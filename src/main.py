@@ -137,7 +137,7 @@ class PDFRedactor:
                     logging.info(f"\n--- Page {page_number + 1} ---")
                     for line in lines:
                         logging.info(line)
-                    all_lines.extend(lines)
+                    all_lines.extend([line + "\n" for line in lines]) 
                 logging.info(
                     f"=========================================> {"".join(all_lines)}"
                 )

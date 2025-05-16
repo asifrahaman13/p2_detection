@@ -1,0 +1,52 @@
+export type KeyPoint = {
+  title: string;
+  description: string;
+};
+
+export type DocumentData = {
+  _id: string;
+  document_summary: string;
+  key_points: KeyPoint[];
+  pdf_name: string;
+  documentName: string;
+  presigned_url: string;
+  documentType: string[];
+  keywordSearch: string[];
+  documentId: string;
+};
+
+export type Message = {
+  message: string;
+};
+
+export type UploadedPdfInterface = {
+  uploadedPdf: string | null;
+  page?: number;
+};
+
+export type PDFButtonTypes = {
+  associatedFunction: () => void;
+  text: string;
+  loading: boolean;
+};
+
+export type Case = {
+  _id: string;
+  path: string;
+  user: string;
+};
+
+export type Document = {
+  documentName: string;
+  document_summary: string;
+  documentType: string[];
+  documentId: string;
+};
+
+export interface State {
+  activeButton: "Outline" | "Files";
+}
+
+export type Action =
+  | { type: "TOGGLE_TO_OUTLINE" }
+  | { type: "TOGGLE_TO_FILES" };
