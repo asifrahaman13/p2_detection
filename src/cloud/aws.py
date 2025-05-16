@@ -1,9 +1,10 @@
 import io
-import logging
 import boto3
 from fastapi import UploadFile
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
+from src.logs.logger import Logger
+
+log = Logger(name="AWS").get_logger()
 
 
 class AWS:
@@ -28,7 +29,7 @@ class AWS:
             buffer.seek(0)
             return buffer
         except Exception as e:
-            print(f"Error downloading file from S3: {e}")
+            log.error(f"Error downloading file from S3: {e}")
             raise e
 
     def upload_file_from_memory(self, buffer, key: str):
@@ -43,6 +44,7 @@ class AWS:
             pdf_file.seek(0)
             return pdf_file
         except Exception as e:
+            log.error(f"Error downloading file from S3: {e}")
             raise e
 
     def upload_pdf(self, file_name: str, file: UploadFile):
@@ -51,9 +53,7 @@ class AWS:
                 raise ValueError("Uploaded file is None")
 
             file.file.seek(0)
-
             s3_key = f"uploads/{file_name}"
-
             self.s3_client.upload_fileobj(
                 file.file,
                 self.bucket_name,
@@ -62,7 +62,7 @@ class AWS:
             )
             return True
         except Exception as e:
-            print("S3 Upload Error:", e)
+            log.error("S3 Upload Error:", e)
             return False
 
     def generate_presigned_url(self, file_name: str) -> str | None:
@@ -74,7 +74,8 @@ class AWS:
             )
             return presigned_url
         except Exception as e:
-            raise e
+            log.error("Error generating presigned URL:", e)
+            return None
 
     def download_file_obj(self, file_name, input_key, input_stream):
         self.s3_client.download_fileobj(self.bucket_name, input_key, input_stream)

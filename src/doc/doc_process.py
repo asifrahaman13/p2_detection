@@ -7,16 +7,12 @@ import pytesseract
 import re
 from PyPDF2 import PdfReader
 from collections import defaultdict
-import logging
 
+from src.helper.images import process_image
 from src.llm.llm import LLM
+from src.logs.logger import Logger
 
-
-def process_image(image_data):
-    page_number, image = image_data
-    text = pytesseract.image_to_string(image)
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    return page_number, lines
+log = Logger(name="PDFRedactor").get_logger()
 
 
 class PDFRedactor:
@@ -42,7 +38,7 @@ class PDFRedactor:
         with Pool(cpu_count()) as pool:
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
-                print(f"\n🔹 Processing pages {start_page} to {end_page}")
+                log.info(f"\n🔹 Processing pages {start_page} to {end_page}")
                 self.pdf_path.seek(0)
                 pdf_bytes = self.pdf_path.read()
 
@@ -56,26 +52,22 @@ class PDFRedactor:
                 results = pool.map(process_image, image_data)
                 results.sort(key=lambda x: x[0])
                 for page_number, lines in results:
-                    print(f"\n--- Page {page_number + 1} ---")
+                    log.info(f"\n--- Page {page_number + 1} ---")
                     all_lines = []
-                    for line in lines:
-                        print(line)
+                    # for line in lines:
+                    #     log.info(line)
                     all_lines.extend([line + "\n" for line in lines])
-                    print(f"=========================================> {all_lines}")
-                    print(f"llm is triggered.")
+                    log.info(f"llm is triggered.")
                     text = "".join(all_lines)
                     result = await self.llm.llm_response(text)
-                    print(f"llm response is: {result}")
+                    log.info(f"llm response is: {result}")
                     if result is not None:
                         self.word_map.update(result)
-                        print(
-                            f"============================> word update now: {self.word_map}"
-                        )
 
-        print(f"============================> word update now: {self.word_map}")
+        log.info(f"word update now: {self.word_map}")
         if self.word_map:
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
-            print(self.word_map)
+            log.info(self.word_map)
             return self.redact()
 
     def _normalize(self, text: str) -> str:
@@ -113,7 +105,7 @@ class PDFRedactor:
         processed_images = []
 
         for page_num, image in enumerate(images):
-            print(f"🔹 Processing Page {page_num + 1}")
+            log.info(f"🔹 Processing Page {page_num + 1}")
             draw = ImageDraw.Draw(image)
             data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
 
@@ -160,7 +152,7 @@ class PDFRedactor:
                         )
                         draw.text(text_pos, replacement, fill="white", font=font)
 
-                        print(f"🔒 Replaced phrase '{phrase}' with '{replacement}'")
+                        log.info(f"🔒 Replaced phrase '{phrase}' with '{replacement}'")
                         i += len(phrase_parts)
                         match_found = True
                         break
@@ -174,10 +166,10 @@ class PDFRedactor:
 
     def save(self, images, output_path: str):
         if not images:
-            logging.error("❌ No images to save.")
+            log.error("❌ No images to save.")
             return
 
         images[0].save(
             output_path, save_all=True, append_images=images[1:], format="PDF"
         )
-        print(f"✅ Output saved to {output_path}")
+        log.info(f"✅ Output saved to {output_path}")
