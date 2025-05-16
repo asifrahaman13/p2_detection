@@ -7,27 +7,23 @@ import config from "@/config/config";
 
 import Link from "next/link";
 
-// Define the shape of the state
 interface State {
   define: boolean;
   upload: boolean;
   process: boolean;
 }
 
-// Define action types
 type Action =
   | { type: "TOGGLE_DEFINE" }
   | { type: "TOGGLE_UPLOAD" }
   | { type: "TOGGLE_PROCESS" };
 
-// Initial state
 const initialState: State = {
   define: false,
   upload: false,
   process: false,
 };
 
-// Reducer function to manage state transitions
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "TOGGLE_DEFINE":
@@ -53,33 +49,29 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   const handleFileChange = async (file: File | null) => {
     if (file) {
-      // Set file name and size
       setFileName(file.name);
-      setFileSize(file.size); // file size is in bytes
+      setFileSize(file.size); 
 
-      // Automatically upload the file after selection
       await handleFileUpload(file);
     }
   };
-  // Handles actual file upload
   const handleFileUpload = async (file: File) => {
     setLoading(true);
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("title", params.case_name); // Pass the document title with the file
+    formData.append("title", params.case_name); 
     setDynamicValue(0);
 
-    // Progress simulation during upload
     const interval = setInterval(() => {
       setDynamicValue((prevValue) => {
         if (prevValue < 100) {
           if (fileSize === null) {
             return prevValue + 1;
           }
-          return prevValue + 1 / (fileSize * 1.5); // Increase value by 1 until 100
+          return prevValue + 1 / (fileSize * 1.5);
         } else {
-          clearInterval(interval); // Stop the interval when it reaches 100
+          clearInterval(interval);
           return prevValue;
         }
       });
@@ -110,7 +102,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
     }
   };
 
-  // Handle drag and drop events
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
@@ -121,19 +112,15 @@ export default function Page({ params }: { params: { case_name: string } }) {
     handleFileChange(file);
   };
 
-  // Dynamic value for progress bar
   const [dynamicValue, setDynamicValue] = useState(0);
 
-  // Utility function to format file size
   const formatFileSize = (fileSize: number | null) => {
     if (fileSize === null) {
       return;
     }
     if (fileSize < 1024 * 1024) {
-      // If less than 1 MB, return size in KB
       return `${(fileSize / 1024).toFixed(2)} KB`;
     } else {
-      // If 1 MB or more, return size in MB
       return `${(fileSize / (1024 * 1024)).toFixed(2)} MB`;
     }
   };
@@ -146,7 +133,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
         </div>
         <div className="w-full h-full flex gap-6 items-center flex-col ">
           <div className="flex gap-2 items-center">
-            {/* Define Section */}
             <div
               className="flex gap-4 items-center"
               onClick={() => dispatch({ type: "TOGGLE_DEFINE" })}
@@ -168,7 +154,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
               ></div>
             </div>
 
-            {/* Upload Section */}
             <div
               className="flex gap-4 items-center"
               onClick={() => dispatch({ type: "TOGGLE_UPLOAD" })}
@@ -190,7 +175,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
               ></div>
             </div>
 
-            {/* Process Section */}
             <div
               className="flex gap-4 items-center"
               onClick={() => dispatch({ type: "TOGGLE_PROCESS" })}
@@ -210,7 +194,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
           {display === "define" && (
             <Fragment>
-              {/* Content Section */}
               <div className="flex flex-col bg-white w-3/4 gap-6 rounded-lg mt-4 p-4">
                 <div className="text-xl font-medium">Upload file</div>
                 <div
@@ -220,7 +203,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
                 >
                   <div className="border-2 w-3/4 py-6 rounded-xl border-dotted">
                     <div className="flex flex-col items-center justify-center">
-                      {/* Image for file selection */}
                       <img
                         src="/assets/dashboard/Group.svg"
                         alt="Select File"
@@ -314,7 +296,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
                       dispatch({ type: "TOGGLE_DEFINE" });
                     }}
                   >
-                    Define filters
+                  Continue 
                   </button>
                 </div>
               </div>

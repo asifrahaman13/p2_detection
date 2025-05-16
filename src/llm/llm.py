@@ -1,18 +1,11 @@
 import json
 from anthropic import AsyncAnthropicBedrock
-import logging
 import asyncio
 
 from src.constants.prompt import prompt_builder
+from src.logs.logger import Logger
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename="app.log",
-    filemode="a",
-)
+log = Logger(name="PDFRedactor").get_logger()
 
 
 async def async_sleep(duration):
@@ -22,7 +15,7 @@ async def async_sleep(duration):
 class LLM:
     def __init__(
         self,
-        max_tokens: int = 5000,
+        max_tokens: int = 1000,
         model: str = "anthropic.claude-3-5-sonnet-20240620-v1:0",
         stream: bool = False,
     ) -> int:
@@ -44,7 +37,7 @@ class LLM:
                     model=self.model, max_tokens=self.max_tokens, messages=[message]
                 )
 
-                logging.info(f"The llm response is: {response.content[0].text}")
+                log.info(f"The llm response is: {response.content[0].text}")
                 response_text = response.content[0].text
                 json_result = json.loads(response_text)
 
@@ -54,8 +47,8 @@ class LLM:
                 return json_result
 
             except (json.JSONDecodeError, ValueError, Exception) as e:
-                logging.info(f"Attempt {attempt + 1} failed: {e}")
+                log.info(f"Attempt {attempt + 1} failed: {e}")
                 if attempt == 2:
-                    logging.error("All retries failed.")
+                    log.error("All retries failed.")
                     return None
                 await asyncio.sleep(1)

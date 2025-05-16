@@ -1,4 +1,3 @@
-import asyncio
 import io
 import logging
 import boto3
@@ -20,25 +19,27 @@ class AWS:
             aws_secret_access_key=self.aws_secret_access_key,
         )
 
-    async def download_file_to_memory(self, s3_key: str, buffer: io.BytesIO) -> None:
-        try:
-            loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(
-                None,
-                lambda: self.s3_client.get_object(Bucket=self.bucket_name, Key=s3_key),
-            )
+    def download_file_to_memory(self, key: str):
+        from io import BytesIO
 
-            buffer.write(response["Body"].read())
+        try:
+            buffer = BytesIO()
+            self.s3_client.download_fileobj(self.bucket_name, key, buffer)
             buffer.seek(0)
+            return buffer
         except Exception as e:
+            print(f"Error downloading file from S3: {e}")
             raise e
 
+    def upload_file_from_memory(self, buffer, key: str):
+        buffer.seek(0)
+        self.s3_client.upload_fileobj(buffer, self.bucket_name, key)
+
     def get_pdf_buffer_s3(self, file_key):
-        bucket_name = "gainlife-asif-document-ingestion"
         try:
             s3 = boto3.client("s3")
             pdf_file = io.BytesIO()
-            s3.download_fileobj(bucket_name, file_key, pdf_file)
+            s3.download_fileobj(self.bucket_name, file_key, pdf_file)
             pdf_file.seek(0)
             return pdf_file
         except Exception as e:
@@ -64,13 +65,6 @@ class AWS:
             print("S3 Upload Error:", e)
             return False
 
-    def upload_fileobj(self, s3_key: str, file_obj) -> str | None:
-        try:
-            s3_key = self.s3_client.upload_fileobj(file_obj, self.bucket_name, s3_key)
-            return s3_key
-        except Exception as e:
-            raise e
-
     def generate_presigned_url(self, file_name: str) -> str | None:
         try:
             presigned_url = self.s3_client.generate_presigned_url(
@@ -81,3 +75,6 @@ class AWS:
             return presigned_url
         except Exception as e:
             raise e
+
+    def download_file_obj(self, file_name, input_key, input_stream):
+        self.s3_client.download_fileobj(self.bucket_name, input_key, input_stream)

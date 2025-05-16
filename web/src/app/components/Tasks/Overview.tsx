@@ -20,7 +20,6 @@ const Overview = ({
 }) => {
   const [keywords, setKeywords] = useState<string[]>([]);
 
-  // Function to add empty list
   const addEmptyList = () => {
     setKeywords([...keywords, "<empty>"]);
   };

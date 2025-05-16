@@ -1,6 +1,7 @@
+from io import BytesIO
 from multiprocessing import Pool, cpu_count
 
-from pdf2image import convert_from_path
+from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
 import pytesseract
 import re
@@ -9,15 +10,6 @@ from collections import defaultdict
 import logging
 
 from src.llm.llm import LLM
-
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename="app.log",
-    filemode="a",
-)
 
 
 def process_image(image_data):
@@ -30,15 +22,16 @@ def process_image(image_data):
 class PDFRedactor:
     def __init__(
         self,
-        pdf_path: str,
+        pdf_bytes_io: BytesIO,
         dpi: int = 300,
         chunk_size: int = 2,
     ):
-        self.pdf_path = pdf_path
+        self.pdf_path = pdf_bytes_io
         self.word_map = defaultdict()
         self.dpi = dpi
         self.chunk_size = chunk_size
         self.dpi = dpi
+        self.pdf_bytes_io = pdf_bytes_io
         self.llm = LLM()
 
     async def extract_lines_from_scanned_pdf_parallel(self):
@@ -49,9 +42,12 @@ class PDFRedactor:
         with Pool(cpu_count()) as pool:
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
-                logging.info(f"\n🔹 Processing pages {start_page} to {end_page}")
-                images = convert_from_path(
-                    self.pdf_path,
+                print(f"\n🔹 Processing pages {start_page} to {end_page}")
+                self.pdf_path.seek(0)
+                pdf_bytes = self.pdf_path.read()
+
+                images = convert_from_bytes(
+                    pdf_bytes,
                     dpi=self.dpi,
                     first_page=start_page,
                     last_page=end_page,
@@ -60,27 +56,26 @@ class PDFRedactor:
                 results = pool.map(process_image, image_data)
                 results.sort(key=lambda x: x[0])
                 for page_number, lines in results:
-                    logging.info(f"\n--- Page {page_number + 1} ---")
+                    print(f"\n--- Page {page_number + 1} ---")
+                    all_lines = []
                     for line in lines:
-                        logging.info(line)
+                        print(line)
                     all_lines.extend([line + "\n" for line in lines])
-                logging.info(
-                    f"=========================================> {"".join(all_lines)}"
-                )
+                    print(f"=========================================> {all_lines}")
+                    print(f"llm is triggered.")
+                    text = "".join(all_lines)
+                    result = await self.llm.llm_response(text)
+                    print(f"llm response is: {result}")
+                    if result is not None:
+                        self.word_map.update(result)
+                        print(
+                            f"============================> word update now: {self.word_map}"
+                        )
 
-                result = await self.llm.llm_response("".join(all_lines))
-
-                if result is not None:
-                    # sets the word maps
-                    self.word_map.update(result)
-                    logging.info(
-                        f"============================> word update now: {self.word_map}"
-                    )
-
-        logging.info(f"============================> word update now: {self.word_map}")
+        print(f"============================> word update now: {self.word_map}")
         if self.word_map:
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
-            logging.info(self.word_map)
+            print(self.word_map)
             return self.redact()
 
     def _normalize(self, text: str) -> str:
@@ -112,11 +107,13 @@ class PDFRedactor:
         return x, y
 
     def redact(self):
-        images = convert_from_path(self.pdf_path, dpi=self.dpi)
+        self.pdf_bytes_io.seek(0)
+        images = convert_from_bytes(self.pdf_path.getvalue(), dpi=self.dpi)
+
         processed_images = []
 
         for page_num, image in enumerate(images):
-            logging.info(f"🔹 Processing Page {page_num + 1}")
+            print(f"🔹 Processing Page {page_num + 1}")
             draw = ImageDraw.Draw(image)
             data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
 
@@ -163,9 +160,7 @@ class PDFRedactor:
                         )
                         draw.text(text_pos, replacement, fill="white", font=font)
 
-                        logging.info(
-                            f"🔒 Replaced phrase '{phrase}' with '{replacement}'"
-                        )
+                        print(f"🔒 Replaced phrase '{phrase}' with '{replacement}'")
                         i += len(phrase_parts)
                         match_found = True
                         break
@@ -185,19 +180,4 @@ class PDFRedactor:
         images[0].save(
             output_path, save_all=True, append_images=images[1:], format="PDF"
         )
-        logging.info(f"✅ Output saved to {output_path}")
-
-
-async def main():
-    pdf_path = "src/Sample assignment document v2.pdf"
-    output_path = "redacted_output.pdf"
-
-    redactor = PDFRedactor(pdf_path)
-    redacted_images = await redactor.extract_lines_from_scanned_pdf_parallel()
-    redactor.save(redacted_images, output_path)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
+        print(f"✅ Output saved to {output_path}")
