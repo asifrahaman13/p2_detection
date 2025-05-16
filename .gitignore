@@ -10,3 +10,4 @@ wheels/
 .venv
 app.log
 redacted_output.pdf
+.env
