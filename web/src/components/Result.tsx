@@ -44,18 +44,17 @@ export default function Result({ caseName }: { caseName: string }) {
       ) : (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-lg font-medium mb-4">Statistics</div>
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
-              <div>
-                <span className="font-medium">Total Time:</span>{" "}
+              <div className="text-2xl text-gray-700 font-medium">
+                <span >Total Time:</span>{" "}
                 {result.stats.total_time.toFixed(2)}s
               </div>
-              <div>
-                <span className="font-medium">Total Words Extracted:</span>{" "}
+              <div className="text-2xl text-gray-700 font-medium">
+                <span>Total Words Extracted:</span>{" "}
                 {result.stats.total_words_extracted}
               </div>
               <div className="col-span-2">
-                <span className="font-medium">Unique Words Extracted:</span>
+                <span className="font-semibold">Unique Words Extracted:</span>
                 <ul className="list-disc ml-6 mt-1">
                   {result.stats.unique_words_extracted.map((word, index) => (
                     <li key={index}>{word}</li>
@@ -63,7 +62,7 @@ export default function Result({ caseName }: { caseName: string }) {
                 </ul>
               </div>
               <div className="col-span-2">
-                <span className="font-medium">Word Frequencies:</span>
+                <span className="font-semibold">Word Frequencies:</span>
                 <ul className="ml-4 mt-1">
                   {Object.entries(result.stats.word_frequencies).map(
                     ([word, count], index) => (
@@ -75,7 +74,7 @@ export default function Result({ caseName }: { caseName: string }) {
                 </ul>
               </div>
               <div className="col-span-2">
-                <span className="font-medium">Word Page Map:</span>
+                <span className="font-semibold">Word Page Map:</span>
                 <ul className="ml-4 mt-1">
                   {Object.entries(result.stats.word_page_map).map(
                     ([phrase, pages], index) => (
