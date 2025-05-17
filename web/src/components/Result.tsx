@@ -44,47 +44,64 @@ export default function Result({ caseName }: { caseName: string }) {
       ) : (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+            <div className="flex flex-col gap-4 text-sm text-gray-800">
               <div className="text-2xl text-gray-700 font-medium">
-                <span >Total Time:</span>{" "}
-                {result.stats.total_time.toFixed(2)}s
+                <span>Total Time:</span> {result.stats.total_time.toFixed(2)}s
               </div>
               <div className="text-2xl text-gray-700 font-medium">
                 <span>Total Words Extracted:</span>{" "}
                 {result.stats.total_words_extracted}
               </div>
-              <div className="col-span-2">
+              <div className="flex flex-col gap-2">
                 <span className="font-semibold">Unique Words Extracted:</span>
-                <ul className="list-disc ml-6 mt-1">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {result.stats.unique_words_extracted.map((word, index) => (
-                    <li key={index}>{word}</li>
+                    <div
+                      key={index}
+                      className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded shadow-sm inline-block"
+                    >
+                      {word}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
-              <div className="col-span-2">
+              <div className="flex flex-col gap-2">
                 <span className="font-semibold">Word Frequencies:</span>
-                <ul className="ml-4 mt-1">
+                <div className="">
                   {Object.entries(result.stats.word_frequencies).map(
                     ([word, count], index) => (
-                      <li key={index}>
-                        <span className="font-mono">{word}</span>: {count}
-                      </li>
+                      <div key={index} className="flex gap-2 items-center">
+                        <span className="font-mono">{word}</span>:
+                        <span className="bg-blue-50 px-2  text-blue-800 rounded-lg">
+                          {" "}
+                          {count}
+                        </span>
+                      </div>
                     ),
                   )}
-                </ul>
+                </div>
               </div>
-              <div className="col-span-2">
-                <span className="font-semibold">Word Page Map:</span>
-                <ul className="ml-4 mt-1">
+              <div className="flex flex-col gap-2">
+                <div className="font-medium">Word Page Map:</div>
+                <div className="">
                   {Object.entries(result.stats.word_page_map).map(
                     ([phrase, pages], index) => (
-                      <li key={index}>
-                        <span className="font-mono">{phrase}</span>: pages{" "}
-                        {pages.join(", ")}
-                      </li>
+                      <div key={index} className="flex gap-2 items-center">
+                        <div className=" ">{phrase}</div>:{" "}
+                        <div className="px-2 rounded-lg flex flex-wrap gap-2">
+                          {pages.map((item, idx) => (
+                            <span
+                              key={idx}
+                              className="bg-blue-50 text-blue-700 px-2 py-0.5 text-sm rounded-full"
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     ),
                   )}
-                </ul>
+                </div>
               </div>
             </div>
           </div>

@@ -44,7 +44,7 @@ export default function DescriptionEditor({
           <img src="/assets/dashboard/Circle Plus.svg" alt="Add" />
         </button>
       </div>
-      <div className="text-sm text-gray-500 mb-4">
+      <div className="text-sm text-gray-500 mb-4 text-justify">
         These are the key points that will be used by the AI to find the fields
         that needs to be extracted. For example, if you have want to mask out
         the name of the person, you can add a key point like &quot;Name of the
