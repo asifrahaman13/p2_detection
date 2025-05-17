@@ -1,6 +1,10 @@
 ## About the aplication.
 
-Repository to deal with the documents masking out the sensitive informations. Currently, this is in the form of mono repo. Make sure you have node , uv (package manager for python) installed in your system.
+Repository to deal with the documents masking out the sensitive informations. Currently, this is in the form of mono repo. Make sure you have node , uv (package manager for python) installed in your system.\
+
+![Screenshot from 2025-05-17 20-45-40](https://github.com/user-attachments/assets/6719c6a4-8cba-4a63-a238-8475f11b3e9d)
+
+![Screenshot from 2025-05-17 20-46-02](https://github.com/user-attachments/assets/6d70f4bb-0296-48c9-b626-db2262e308fa)
 
 ## Backend
 
