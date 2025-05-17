@@ -25,9 +25,7 @@ jobs:
 
       - name: Add uv to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Build Docker image
-        run: docker compose build
-
-      - name: Start Docker containers
-        run: docker compose up -d
+      
+      - name: Install dependencies
+        run: |
+          uv sync
