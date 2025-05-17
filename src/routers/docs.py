@@ -193,3 +193,19 @@ async def get_key_points(request: RedactRequest):
     except Exception as e:
         log.error(e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@docs_router.post("/results")
+async def get_results(request: RedactRequest):
+    try:
+        results = await mongo_db.find_one(
+            filters={"file_name": request.input_key},
+        )
+        log.info(f"The results are: {results}")
+        if not results:
+            raise HTTPException(status_code=404, detail="No results found")
+        log.info(f"Results retrieved successfully: {results}")
+        return JSONResponse(content={"results": results}, status_code=200)
+    except Exception as e:
+        log.error(e)
+        raise HTTPException(status_code=500, detail=str(e))

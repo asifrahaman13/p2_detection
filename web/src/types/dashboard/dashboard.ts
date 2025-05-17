@@ -38,12 +38,12 @@ export type Document = {
 };
 
 export interface State {
-  activeButton: "Outline" | "Files";
+  activeButton: "OUTLINE" | "RESULT";
 }
 
 export type Action =
   | { type: "TOGGLE_TO_OUTLINE" }
-  | { type: "TOGGLE_TO_FILES" };
+  | { type: "TOGGLE_TO_RESULT" };
 
 export type PresignedUrl = {
   original_pdf: string;

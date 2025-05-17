@@ -9,15 +9,16 @@ import { usePresignedUrl } from "@/hooks/usePresignedUrl";
 import { State, Action } from "@/types/dashboard/dashboard";
 import axios from "axios";
 import config from "@/config/config";
+import Result from "@/components/Result";
 
-const initialState: State = { activeButton: "Outline" };
+const initialState: State = { activeButton: "OUTLINE" };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "TOGGLE_TO_OUTLINE":
-      return { activeButton: "Outline" };
-    case "TOGGLE_TO_FILES":
-      return { activeButton: "Files" };
+      return { activeButton: "OUTLINE" };
+    case "TOGGLE_TO_RESULT":
+      return { activeButton: "RESULT" };
     default:
       return state;
   }
@@ -100,16 +101,25 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
       <div className="h-full">
         <div className="flex h-full  gap-8">
-          <div className="w-1/2 h-3/4">
-            <DescriptionEditor
-              data={documentData}
-              setData={setDocumentData}
-              onSave={saveData}
-              onProcess={processDocument}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-            />
-          </div>
+          {state.activeButton === "OUTLINE" ? (
+            <>
+              {" "}
+              <div className="w-1/2 h-3/4">
+                <DescriptionEditor
+                  data={documentData}
+                  setData={setDocumentData}
+                  onSave={saveData}
+                  onProcess={processDocument}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="w-1/2 h-3/4">
+              <Result caseName={params.case_name} />
+            </div>
+          )}
 
           <div className="w-1/2 h-3/4">
             <UploadedPdf

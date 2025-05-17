@@ -22,6 +22,10 @@ class MongoDBHandler:
         doc = await self.collection.find_one({"_id": ObjectId(id)})
         return self._format_doc(doc) if doc else None
 
+    async def find_one(self, filters: dict) -> Optional[dict]:
+        doc = await self.collection.find_one(filters)
+        return self._format_doc(doc) if doc else None
+
     async def get_all(self, filters: dict = {}) -> List[dict]:
         cursor = self.collection.find(filters)
         docs = await cursor.to_list(length=None)
