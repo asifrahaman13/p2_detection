@@ -231,7 +231,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
                     ))}
                 </div>
                 <div className="flex my-8 flex-col  items-center gap-2 w-full">
-                  {/* <div className="w-full font-medium text-lg">Select the type of masking</div> */}
                   <div className="flex items-center space-x-4">
                     <span
                       onClick={() => setValue("x")}
@@ -286,7 +285,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
             </div>
           </div>
 
-          <div className="flex w-1/2 bg-red-50">
+          <div className="flex w-1/2 ">
             {preview === "x" ? (
               <UploadedPdf uploadedPdf={docUrl?.original_pdf ?? null} />
             ) : (
