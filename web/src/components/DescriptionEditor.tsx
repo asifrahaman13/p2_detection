@@ -21,7 +21,7 @@ export default function DescriptionEditor({
 }: Props) {
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number
+    idx: number,
   ) => {
     if (!data) return;
     const updated = [...data.key_points];
@@ -45,7 +45,12 @@ export default function DescriptionEditor({
         </button>
       </div>
       <div className="text-sm text-gray-500 mb-4">
-        These are the key points that will be used by the AI to find the fields that needs to be extracted.  For example, if you have want to mask out the name of the person, you can add a key point like &quot;Name of the person&quot; or &quot;Name of the customer&quot;. You can also add multiple key points. The more key points you add, the better the AI will be able to find the fields that needs to be extracted.
+        These are the key points that will be used by the AI to find the fields
+        that needs to be extracted. For example, if you have want to mask out
+        the name of the person, you can add a key point like &quot;Name of the
+        person&quot; or &quot;Name of the customer&quot;. You can also add
+        multiple key points. The more key points you add, the better the AI will
+        be able to find the fields that needs to be extracted.
       </div>
       {/* Middle Section (growable area) */}
       <div className="flex-1 overflow-auto space-y-2">

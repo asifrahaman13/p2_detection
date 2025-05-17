@@ -15,7 +15,7 @@ from src.logs.logger import Logger
 log = Logger(name="PDFRedactor").get_logger()
 
 
-class PDFRedactor:
+class DocsRedactor:
     def __init__(
         self,
         pdf_bytes_io: BytesIO,

@@ -34,7 +34,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
   const saveData = async () => {
     if (!documentData) return;
     try {
-      await axios.post(`${config.backendUrl}/api/v1/pdf/save`, documentData);
+      await axios.post(`${config.backendUrl}/api/v1/docs/save`, documentData);
     } catch (err) {
       console.error("Error saving data", err);
     }
@@ -42,7 +42,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   const processDocument = async () => {
     try {
-      await axios.post(`${config.backendUrl}/api/v1/pdf/process-pdf`, {
+      await axios.post(`${config.backendUrl}/api/v1/docs/process-docs`, {
         input_key: params.case_name,
       });
     } catch (err) {

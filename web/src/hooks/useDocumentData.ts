@@ -12,7 +12,7 @@ export function useDocumentData(caseName: string) {
     if (!inputKey) return;
 
     axios
-      .post(`${config.backendUrl}/api/v1/pdf/get-key-points`, {
+      .post(`${config.backendUrl}/api/v1/docs/get-key-points`, {
         input_key: inputKey,
       })
       .then((res) => setDocumentData(res.data))

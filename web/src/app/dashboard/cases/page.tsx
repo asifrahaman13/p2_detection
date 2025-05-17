@@ -18,7 +18,7 @@ const MyCases: React.FC = () => {
     async function fetchAllCases() {
       try {
         const response = await axios.get(
-          `${config.backendUrl}/api/v1/pdf/list-files`,
+          `${config.backendUrl}/api/v1/docs/list-files`,
         );
         if (response.status === 200) {
           console.log(response.data);
@@ -155,21 +155,6 @@ const MyCases: React.FC = () => {
           </div>
         ))}
       </div>
-
-      {/* Pagination */}
-      {/* <div className="flex justify-between items-center mt-4">
-        <p>1-8 of 150 claims</p>
-        <div className="flex items-center space-x-2">
-          <p>Show</p>
-          <select className="border p-1 rounded">
-            <option value="10">10</option>
-            <option value="25" selected>
-              25
-            </option>
-            <option value="50">50</option>
-          </select>
-        </div>
-      </div> */}
     </div>
   );
 };

@@ -11,12 +11,21 @@ export function usePresignedUrl(caseName: string) {
     const inputKey = parseInputKey(caseName);
     if (!inputKey) return;
 
-    axios
-      .post(`${config.backendUrl}/api/v1/pdf/get-presigned-url`, {
-        input_key: inputKey,
-      })
-      .then((res) => setDocUrl(res.data))
-      .catch((err) => console.error("Presigned URL error:", err));
+    const fetchPresignedUrl = async () => {
+      try {
+        const response = await axios.post(
+          `${config.backendUrl}/api/v1/docs/get-presigned-url`,
+          {
+            input_key: inputKey,
+          },
+        );
+        setDocUrl(response.data);
+      } catch (error) {
+        console.error("Presigned URL error:", error);
+      }
+    };
+
+    fetchPresignedUrl();
   }, [caseName]);
 
   return docUrl;

@@ -30,7 +30,7 @@ const Overview = ({
       triggerProcess();
       handleProcessLoad();
       const response = await axios.post(
-        `${config.backendUrl}/api/v1/pdf/process-pdf`,
+        `${config.backendUrl}/api/v1/docs/process-pdf`,
         {
           input_key: caseName,
         },
