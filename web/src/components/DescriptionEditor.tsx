@@ -21,7 +21,7 @@ export default function DescriptionEditor({
 }: Props) {
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
+    idx: number
   ) => {
     if (!data) return;
     const updated = [...data.key_points];
@@ -36,7 +36,7 @@ export default function DescriptionEditor({
   };
 
   return (
-    <div className="bg-white h-full p-6 flex flex-col w-full">
+    <div className="bg-white gap-4 h-full p-6 flex flex-col w-full">
       {/* Top Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium">Add your descriptions</h2>
@@ -44,13 +44,15 @@ export default function DescriptionEditor({
           <img src="/assets/dashboard/Circle Plus.svg" alt="Add" />
         </button>
       </div>
-
+      <div className="text-sm text-gray-500 mb-4">
+        These are the key points that will be used by the AI to find the fields that needs to be extracted.  For example, if you have want to mask out the name of the person, you can add a key point like &quot;Name of the person&quot; or &quot;Name of the customer&quot;. You can also add multiple key points. The more key points you add, the better the AI will be able to find the fields that needs to be extracted.
+      </div>
       {/* Middle Section (growable area) */}
       <div className="flex-1 overflow-auto space-y-2">
         {data?.key_points.map((point, idx) => (
           <textarea
             key={idx}
-            className="bg-gray-100 py-1 w-full rounded-md text-center border-0"
+            className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
             value={point}
             onChange={(e) => handleChange(e, idx)}
           />
