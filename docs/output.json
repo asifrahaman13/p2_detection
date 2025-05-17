@@ -1,6 +1,6 @@
 {
     "message": "Redacted file uploaded successfully.",
-    "s3_path": "s3://asif-bucket-hr-payroll/redacted/redacted/sample_test",
+    "s3_path": "xyz",
     "stats": {
         "total_time": 56.42911434173584,
         "total_words_extracted": 143,
