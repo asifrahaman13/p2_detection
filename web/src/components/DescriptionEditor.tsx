@@ -27,6 +27,7 @@ export default function DescriptionEditor({
     const updated = [...data.key_points];
     updated[idx] = e.target.value;
     setData({ ...data, key_points: updated });
+    onSave();
   };
 
   const addPoint = () => {
@@ -58,13 +59,6 @@ export default function DescriptionEditor({
 
       {/* Bottom Button Section */}
       <div className="flex justify-between items-center mt-4">
-        <button
-          className="bg-blue-800 text-white py-2 px-4 rounded-md"
-          onClick={onSave}
-        >
-          Save
-        </button>
-
         <div className="flex items-center space-x-4">
           <span
             onClick={() => setViewMode("x")}
