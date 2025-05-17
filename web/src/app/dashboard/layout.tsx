@@ -3,7 +3,7 @@
 import React, { Fragment, useReducer } from "react";
 import { useRouter } from "next/navigation";
 import { sidebarButtons } from "@/constants/dashboard";
-import ActionButton from "../components/ui/ActionableButtons";
+import ActionButton from "../../components/ui/ActionableButtons";
 import { usePathname } from "next/navigation";
 
 function changeSidebar(

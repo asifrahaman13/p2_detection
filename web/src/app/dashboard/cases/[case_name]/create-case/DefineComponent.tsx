@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { Fragment } from "react";
-import Overview from "@/app/components/Tasks/Overview";
-import Group from "@/app/components/Tasks/Group";
+import Overview from "@/components/Tasks/Overview";
+import Group from "@/components/Tasks/Group";
 
 export default function DefineComponent({
   case_name,

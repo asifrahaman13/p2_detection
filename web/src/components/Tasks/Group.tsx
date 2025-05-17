@@ -12,7 +12,7 @@ const Group = () => {
   const handleUpdate = (
     index: number,
     value: string,
-    setState: React.Dispatch<React.SetStateAction<string[]>>
+    setState: React.Dispatch<React.SetStateAction<string[]>>,
   ) => {
     setState((prev) => {
       const updated = [...prev];
