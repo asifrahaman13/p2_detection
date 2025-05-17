@@ -1,6 +1,8 @@
 import os
 from src.cloud.aws import AWS
 from dotenv import load_dotenv
+from src.database.mongo_db import MongoDBHandler
+from src.models.db import Collections, Databases
 
 from src.database.ps_db import AsyncPostgresCRUD
 from src.logs.logger import Logger
@@ -14,6 +16,8 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS")
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 S3_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
 POSTGRES_CONNECTION = os.getenv("POSTGRES_CONNECTION_STRING")
 
@@ -37,3 +41,9 @@ aws = AWS(
 )
 
 db = AsyncPostgresCRUD(dsn=POSTGRES_CONNECTION)
+
+mongo_db = MongoDBHandler(
+    uri=MONGO_URI,
+    db_name=Databases.DOCS.value,
+    collection_name=Collections.DOCS.value,
+)

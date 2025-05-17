@@ -1,12 +1,13 @@
 from io import BytesIO
 from multiprocessing import Pool, cpu_count
+import time
 
 from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
 import pytesseract
 import re
 from PyPDF2 import PdfReader
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 from src.helper.images import process_image
 from src.llm.llm import LLM
@@ -31,10 +32,14 @@ class DocsRedactor:
         self.llm = LLM()
 
     async def extract_lines_from_scanned_pdf_parallel(self):
+        start_time = time.time()
         reader = PdfReader(self.pdf_path)
         total_pages = len(reader.pages)
+
         all_lines = []
-        results = {}
+        word_count = Counter()
+        word_pages = defaultdict(set)  # phrase -> set of page numbers
+
         with Pool(cpu_count()) as pool:
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
@@ -51,22 +56,57 @@ class DocsRedactor:
                 image_data = [(start_page + i - 1, img) for i, img in enumerate(images)]
                 results = pool.map(process_image, image_data)
                 results.sort(key=lambda x: x[0])
+
                 for page_number, lines in results:
                     log.info(f"\n--- Page {page_number + 1} ---")
                     all_lines = []
                     all_lines.extend([line + "\n" for line in lines])
                     log.info("llm is triggered.")
                     text = "".join(all_lines)
+
                     result = await self.llm.llm_response(text)
                     log.info(f"llm response is: {result}")
                     if result is not None:
-                        self.word_map.update(result)
+                        # Normalize keys and update stats
+                        for phrase, replacement in result.items():
+                            normalized = self._normalize(phrase)
+                            self.word_map[normalized] = replacement
+                            word_count[normalized] += 1
+                            word_pages[normalized].add(page_number + 1)
 
-        log.info(f"word update now: {self.word_map}")
+        total_time = time.time() - start_time
+        log.info(f"🔹 Total time taken: {total_time:.2f}s")
+        log.info(f"🧠 Unique phrases found: {len(self.word_map)}")
+        log.info(f"📈 Word frequency: {dict(word_count)}")
+        log.info(f"📄 Word locations: {dict(word_pages)}")
+
         if self.word_map:
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
-            log.info(f"The world wraps: {str(self.word_map)}")
-            return self.redact()
+            redacted_images = self.redact()
+
+            return {
+                "redacted_images": redacted_images,
+                "stats": {
+                    "total_time": total_time,
+                    "total_words_extracted": sum(word_count.values()),
+                    "unique_words_extracted": list(self.word_map.keys()),
+                    "word_frequencies": dict(word_count),
+                    "word_page_map": {
+                        k: sorted(list(v)) for k, v in word_pages.items()
+                    },
+                },
+            }
+
+        return {
+            "redacted_images": [],
+            "stats": {
+                "total_time": total_time,
+                "total_words_extracted": 0,
+                "unique_words_extracted": [],
+                "word_frequencies": {},
+                "word_page_map": {},
+            },
+        }
 
     def _normalize(self, text: str) -> str:
         return re.sub(r"[^\w\s]", "", text).strip().lower()

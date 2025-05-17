@@ -9,8 +9,9 @@ from src.models.db import Tables
 from src.models.cloud import CloudStorage
 from src.instances import db
 from src.models.docs import DocumentData, RedactRequest
+from src.instances import mongo_db
 
-log = Logger(name="main").get_logger()
+log = Logger(name="router").get_logger()
 
 
 docs_router = APIRouter(
@@ -61,23 +62,34 @@ async def process_pdf(request: RedactRequest):
             f"{CloudStorage.UPLOADS.value}/{request.input_key}"
         )
         redactor = DocsRedactor(input_stream)
-        redacted_images = await redactor.extract_lines_from_scanned_pdf_parallel()
+        result = await redactor.extract_lines_from_scanned_pdf_parallel()
+        print(f"The statistcis is: {result["stats"]}")
         output_stream = BytesIO()
-        redacted_images[0].save(
+        result["redacted_images"][0].save(
             output_stream,
             save_all=True,
-            append_images=redacted_images[1:],
-            format="docs",
+            append_images=result["redacted_images"][1:],
+            format="PDF",
         )
         output_key = f"{CloudStorage.REDACTED.value}/{request.input_key}"
         aws.upload_file_from_memory(output_stream, output_key)
+        log.info(f"Redacted file uploaded successfully: {output_key}")
+
         result = {
             "message": "Redacted file uploaded successfully.",
+            "file_name": request.input_key,
             "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
+            "stats": result["stats"],
         }
-        log.info(f"Redacted file uploaded successfully: {output_key}")
+        result = await mongo_db.create(data=result)
+        if not result:
+            raise HTTPException(
+                status_code=500, detail="Failed to save results in MongoDB"
+            )
+
         return JSONResponse(content=result, status_code=200)
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -106,8 +118,6 @@ async def get_presigned_url(request: RedactRequest):
 async def list_files():
     try:
         files = await db.read(Tables.PDF_FILES.value)
-        print(files)
-
         files = [
             {
                 "id": file["id"],

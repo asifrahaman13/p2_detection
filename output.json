@@ -1,0 +1,653 @@
+{
+    "message": "Redacted file uploaded successfully.",
+    "s3_path": "s3://asif-bucket-hr-payroll/redacted/redacted/sample_test",
+    "stats": {
+        "total_time": 56.42911434173584,
+        "total_words_extracted": 143,
+        "unique_words_extracted": [
+            "independent auditors report",
+            "income statement",
+            "statement of comprehensive income",
+            "statement of financial position",
+            "statement of changes in members equity",
+            "statement of cash flows",
+            "notes to the financial statements",
+            "deloitte certified public accountants sa",
+            "3a fragkokklisias  granikou str marousi athens gr 15125 greece",
+            "30 210 6781 100",
+            "black sea trade and development bank",
+            "deloitte",
+            "eur 2329 million",
+            "eur 2030 million",
+            "eur 44 million",
+            "eur 56 million",
+            "31 december 2021",
+            "31 december 2020",
+            "audit committee",
+            "greek",
+            "alexandra kostara",
+            "athens",
+            "greece",
+            "3a fragkokklisias  granikou str",
+            "gr 15125 marousi athens greece",
+            "for the year ended 31 december 2021",
+            "cash and due from banks",
+            "deposits in margin accounts",
+            "debt investment securities at fair value through other comprehensive income",
+            "derivative financial instruments",
+            "loans at amortized cost",
+            "loans at fair value through profit or loss",
+            "equity investments at fair value through profit or loss",
+            "equity investments at fair value through other comprehensive income",
+            "equity investments at fair value",
+            "accrued interest receivable",
+            "other assets",
+            "property and equipment",
+            "intangible assets",
+            "right of use assets",
+            "shortterm",
+            "amounts due to financial institutions",
+            "debt evidenced by certificates",
+            "accrued interest payable",
+            "borrowings",
+            "margin accounts",
+            "derivative financial instruments  liabilities",
+            "other liabilities",
+            "lease liability",
+            "cash flows from operating activities",
+            "income for the year",
+            "adjustment for items in income statement",
+            "depreciation and amortization",
+            "impairment losses on loans",
+            "impairment losses on investment securities",
+            "fair value losses on loans at fvtpl",
+            "fair value gains losses on equity investments at fvtpl",
+            "net interest income",
+            "realized gains on disposal investment securities at fvtoci",
+            "realized losses from debt issued",
+            "cash generated from used for operations",
+            "proceeds from repayment of loans",
+            "proceeds from repayment of equity investments",
+            "funds advanced for loans",
+            "funds advanced for equity investments",
+            "net movement in derivative financial instruments",
+            "working capital adjustments",
+            "interest income received",
+            "interest income paid",
+            "decrease increase in deposit margin accounts",
+            "decrease increase in other assets",
+            "increase decrease in margin accounts",
+            "increase decrease in other liabilities",
+            "increase decrease in deferred income",
+            "net cash from  used in operating activities",
+            "cash flows from investing activities",
+            "proceeds investment securities at fvtoci",
+            "purchase of investment securities at fvtoci",
+            "purchase of property software and equipment",
+            "net cash from  used in investing activities",
+            "cash flows from financing activities",
+            "proceeds received from share capital",
+            "proceeds from borrowings",
+            "repayment of borrowings",
+            "net cash from financing activities",
+            "net increase decrease in cash and cash equivalents",
+            "cash and cash equivalents at beginning of year",
+            "cash and cash equivalents at end of year",
+            "1 komninon street thessaloniki in the hellenic republic",
+            "albania",
+            "armenia",
+            "azerbaijan",
+            "bulgaria",
+            "georgia",
+            "moldova",
+            "romania",
+            "russian federation",
+            "turkey",
+            "ukraine",
+            "adela xhemali",
+            "arthur javadyan",
+            "samir sharifov",
+            "monica dimitrovabeecher",
+            "koba gvenetadze",
+            "adonisspyridon georgiadis",
+            "dumitru budianschi",
+            "alin chitu",
+            "timur maksimov",
+            "murat zaman",
+            "yuliia svyrydenko",
+            "mr arlind gjokuta",
+            "mr andranik grigoryan",
+            "mr famil ismayilov",
+            "ms milena boykova",
+            "mr ekaterine guntsadze",
+            "mr loannis tsakiris",
+            "ms elena matveeva",
+            "ms diana blindu",
+            "mr dmitry birichevskiy",
+            "dr serhat koksal",
+            "mr taras kachka",
+            "russia",
+            "international accounting standards board",
+            "european central bank"
+        ],
+        "word_frequencies": {
+            "independent auditors report": 1,
+            "income statement": 2,
+            "statement of comprehensive income": 2,
+            "statement of financial position": 1,
+            "statement of changes in members equity": 2,
+            "statement of cash flows": 1,
+            "notes to the financial statements": 1,
+            "deloitte certified public accountants sa": 2,
+            "3a fragkokklisias  granikou str marousi athens gr 15125 greece": 1,
+            "30 210 6781 100": 1,
+            "black sea trade and development bank": 2,
+            "deloitte": 3,
+            "eur 2329 million": 1,
+            "eur 2030 million": 1,
+            "eur 44 million": 1,
+            "eur 56 million": 1,
+            "31 december 2021": 1,
+            "31 december 2020": 1,
+            "audit committee": 1,
+            "greek": 1,
+            "alexandra kostara": 1,
+            "athens": 1,
+            "greece": 3,
+            "3a fragkokklisias  granikou str": 1,
+            "gr 15125 marousi athens greece": 1,
+            "for the year ended 31 december 2021": 2,
+            "cash and due from banks": 1,
+            "deposits in margin accounts": 1,
+            "debt investment securities at fair value through other comprehensive income": 1,
+            "derivative financial instruments": 1,
+            "loans at amortized cost": 1,
+            "loans at fair value through profit or loss": 1,
+            "equity investments at fair value through profit or loss": 1,
+            "equity investments at fair value through other comprehensive income": 1,
+            "equity investments at fair value": 1,
+            "accrued interest receivable": 1,
+            "other assets": 1,
+            "property and equipment": 1,
+            "intangible assets": 1,
+            "right of use assets": 1,
+            "shortterm": 1,
+            "amounts due to financial institutions": 1,
+            "debt evidenced by certificates": 1,
+            "accrued interest payable": 1,
+            "borrowings": 1,
+            "margin accounts": 1,
+            "derivative financial instruments  liabilities": 1,
+            "other liabilities": 1,
+            "lease liability": 1,
+            "cash flows from operating activities": 1,
+            "income for the year": 1,
+            "adjustment for items in income statement": 1,
+            "depreciation and amortization": 1,
+            "impairment losses on loans": 1,
+            "impairment losses on investment securities": 1,
+            "fair value losses on loans at fvtpl": 1,
+            "fair value gains losses on equity investments at fvtpl": 1,
+            "net interest income": 1,
+            "realized gains on disposal investment securities at fvtoci": 1,
+            "realized losses from debt issued": 1,
+            "cash generated from used for operations": 1,
+            "proceeds from repayment of loans": 1,
+            "proceeds from repayment of equity investments": 1,
+            "funds advanced for loans": 1,
+            "funds advanced for equity investments": 1,
+            "net movement in derivative financial instruments": 1,
+            "working capital adjustments": 1,
+            "interest income received": 1,
+            "interest income paid": 1,
+            "decrease increase in deposit margin accounts": 1,
+            "decrease increase in other assets": 1,
+            "increase decrease in margin accounts": 1,
+            "increase decrease in other liabilities": 1,
+            "increase decrease in deferred income": 1,
+            "net cash from  used in operating activities": 1,
+            "cash flows from investing activities": 1,
+            "proceeds investment securities at fvtoci": 1,
+            "purchase of investment securities at fvtoci": 1,
+            "purchase of property software and equipment": 1,
+            "net cash from  used in investing activities": 1,
+            "cash flows from financing activities": 1,
+            "proceeds received from share capital": 1,
+            "proceeds from borrowings": 1,
+            "repayment of borrowings": 1,
+            "net cash from financing activities": 1,
+            "net increase decrease in cash and cash equivalents": 1,
+            "cash and cash equivalents at beginning of year": 1,
+            "cash and cash equivalents at end of year": 1,
+            "1 komninon street thessaloniki in the hellenic republic": 1,
+            "albania": 2,
+            "armenia": 2,
+            "azerbaijan": 2,
+            "bulgaria": 2,
+            "georgia": 2,
+            "moldova": 2,
+            "romania": 2,
+            "russian federation": 1,
+            "turkey": 2,
+            "ukraine": 2,
+            "adela xhemali": 1,
+            "arthur javadyan": 1,
+            "samir sharifov": 1,
+            "monica dimitrovabeecher": 1,
+            "koba gvenetadze": 1,
+            "adonisspyridon georgiadis": 1,
+            "dumitru budianschi": 1,
+            "alin chitu": 1,
+            "timur maksimov": 1,
+            "murat zaman": 1,
+            "yuliia svyrydenko": 1,
+            "mr arlind gjokuta": 1,
+            "mr andranik grigoryan": 1,
+            "mr famil ismayilov": 1,
+            "ms milena boykova": 1,
+            "mr ekaterine guntsadze": 1,
+            "mr loannis tsakiris": 1,
+            "ms elena matveeva": 1,
+            "ms diana blindu": 1,
+            "mr dmitry birichevskiy": 1,
+            "dr serhat koksal": 1,
+            "mr taras kachka": 1,
+            "russia": 1,
+            "international accounting standards board": 1,
+            "european central bank": 1
+        },
+        "word_page_map": {
+            "independent auditors report": [
+                1
+            ],
+            "income statement": [
+                1,
+                6
+            ],
+            "statement of comprehensive income": [
+                1,
+                7
+            ],
+            "statement of financial position": [
+                1
+            ],
+            "statement of changes in members equity": [
+                1,
+                9
+            ],
+            "statement of cash flows": [
+                1
+            ],
+            "notes to the financial statements": [
+                1
+            ],
+            "deloitte certified public accountants sa": [
+                2,
+                5
+            ],
+            "3a fragkokklisias  granikou str marousi athens gr 15125 greece": [
+                2
+            ],
+            "30 210 6781 100": [
+                2
+            ],
+            "black sea trade and development bank": [
+                2,
+                11
+            ],
+            "deloitte": [
+                3,
+                4,
+                5
+            ],
+            "eur 2329 million": [
+                3
+            ],
+            "eur 2030 million": [
+                3
+            ],
+            "eur 44 million": [
+                3
+            ],
+            "eur 56 million": [
+                3
+            ],
+            "31 december 2021": [
+                3
+            ],
+            "31 december 2020": [
+                3
+            ],
+            "audit committee": [
+                4
+            ],
+            "greek": [
+                4
+            ],
+            "alexandra kostara": [
+                5
+            ],
+            "athens": [
+                5
+            ],
+            "greece": [
+                5,
+                11,
+                12
+            ],
+            "3a fragkokklisias  granikou str": [
+                5
+            ],
+            "gr 15125 marousi athens greece": [
+                5
+            ],
+            "for the year ended 31 december 2021": [
+                6,
+                9
+            ],
+            "cash and due from banks": [
+                8
+            ],
+            "deposits in margin accounts": [
+                8
+            ],
+            "debt investment securities at fair value through other comprehensive income": [
+                8
+            ],
+            "derivative financial instruments": [
+                8
+            ],
+            "loans at amortized cost": [
+                8
+            ],
+            "loans at fair value through profit or loss": [
+                8
+            ],
+            "equity investments at fair value through profit or loss": [
+                8
+            ],
+            "equity investments at fair value through other comprehensive income": [
+                8
+            ],
+            "equity investments at fair value": [
+                8
+            ],
+            "accrued interest receivable": [
+                8
+            ],
+            "other assets": [
+                8
+            ],
+            "property and equipment": [
+                8
+            ],
+            "intangible assets": [
+                8
+            ],
+            "right of use assets": [
+                8
+            ],
+            "shortterm": [
+                8
+            ],
+            "amounts due to financial institutions": [
+                8
+            ],
+            "debt evidenced by certificates": [
+                8
+            ],
+            "accrued interest payable": [
+                8
+            ],
+            "borrowings": [
+                8
+            ],
+            "margin accounts": [
+                8
+            ],
+            "derivative financial instruments  liabilities": [
+                8
+            ],
+            "other liabilities": [
+                8
+            ],
+            "lease liability": [
+                8
+            ],
+            "cash flows from operating activities": [
+                10
+            ],
+            "income for the year": [
+                10
+            ],
+            "adjustment for items in income statement": [
+                10
+            ],
+            "depreciation and amortization": [
+                10
+            ],
+            "impairment losses on loans": [
+                10
+            ],
+            "impairment losses on investment securities": [
+                10
+            ],
+            "fair value losses on loans at fvtpl": [
+                10
+            ],
+            "fair value gains losses on equity investments at fvtpl": [
+                10
+            ],
+            "net interest income": [
+                10
+            ],
+            "realized gains on disposal investment securities at fvtoci": [
+                10
+            ],
+            "realized losses from debt issued": [
+                10
+            ],
+            "cash generated from used for operations": [
+                10
+            ],
+            "proceeds from repayment of loans": [
+                10
+            ],
+            "proceeds from repayment of equity investments": [
+                10
+            ],
+            "funds advanced for loans": [
+                10
+            ],
+            "funds advanced for equity investments": [
+                10
+            ],
+            "net movement in derivative financial instruments": [
+                10
+            ],
+            "working capital adjustments": [
+                10
+            ],
+            "interest income received": [
+                10
+            ],
+            "interest income paid": [
+                10
+            ],
+            "decrease increase in deposit margin accounts": [
+                10
+            ],
+            "decrease increase in other assets": [
+                10
+            ],
+            "increase decrease in margin accounts": [
+                10
+            ],
+            "increase decrease in other liabilities": [
+                10
+            ],
+            "increase decrease in deferred income": [
+                10
+            ],
+            "net cash from  used in operating activities": [
+                10
+            ],
+            "cash flows from investing activities": [
+                10
+            ],
+            "proceeds investment securities at fvtoci": [
+                10
+            ],
+            "purchase of investment securities at fvtoci": [
+                10
+            ],
+            "purchase of property software and equipment": [
+                10
+            ],
+            "net cash from  used in investing activities": [
+                10
+            ],
+            "cash flows from financing activities": [
+                10
+            ],
+            "proceeds received from share capital": [
+                10
+            ],
+            "proceeds from borrowings": [
+                10
+            ],
+            "repayment of borrowings": [
+                10
+            ],
+            "net cash from financing activities": [
+                10
+            ],
+            "net increase decrease in cash and cash equivalents": [
+                10
+            ],
+            "cash and cash equivalents at beginning of year": [
+                10
+            ],
+            "cash and cash equivalents at end of year": [
+                10
+            ],
+            "1 komninon street thessaloniki in the hellenic republic": [
+                11
+            ],
+            "albania": [
+                11,
+                12
+            ],
+            "armenia": [
+                11,
+                12
+            ],
+            "azerbaijan": [
+                11,
+                12
+            ],
+            "bulgaria": [
+                11,
+                12
+            ],
+            "georgia": [
+                11,
+                12
+            ],
+            "moldova": [
+                11,
+                12
+            ],
+            "romania": [
+                11,
+                12
+            ],
+            "russian federation": [
+                11
+            ],
+            "turkey": [
+                11,
+                12
+            ],
+            "ukraine": [
+                11,
+                12
+            ],
+            "adela xhemali": [
+                11
+            ],
+            "arthur javadyan": [
+                11
+            ],
+            "samir sharifov": [
+                11
+            ],
+            "monica dimitrovabeecher": [
+                11
+            ],
+            "koba gvenetadze": [
+                11
+            ],
+            "adonisspyridon georgiadis": [
+                11
+            ],
+            "dumitru budianschi": [
+                11
+            ],
+            "alin chitu": [
+                11
+            ],
+            "timur maksimov": [
+                11
+            ],
+            "murat zaman": [
+                11
+            ],
+            "yuliia svyrydenko": [
+                11
+            ],
+            "mr arlind gjokuta": [
+                12
+            ],
+            "mr andranik grigoryan": [
+                12
+            ],
+            "mr famil ismayilov": [
+                12
+            ],
+            "ms milena boykova": [
+                12
+            ],
+            "mr ekaterine guntsadze": [
+                12
+            ],
+            "mr loannis tsakiris": [
+                12
+            ],
+            "ms elena matveeva": [
+                12
+            ],
+            "ms diana blindu": [
+                12
+            ],
+            "mr dmitry birichevskiy": [
+                12
+            ],
+            "dr serhat koksal": [
+                12
+            ],
+            "mr taras kachka": [
+                12
+            ],
+            "russia": [
+                12
+            ],
+            "international accounting standards board": [
+                12
+            ],
+            "european central bank": [
+                12
+            ]
+        }
+    }
+}
