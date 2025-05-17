@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from src.instances import aws
 from src.doc.doc_process import PDFRedactor
-from src.models.docs import RedactRequest
+from src.models.docs import DocumentData, RedactRequest
 
 from src.logs.logger import Logger
 from src.models.db import Tables
@@ -132,6 +132,70 @@ async def list_files():
         return JSONResponse(content={"files": files}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+@app.post("/api/v1/pdf/save")
+async def save_document(data: DocumentData):
+    try:
+
+        if not data.pdf_name:
+            raise HTTPException(status_code=400, detail="PDF name is required")
+        
+        if not data.key_points:
+            raise HTTPException(status_code=400, detail="Key points are required")
+
+        await db.delete(
+            table=Tables.DOCUMENT_DATA.value,
+            key_name="pdf_name",
+            key_val=data.pdf_name,
+        )
+        for key_point in data.key_points:
+            await db.create(
+                table=Tables.DOCUMENT_DATA.value,
+                data={
+                    "key_points": key_point,
+                    "pdf_name": data.pdf_name,
+                },
+            )
+        log.info(f"Document saved successfully: {data.pdf_name}")
+        return JSONResponse(content={"message": "Document saved successfully"}, status_code=200)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Fetch all key points for a given PDF name
+@app.post("/api/v1/pdf/get-key-points")
+async def get_key_points(request: RedactRequest):
+    try:
+        
+        key_points = await db.read(
+            table=Tables.DOCUMENT_DATA.value,
+            conditions={"pdf_name": request.input_key},
+        )
+        print(key_points)
+        if not key_points:
+            raise HTTPException(status_code=404, detail="No key points found")
+        
+        # serialize the key points
+        key_points = [
+            {
+                "key_points": key_point["key_points"],
+                "pdf_name": key_point["pdf_name"],
+            }
+            for key_point in key_points
+        ]
+        document_data = {
+    "key_points": [item["key_points"] for item in key_points],
+    "pdf_name": key_points[0]["pdf_name"] if key_points else ""
+}
+        log.info(f"Key points retrieved successfully: {key_points}")
+        return JSONResponse(content=document_data, status_code=200)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get("/")

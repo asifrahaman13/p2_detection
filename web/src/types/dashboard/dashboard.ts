@@ -4,15 +4,8 @@ export type KeyPoint = {
 };
 
 export type DocumentData = {
-  _id: string;
-  document_summary: string;
-  key_points: KeyPoint[];
+  key_points: string[];
   pdf_name: string;
-  documentName: string;
-  presigned_url: string;
-  documentType: string[];
-  keywordSearch: string[];
-  documentId: string;
 };
 
 export type Message = {
