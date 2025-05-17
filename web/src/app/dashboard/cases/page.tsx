@@ -4,7 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Case } from "@/types/dashboard/dashboard";
+import { FileMetadata } from "@/types/dashboard/dashboard";
 
 const MyCases: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,17 +13,16 @@ const MyCases: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const [cases, setCases] = useState<Case[]>([]);
+  const [cases, setCases] = useState<FileMetadata[]>([]);
   useEffect(() => {
     async function fetchAllCases() {
       try {
-        // Using axios
         const response = await axios.get(
-          `${config.backendUrl}/api/v1/user/pdfs/${"user"}`,
+          `${config.backendUrl}/api/v1/pdf/list-files`,
         );
         if (response.status === 200) {
           console.log(response.data);
-          setCases(response.data);
+          setCases(response.data.files);
         }
       } catch (error) {
         console.log(error);
@@ -139,11 +138,11 @@ const MyCases: React.FC = () => {
             } flex text-buttonTextColor border-2 border-gray-100`}
           >
             <Link
-              href={`/dashboard/cases/${caseItem.path}`}
+              href={`/dashboard/cases/${caseItem.file_name}`}
               className="w-full flex"
             >
               <div className="p-2 w-3/12 border-l-0 border-r-0">
-                {caseItem.path}
+                {caseItem.file_name}
               </div>
               <div className="p-2 w-2/12 border-l-0 border-r-0">Processed</div>
               <div className="p-2 w-4/12 border-l-0 border-r-0">

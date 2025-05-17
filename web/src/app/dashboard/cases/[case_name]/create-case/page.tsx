@@ -50,7 +50,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
   const handleFileChange = async (file: File | null) => {
     if (file) {
       setFileName(file.name);
-      setFileSize(file.size); 
+      setFileSize(file.size);
 
       await handleFileUpload(file);
     }
@@ -60,7 +60,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("title", params.case_name); 
+    formData.append("title", params.case_name);
     setDynamicValue(0);
 
     const interval = setInterval(() => {
@@ -296,7 +296,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
                       dispatch({ type: "TOGGLE_DEFINE" });
                     }}
                   >
-                  Continue 
+                    Continue
                   </button>
                 </div>
               </div>

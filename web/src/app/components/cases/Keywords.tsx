@@ -51,9 +51,7 @@ export default function Keywords({ pdfName }: { pdfName: string }) {
         setPresignedUrl(response.data.presigned_url);
 
         // Trigger download of keyword search pages as .txt file
-        downloadKeyWordSearchPagesAsText(
-          response.data.keyword_search_pages,
-        );
+        downloadKeyWordSearchPagesAsText(response.data.keyword_search_pages);
       }
       setLoading(false);
     } catch (error: unknown) {

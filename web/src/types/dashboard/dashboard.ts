@@ -30,10 +30,11 @@ export type PDFButtonTypes = {
   loading: boolean;
 };
 
-export type Case = {
-  _id: string;
-  path: string;
-  user: string;
+export type FileMetadata = {
+  id: string;
+  file_name: string;
+  s3_path: string;
+  title: string;
 };
 
 export type Document = {

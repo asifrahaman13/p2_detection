@@ -12,7 +12,7 @@ const Group = () => {
   const [yearOfInterest, setYearOfInterest] = useState<string[]>([]);
 
   const selectedDocuments = useSelector(
-    (state: RootState) => state.pdfSelection
+    (state: RootState) => state.pdfSelection,
   );
 
   const isInitialLoad = useRef(true);
@@ -21,7 +21,7 @@ const Group = () => {
     async function fetchDocumentInterests() {
       try {
         const response = await axios.get(
-          `${config.backendUrl}/api/v1/document/document-orderings`
+          `${config.backendUrl}/api/v1/document/document-orderings`,
         );
         if (response.status === 200) {
           const data = response.data.orderings;
@@ -48,7 +48,7 @@ const Group = () => {
             documentOfInterest: documentOfInterest,
             datesOfInterest: dateOfinterest,
             yearsOfInterest: yearOfInterest,
-          }
+          },
         );
         if (response.status === 200) {
           console.log("Document interests updated successfully");
@@ -68,7 +68,7 @@ const Group = () => {
   const handleUpdate = (
     index: number,
     value: string,
-    setState: React.Dispatch<React.SetStateAction<string[]>>
+    setState: React.Dispatch<React.SetStateAction<string[]>>,
   ) => {
     setState((prev) => {
       const updated = [...prev];
