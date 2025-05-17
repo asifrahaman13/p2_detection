@@ -83,7 +83,7 @@ The appllication can also be run as a docker container serveice. Run the followi
 
 
 ```bash
-docker compose up 
+docker compose up
 ```
 
 ## Ports
@@ -119,4 +119,3 @@ For the format run the following:
 ```bash
 bun run format
 ```
-
