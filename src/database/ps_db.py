@@ -1,6 +1,11 @@
 import asyncpg
 from typing import Any, Dict, List, Optional
 
+from src.logs.logger import Logger
+
+
+log = Logger(name="main").get_logger()
+
 
 class AsyncPostgresCRUD:
     def __init__(self, dsn: str):
@@ -13,10 +18,29 @@ class AsyncPostgresCRUD:
     async def disconnect(self):
         if self.pool:
             await self.pool.close()
+    
+    async def create_table_if_not_exists(self, table: str, columns: Dict[str, str]) -> bool:
+        try:
+            column_definitions = ", ".join(
+                f"{name} {definition}" for name, definition in columns.items()
+            )
+            table_sql = f"CREATE TABLE IF NOT EXISTS {table} ({column_definitions});"
+            return await self.create_table(table_sql)
+        except Exception as e:
+            log.error(f"Error creating table {table}: {e}")
+            return False
 
-    async def create_table(self, table_sql: str):
-        async with self.pool.acquire() as conn:
-            await conn.execute(table_sql)
+    async def create_table(self, table_sql: str) -> bool:
+        if not self.pool:
+            log.error("Database connection pool is not initialized.")
+            return False
+        try:
+            async with self.pool.acquire() as conn:
+                await conn.execute(table_sql)
+            return True
+        except Exception as e:
+            log.error(f"Error executing table SQL: {e}")
+            return False
 
     async def create(self, table: str, data: Dict[str, Any]) -> int:
         columns = ", ".join(data.keys())

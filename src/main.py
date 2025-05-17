@@ -19,6 +19,36 @@ log = Logger(name="main").get_logger()
 async def lifespan(app: FastAPI):
     await db.connect()
     log.info("Connected to the database")
+
+    # First create the tables if they do not exist
+    docs_table=await db.create_table_if_not_exists(
+        table=Tables.PDF_FILES.value,
+        columns={
+            "id": "SERIAL PRIMARY KEY",
+            "file_name": "TEXT",
+            "s3_path": "TEXT",
+            "title": "TEXT",
+        },
+    )
+
+    if docs_table is False:
+        log.error("Failed to create PDF_FILES table")
+        raise HTTPException(status_code=500, detail="Failed to create PDF_FILES table")
+
+    docs_table=await db.create_table_if_not_exists(
+        table=Tables.DOCUMENT_DATA.value,
+        columns={
+            "id": "SERIAL PRIMARY KEY",
+            "key_points": "TEXT",
+            "pdf_name": "TEXT",
+        },
+    )
+    
+
+    if docs_table is False:
+        log.error("Failed to create DOCUMENT_DATA table")
+        raise HTTPException(status_code=500, detail="Failed to create DOCUMENT_DATA table")
+
     yield
     await db.disconnect()
     log.info("Disconnected from the database")
@@ -48,7 +78,7 @@ async def upload_pdf(
         if not upload_response:
             raise HTTPException(status_code=500, detail="Failed to upload file to S3")
         presigned_url = aws.generate_presigned_url(
-            f"{CloudStorage.UPLOAD.value}/{file_name}"
+            f"{CloudStorage.UPLOADS.value}/{file_name}"
         )
         if not presigned_url:
             raise HTTPException(
