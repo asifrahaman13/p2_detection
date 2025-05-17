@@ -8,10 +8,6 @@ from src.logs.logger import Logger
 log = Logger(name="PDFRedactor").get_logger()
 
 
-async def async_sleep(duration):
-    await asyncio.sleep(duration)
-
-
 class LLM:
     def __init__(
         self,
@@ -26,7 +22,7 @@ class LLM:
         self.client = AsyncAnthropicBedrock()
 
     async def llm_response(self, prompt: str) -> str:
-        for attempt in range(3):  # Retry up to 3 times
+        for attempt in range(3):
             try:
                 message = {
                     "role": "user",

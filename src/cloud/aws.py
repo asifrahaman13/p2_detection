@@ -34,7 +34,12 @@ class AWS:
 
     def upload_file_from_memory(self, buffer, key: str):
         buffer.seek(0)
-        self.s3_client.upload_fileobj(buffer, self.bucket_name, key)
+        self.s3_client.upload_fileobj(
+            Fileobj=buffer,
+            Bucket=self.bucket_name,
+            Key=key,
+            ExtraArgs={"ContentType": "application/pdf"},
+        )
 
     def get_pdf_buffer_s3(self, file_key):
         try:

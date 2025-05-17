@@ -54,8 +54,6 @@ class PDFRedactor:
                 for page_number, lines in results:
                     log.info(f"\n--- Page {page_number + 1} ---")
                     all_lines = []
-                    # for line in lines:
-                    #     log.info(line)
                     all_lines.extend([line + "\n" for line in lines])
                     log.info(f"llm is triggered.")
                     text = "".join(all_lines)
@@ -67,7 +65,7 @@ class PDFRedactor:
         log.info(f"word update now: {self.word_map}")
         if self.word_map:
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
-            log.info(self.word_map)
+            log.info(f"The world wraps: {str(self.word_map)}")
             return self.redact()
 
     def _normalize(self, text: str) -> str:
