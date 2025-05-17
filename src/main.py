@@ -88,10 +88,12 @@ async def process_pdf(request: RedactRequest):
         )
         output_key = f"{CloudStorage.REDACTED.value}/{request.input_key}"
         aws.upload_file_from_memory(output_stream, output_key)
-        return {
+        result = {
             "message": "Redacted file uploaded successfully.",
             "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
         }
+        log.info(f"Redacted file uploaded successfully: {output_key}")
+        return JSONResponse(content=result, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -99,14 +101,20 @@ async def process_pdf(request: RedactRequest):
 @app.post("/api/v1/pdf/get-presigned-url")
 async def get_presigned_url(request: RedactRequest):
     try:
-        presigned_url = aws.generate_presigned_url(
+        original_pdf = aws.generate_presigned_url(
             f"{CloudStorage.UPLOADS.value}/{request.input_key}"
         )
-        if not presigned_url:
+        masked_pdf = aws.generate_presigned_url(
+            f"{CloudStorage.REDACTED.value}/{request.input_key}"
+        )
+        if not original_pdf or not masked_pdf:
             raise HTTPException(
                 status_code=500, detail="Failed to generate presigned URL"
             )
-        return JSONResponse(content={"presigned_url": presigned_url}, status_code=200)
+        return JSONResponse(
+            content={"original_pdf": original_pdf, "masked_pdf": masked_pdf},
+            status_code=200,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -134,15 +142,12 @@ async def list_files():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
 @app.post("/api/v1/pdf/save")
 async def save_document(data: DocumentData):
     try:
-
         if not data.pdf_name:
             raise HTTPException(status_code=400, detail="PDF name is required")
-        
+
         if not data.key_points:
             raise HTTPException(status_code=400, detail="Key points are required")
 
@@ -160,25 +165,25 @@ async def save_document(data: DocumentData):
                 },
             )
         log.info(f"Document saved successfully: {data.pdf_name}")
-        return JSONResponse(content={"message": "Document saved successfully"}, status_code=200)
+        return JSONResponse(
+            content={"message": "Document saved successfully"}, status_code=200
+        )
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
-# Fetch all key points for a given PDF name
+
 @app.post("/api/v1/pdf/get-key-points")
 async def get_key_points(request: RedactRequest):
     try:
-        
         key_points = await db.read(
             table=Tables.DOCUMENT_DATA.value,
             conditions={"pdf_name": request.input_key},
         )
-        print(key_points)
+        log.info(key_points)
         if not key_points:
             raise HTTPException(status_code=404, detail="No key points found")
-        
-        # serialize the key points
+
         key_points = [
             {
                 "key_points": key_point["key_points"],
@@ -187,15 +192,14 @@ async def get_key_points(request: RedactRequest):
             for key_point in key_points
         ]
         document_data = {
-    "key_points": [item["key_points"] for item in key_points],
-    "pdf_name": key_points[0]["pdf_name"] if key_points else ""
-}
+            "key_points": [item["key_points"] for item in key_points],
+            "pdf_name": key_points[0]["pdf_name"] if key_points else "",
+        }
         log.info(f"Key points retrieved successfully: {key_points}")
         return JSONResponse(content=document_data, status_code=200)
     except Exception as e:
-        print(e)
+        log.error(e)
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @app.get("/")

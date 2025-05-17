@@ -44,3 +44,8 @@ export interface State {
 export type Action =
   | { type: "TOGGLE_TO_OUTLINE" }
   | { type: "TOGGLE_TO_FILES" };
+
+export type PresignedUrl = {
+  original_pdf: string;
+  masked_pdf: string;
+};

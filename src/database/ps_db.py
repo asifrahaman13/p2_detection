@@ -49,9 +49,8 @@ class AsyncPostgresCRUD:
             await conn.execute(query, *values)
             return "Updated successfully"
 
-    async def delete(self, table: str, key_name: str,  key_val: Any) -> str:
+    async def delete(self, table: str, key_name: str, key_val: Any) -> str:
         query = f"DELETE FROM {table} WHERE {key_name} = $1;"
         async with self.pool.acquire() as conn:
             await conn.execute(query, key_val)
             return "Deleted successfully"
-
