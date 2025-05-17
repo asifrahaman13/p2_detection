@@ -44,7 +44,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
           `${config.backendUrl}/api/v1/pdf/get-key-points`,
           {
             input_key: inputKey,
-          },
+          }
         );
         const { data } = response;
         console.log("Keypoints data:", data);
@@ -68,7 +68,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
           `${config.backendUrl}/api/v1/pdf/get-presigned-url`,
           {
             input_key: inputKey,
-          },
+          }
         );
         const { data } = response;
         setPdfUrl({
@@ -85,7 +85,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   function handleValueChange(
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
+    idx: number
   ): void {
     setDocumentData((prevData) => {
       if (!prevData) return null;
@@ -99,8 +99,19 @@ export default function Page({ params }: { params: { case_name: string } }) {
   }
 
   function addEmptyKeyPoint(): void {
+    const docName = params.case_name.split("/").pop();
+
+    if (!docName) {
+      console.error("No document name found in params");
+      return;
+    }
     setDocumentData((prev) => {
-      if (!prev) return null;
+      if (!prev) {
+        return {
+          key_points: [""],
+          pdf_name: docName,
+        };
+      }
       return {
         ...prev,
         key_points: [...prev.key_points, ""],
@@ -114,7 +125,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
     try {
       const response = await axios.post(
         `${config.backendUrl}/api/v1/pdf/save`,
-        documentData,
+        documentData
       );
       console.log("Response:", response.data);
     } catch (error) {
@@ -129,7 +140,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
         `${config.backendUrl}/api/v1/pdf/process-pdf`,
         {
           input_key: params.case_name,
-        },
+        }
       );
       console.log("Response from process document", response);
       if (response.status === 200) {
@@ -210,7 +221,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
             <div className="bg-white p-6 flex flex-col justify-between gap-2 w-full">
               <div>
                 <div className="flex gap-2 items-center">
-                  <div className="text-xl font-medium">
+                  <div className="text-xl py-4 font-medium">
                     Add your descriptions
                   </div>
                   <button onClick={addEmptyKeyPoint}>
@@ -230,51 +241,53 @@ export default function Page({ params }: { params: { case_name: string } }) {
                       </div>
                     ))}
                 </div>
-                <div className="flex my-8 flex-col  items-center gap-2 w-full">
-                  <div className="flex items-center space-x-4">
-                    <span
-                      onClick={() => setValue("x")}
-                      className={`px-4 py-1 rounded-l-full border border-blue-600 cursor-pointer ${
-                        value === "x"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-blue-600"
-                      }`}
-                    >
-                      Mask
-                    </span>
-
-                    <div
-                      className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
-                      onClick={() => setValue(value === "x" ? "y" : "x")}
-                    >
-                      <div
-                        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-md transform transition-transform ${
-                          value === "x" ? "translate-x-0" : "translate-x-6"
-                        }`}
-                      />
-                    </div>
-
-                    <span
-                      onClick={() => setValue("y")}
-                      className={`px-4 py-1 rounded-r-full border border-blue-600 cursor-pointer ${
-                        value === "y"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-blue-600"
-                      }`}
-                    >
-                      Replace
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              <div className="flex justify-between mt-4">
+              <div className="flex h-12 items-center justify-between mt-4">
                 <button
                   className="bg-blue-800 w-1/6 text-white py-2 px-4 rounded-md"
                   onClick={saveData}
                 >
                   Save
                 </button>
+                <div>
+                  <div className="flex my-8 flex-col  items-center gap-2 w-full">
+                    <div className="flex items-center space-x-4">
+                      <span
+                        onClick={() => setValue("x")}
+                        className={`px-4 py-1 rounded-l-full border border-blue-600 cursor-pointer ${
+                          value === "x"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-blue-600"
+                        }`}
+                      >
+                        Mask
+                      </span>
+
+                      <div
+                        className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
+                        onClick={() => setValue(value === "x" ? "y" : "x")}
+                      >
+                        <div
+                          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-md transform transition-transform ${
+                            value === "x" ? "translate-x-0" : "translate-x-6"
+                          }`}
+                        />
+                      </div>
+
+                      <span
+                        onClick={() => setValue("y")}
+                        className={`px-4 py-1 rounded-r-full border border-blue-600 cursor-pointer ${
+                          value === "y"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-blue-600"
+                        }`}
+                      >
+                        Replace
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 <button
                   className="bg-blue-800 text-white py-2 px-4 rounded-md"
                   onClick={processDocument}

@@ -1,65 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import config from "@/config/config";
-import { RootState } from "@/lib/store";
-import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
 
 const Group = () => {
   const [documentOfInterest, setDocumentOfInterest] = useState<string[]>([]);
-  const [dateOfinterest, setDateOfInterest] = useState<string[]>([]);
-  const [yearOfInterest, setYearOfInterest] = useState<string[]>([]);
-
-  const selectedDocuments = useSelector(
-    (state: RootState) => state.pdfSelection,
-  );
-
-  const isInitialLoad = useRef(true);
-
-  useEffect(() => {
-    async function fetchDocumentInterests() {
-      try {
-        const response = await axios.get(
-          `${config.backendUrl}/api/v1/document/document-orderings`,
-        );
-        if (response.status === 200) {
-          const data = response.data.orderings;
-          setDocumentOfInterest(data.documentOfInterest);
-          setDateOfInterest(data.datesOfInterest);
-          setYearOfInterest(data.yearsOfInterest);
-          isInitialLoad.current = false;
-        }
-      } catch (error: unknown) {
-        console.error("Error fetching document interests", error);
-      }
-    }
-    fetchDocumentInterests();
-  }, [selectedDocuments]);
-
-  useEffect(() => {
-    if (isInitialLoad.current) return;
-
-    async function updateDocumentInterests() {
-      try {
-        const response = await axios.put(
-          `${config.backendUrl}/api/v1/document/document-orderings`,
-          {
-            documentOfInterest: documentOfInterest,
-            datesOfInterest: dateOfinterest,
-            yearsOfInterest: yearOfInterest,
-          },
-        );
-        if (response.status === 200) {
-          console.log("Document interests updated successfully");
-        }
-      } catch (error: unknown) {
-        console.error("Error updating document interests", error);
-      }
-    }
-
-    updateDocumentInterests();
-  }, [documentOfInterest, dateOfinterest, yearOfInterest]);
 
   const handleAddDocument = () => {
     setDocumentOfInterest((prev) => [...prev, "<empty>"]);
@@ -68,7 +12,7 @@ const Group = () => {
   const handleUpdate = (
     index: number,
     value: string,
-    setState: React.Dispatch<React.SetStateAction<string[]>>,
+    setState: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     setState((prev) => {
       const updated = [...prev];

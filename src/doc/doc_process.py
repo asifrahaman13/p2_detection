@@ -19,7 +19,7 @@ class PDFRedactor:
     def __init__(
         self,
         pdf_bytes_io: BytesIO,
-        dpi: int = 300,
+        dpi: int = 150,
         chunk_size: int = 2,
     ):
         self.pdf_path = pdf_bytes_io
@@ -55,7 +55,7 @@ class PDFRedactor:
                     log.info(f"\n--- Page {page_number + 1} ---")
                     all_lines = []
                     all_lines.extend([line + "\n" for line in lines])
-                    log.info(f"llm is triggered.")
+                    log.info("llm is triggered.")
                     text = "".join(all_lines)
                     result = await self.llm.llm_response(text)
                     log.info(f"llm response is: {result}")

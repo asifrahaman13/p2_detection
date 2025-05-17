@@ -18,8 +18,10 @@ class AsyncPostgresCRUD:
     async def disconnect(self):
         if self.pool:
             await self.pool.close()
-    
-    async def create_table_if_not_exists(self, table: str, columns: Dict[str, str]) -> bool:
+
+    async def create_table_if_not_exists(
+        self, table: str, columns: Dict[str, str]
+    ) -> bool:
         try:
             column_definitions = ", ".join(
                 f"{name} {definition}" for name, definition in columns.items()

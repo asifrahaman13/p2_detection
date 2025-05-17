@@ -20,8 +20,7 @@ async def lifespan(app: FastAPI):
     await db.connect()
     log.info("Connected to the database")
 
-    # First create the tables if they do not exist
-    docs_table=await db.create_table_if_not_exists(
+    docs_table = await db.create_table_if_not_exists(
         table=Tables.PDF_FILES.value,
         columns={
             "id": "SERIAL PRIMARY KEY",
@@ -35,7 +34,7 @@ async def lifespan(app: FastAPI):
         log.error("Failed to create PDF_FILES table")
         raise HTTPException(status_code=500, detail="Failed to create PDF_FILES table")
 
-    docs_table=await db.create_table_if_not_exists(
+    docs_table = await db.create_table_if_not_exists(
         table=Tables.DOCUMENT_DATA.value,
         columns={
             "id": "SERIAL PRIMARY KEY",
@@ -43,11 +42,12 @@ async def lifespan(app: FastAPI):
             "pdf_name": "TEXT",
         },
     )
-    
 
     if docs_table is False:
         log.error("Failed to create DOCUMENT_DATA table")
-        raise HTTPException(status_code=500, detail="Failed to create DOCUMENT_DATA table")
+        raise HTTPException(
+            status_code=500, detail="Failed to create DOCUMENT_DATA table"
+        )
 
     yield
     await db.disconnect()
