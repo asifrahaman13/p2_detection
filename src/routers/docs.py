@@ -111,6 +111,7 @@ async def process_pdf(request: RedactRequest):
                 "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
                 "stats": result["stats"],
             },
+            upsert=True,
         )
         if not result:
             raise HTTPException(

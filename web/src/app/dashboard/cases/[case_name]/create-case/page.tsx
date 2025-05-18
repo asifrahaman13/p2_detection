@@ -80,7 +80,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
     try {
       const response = await axios.post(
-        `${config.backendUrl}/api/v1/pdf/upload-pdf`,
+        `${config.backendUrl}/api/v1/docs/upload-docs`,
         formData,
         {
           headers: {
@@ -300,9 +300,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
                 </div>
               </div>
 
-              <div>
-                <div className="text-blue-600 font-medium">Cancel case</div>
-              </div>
             </Fragment>
           )}
 
