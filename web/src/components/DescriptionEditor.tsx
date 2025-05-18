@@ -135,17 +135,25 @@ export default function DescriptionEditor({
             points you add, the better the AI will be able to find the fields.
           </div>
 
-          <div className="flex-1 overflow-auto space-y-2">
+          <div className="flex-1 overflow-auto space-y-6">
             {data?.key_points.map((point, idx) => (
-              <div className="flex items-center gap-2" key={idx}>
-                <textarea
-                  key={idx}
-                  className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
-                  value={point}
-                  onChange={(e) => handleChange(e, idx)}
-                />
+              <div className="flex items-center gap-8" key={idx}>
+                <div className="flex  bg-blue-100 rounded-xl p-1 px-3 text-blue-600 h-full">{idx + 1}</div>
                 <div>
-                  <button onClick={() => handleDelete(idx)}>❌</button>
+                  <textarea
+                    key={idx}
+                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
+                    value={point}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
+                </div>
+                <div>
+                  <button
+                    onClick={() => handleDelete(idx)}
+                    className="bg-red-100 p-2 rounded-2xl"
+                  >
+                    ❌
+                  </button>
                 </div>
               </div>
             ))}
