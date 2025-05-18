@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.models.db import Tables
 from src.instances import db
+from src.routers.docs_websocket import docs_websocket
 from src.routers.docs import docs_router
 from src.logs.logger import Logger
 
@@ -64,6 +65,11 @@ app.include_router(
     docs_router,
     prefix="/api",
     tags=["docs"],
+)
+app.include_router(
+    docs_websocket,
+    prefix="/api",
+    tags=["docs_websocket"],
 )
 
 

@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <Fragment>
-      <div className="w-screen h-screen flex flex-row overflow-y-scroll">
+      <div className="w-screen h-screen flex flex-row overflow-y-hidden">
         <div className="w-[15%] flex flex-col h-full border-2 border-gray-200">
           <div className="bg-white  h-1/5 flex items-center justify-center">
             <img
@@ -102,7 +102,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               label="Annie Adjuster"
             />
           </div>
-          <div className="flex w-full  h-full bg-gray-100">{children}</div>
+          <div className="flex w-full  h-full overflow-y-hidden bg-gray-100">
+            {children}
+          </div>
         </div>
       </div>
     </Fragment>

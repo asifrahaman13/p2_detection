@@ -1,3 +1,4 @@
+import asyncio
 from io import BytesIO
 from multiprocessing import Pool, cpu_count
 import time
@@ -22,23 +23,27 @@ class DocsRedactor:
         pdf_bytes_io: BytesIO,
         dpi: int = 150,
         chunk_size: int = 2,
-    ):
+        key: str = None,
+        progress_callback=None,
+    ) -> None:
         self.pdf_path = pdf_bytes_io
         self.word_map = defaultdict()
         self.dpi = dpi
         self.chunk_size = chunk_size
         self.dpi = dpi
         self.pdf_bytes_io = pdf_bytes_io
+        self.key = key
+        self.progress_callback = progress_callback
         self.llm = LLM()
 
-    async def extract_lines_from_scanned_pdf_parallel(self):
+    async def extract_lines_from_scanned_pdf_parallel(self) -> dict:
         start_time = time.time()
         reader = PdfReader(self.pdf_path)
         total_pages = len(reader.pages)
 
         all_lines = []
         word_count = Counter()
-        word_pages = defaultdict(set)  # phrase -> set of page numbers
+        word_pages = defaultdict(set)
 
         with Pool(cpu_count()) as pool:
             for start_page in range(1, total_pages + 1, self.chunk_size):
@@ -57,22 +62,32 @@ class DocsRedactor:
                 results = pool.map(process_image, image_data)
                 results.sort(key=lambda x: x[0])
 
+                await self.progress_callback(
+                    f"Processing the pages: {start_page} to {end_page}",
+                    self.key,
+                )
+
                 for page_number, lines in results:
                     log.info(f"\n--- Page {page_number + 1} ---")
-                    all_lines = []
-                    all_lines.extend([line + "\n" for line in lines])
-                    log.info("llm is triggered.")
-                    text = "".join(all_lines)
 
-                    result = await self.llm.llm_response(text)
-                    log.info(f"llm response is: {result}")
-                    if result is not None:
-                        # Normalize keys and update stats
-                        for phrase, replacement in result.items():
-                            normalized = self._normalize(phrase)
-                            self.word_map[normalized] = replacement
-                            word_count[normalized] += 1
-                            word_pages[normalized].add(page_number + 1)
+                    await self.progress_callback(
+                        f"Processing the page number: {page_number+1}",
+                        self.key,
+                    )
+
+                    # all_lines = []
+                    # all_lines.extend([line + "\n" for line in lines])
+                    # log.info("llm is triggered.")
+                    # text = "".join(all_lines)
+
+                    # result = await self.llm.llm_response(text)
+                    # log.info(f"llm response is: {result}")
+                    # if result is not None:
+                    #     for phrase, replacement in result.items():
+                    #         normalized = self._normalize(phrase)
+                    #         self.word_map[normalized] = replacement
+                    #         word_count[normalized] += 1
+                    # word_pages[normalized].add(page_number + 1)
 
         total_time = time.time() - start_time
         log.info(f"🔹 Total time taken: {total_time:.2f}s")
@@ -81,6 +96,7 @@ class DocsRedactor:
         log.info(f"📄 Word locations: {dict(word_pages)}")
 
         if self.word_map:
+            await self.progress_callback("Redacting the document", self.key)
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
             redacted_images = self.redact()
 
@@ -127,7 +143,9 @@ class DocsRedactor:
         except Exception:
             return ImageFont.load_default()
 
-    def _centered_text_position(self, font: ImageFont.ImageFont, replacement: str, box):
+    def _centered_text_position(
+        self, font: ImageFont.ImageFont, replacement: str, box
+    ) -> tuple[float, float]:
         bbox = font.getbbox(replacement)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
@@ -136,7 +154,7 @@ class DocsRedactor:
         y = min_y + (max_y - min_y - text_height) // 2
         return x, y
 
-    def redact(self):
+    def redact(self) -> list:
         self.pdf_bytes_io.seek(0)
         images = convert_from_bytes(self.pdf_path.getvalue(), dpi=self.dpi)
 
@@ -201,13 +219,3 @@ class DocsRedactor:
             processed_images.append(image)
 
         return processed_images
-
-    def save(self, images, output_path: str):
-        if not images:
-            log.error("❌ No images to save.")
-            return
-
-        images[0].save(
-            output_path, save_all=True, append_images=images[1:], format="PDF"
-        )
-        log.info(f"✅ Output saved to {output_path}")

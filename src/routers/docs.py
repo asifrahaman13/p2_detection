@@ -10,6 +10,7 @@ from src.models.cloud import CloudStorage
 from src.instances import db
 from src.models.docs import DocumentData, RedactRequest
 from src.instances import mongo_db
+from src.helper.callback_func import progress_callback_func
 
 log = Logger(name="router").get_logger()
 
@@ -58,12 +59,26 @@ async def upload_pdf(
 async def process_pdf(request: RedactRequest):
     try:
         log.info("Processing docs...")
+
+        await progress_callback_func(
+            "downloading the file to our system", key=request.input_key
+        )
+        await progress_callback_func(
+            "downloading the file to our system", key=request.input_key
+        )
+
+        log.info(f"Input key: {request.input_key}")
         input_stream = aws.download_file_to_memory(
             f"{CloudStorage.UPLOADS.value}/{request.input_key}"
         )
-        redactor = DocsRedactor(input_stream)
+
+        redactor = DocsRedactor(
+            input_stream,
+            key=request.input_key,
+            progress_callback=progress_callback_func,
+        )
         result = await redactor.extract_lines_from_scanned_pdf_parallel()
-        print(f"The statistcis is: {result["stats"]}")
+        log.info(f"The statistcis is: {result["stats"]}")
         output_stream = BytesIO()
         result["redacted_images"][0].save(
             output_stream,
@@ -72,8 +87,16 @@ async def process_pdf(request: RedactRequest):
             format="PDF",
         )
         output_key = f"{CloudStorage.REDACTED.value}/{request.input_key}"
+        await progress_callback_func(
+            "Uploading the processed file...", key=request.input_key
+        )
+
         aws.upload_file_from_memory(output_stream, output_key)
         log.info(f"Redacted file uploaded successfully: {output_key}")
+
+        await progress_callback_func(
+            "File successfully uploaded...", key=request.input_key
+        )
 
         result = {
             "message": "Redacted file uploaded successfully.",
@@ -89,7 +112,7 @@ async def process_pdf(request: RedactRequest):
 
         return JSONResponse(content=result, status_code=200)
     except Exception as e:
-        print(e)
+        log.error(f"Error processing PDF: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

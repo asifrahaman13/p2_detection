@@ -4,15 +4,15 @@ from typing import Any, Dict, List, Optional
 from src.logs.logger import Logger
 
 
-log = Logger(name="main").get_logger()
+log = Logger(name="ps_db").get_logger()
 
 
 class AsyncPostgresCRUD:
-    def __init__(self, dsn: str):
+    def __init__(self, dsn: str) -> None:
         self.dsn = dsn
         self.pool: Optional[asyncpg.pool.Pool] = None
 
-    async def connect(self):
+    async def connect(self) -> None:
         self.pool = await asyncpg.create_pool(dsn=self.dsn)
 
     async def disconnect(self):

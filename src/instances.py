@@ -2,6 +2,7 @@ import os
 from src.cloud.aws import AWS
 from dotenv import load_dotenv
 from src.database.mongo_db import MongoDBHandler
+from src.helper.conn_manager import ConnectionManager
 from src.models.db import Collections, Databases
 
 from src.database.ps_db import AsyncPostgresCRUD
@@ -47,3 +48,6 @@ mongo_db = MongoDBHandler(
     db_name=Databases.DOCS.value,
     collection_name=Collections.DOCS.value,
 )
+
+
+manager = ConnectionManager()

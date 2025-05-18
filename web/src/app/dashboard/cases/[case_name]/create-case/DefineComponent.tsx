@@ -33,8 +33,7 @@ export default function DefineComponent({
               </div>
             </div>
           ) : (
-            <>
-              {" "}
+            <div>
               <Group />
               <Overview
                 caseName={case_name}
@@ -42,7 +41,7 @@ export default function DefineComponent({
                 triggerProcess={triggerProcess}
                 handleProcessLoad={handleProcessLoad}
               />
-            </>
+            </div>
           )}
         </div>
       </div>

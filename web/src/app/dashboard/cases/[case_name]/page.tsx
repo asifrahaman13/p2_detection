@@ -106,6 +106,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
               {" "}
               <div className="w-1/2 h-3/4">
                 <DescriptionEditor
+                  docName={params.case_name}
                   data={documentData}
                   setData={setDocumentData}
                   onSave={saveData}

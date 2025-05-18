@@ -46,6 +46,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<number | null>(null);
+  const [dynamicValue, setDynamicValue] = useState(0);
 
   const handleFileChange = async (file: File | null) => {
     if (file) {
@@ -111,8 +112,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
     const file = e.dataTransfer.files?.[0] ?? null;
     handleFileChange(file);
   };
-
-  const [dynamicValue, setDynamicValue] = useState(0);
 
   const formatFileSize = (fileSize: number | null) => {
     if (fileSize === null) {
