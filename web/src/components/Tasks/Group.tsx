@@ -2,8 +2,16 @@
 "use client";
 import React, { useState } from "react";
 
+const sampleData = [
+  "Poone numbers associated with the document",
+  "Email addresses associated with the document",
+  "Names associated with the document",
+  "Company names associated with the document",
+];
+
 const Group = () => {
-  const [documentOfInterest, setDocumentOfInterest] = useState<string[]>([]);
+  const [documentOfInterest, setDocumentOfInterest] =
+    useState<string[]>(sampleData);
 
   const handleAddDocument = () => {
     setDocumentOfInterest((prev) => [...prev, "<empty>"]);

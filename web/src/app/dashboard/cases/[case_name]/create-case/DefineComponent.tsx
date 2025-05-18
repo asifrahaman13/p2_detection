@@ -1,8 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import Overview from "@/components/Tasks/Overview";
 import Group from "@/components/Tasks/Group";
+import config from "@/config/config";
+
+type ProgressMessage = {
+  status: string;
+  timestamp: number;
+};
 
 export default function DefineComponent({
   case_name,
@@ -18,19 +24,60 @@ export default function DefineComponent({
   function handleProcessLoad() {
     setProcessLoad(true);
   }
+  const [messages, setMessages] = useState<ProgressMessage[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    const ws = new WebSocket(
+      `${config.websocketUrl}/api/ws/progress/${case_name}`,
+    );
+    if (!wsRef.current) {
+      wsRef.current = ws;
+    }
+
+    ws.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+
+    ws.onmessage = (event) => {
+      const parsedData = JSON.parse(event.data);
+
+      if (parsedData.status === "completed") {
+        setIsProcessing(false);
+      }
+      setMessages((prev) => [...prev, parsedData]);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [case_name]);
 
   return (
     <Fragment>
       <div className="flex flex-col h-full w-full items-center">
         <div className=" bg-white shadow-md rounded-md flex h-1/2 flex-col w-1/2">
           {processLoad ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="relative">
-                <div className="w-24 h-24 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-blue-500"></span>
+            <div className="flex flex-col gap-2 p-4 overflow-y-scroll my-2">
+              {messages.map((message, index) => (
+                <div key={index} className="text-sm text-gray-700 flex gap-2">
+                  <div className="bg-blue-300 text-blue-800 px-2 py-1 rounded-md">
+                    {new Date(message.timestamp).toLocaleTimeString()}
+                  </div>
+                  <div className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md">
+                    {message.status}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           ) : (
             <div>
