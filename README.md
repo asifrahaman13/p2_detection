@@ -48,15 +48,7 @@ Create a .env file from the .env.example file, and ensure you enter correct cred
 mv .env.example .env
 ```
 
-Next enter your credentials in .env file. Ensure you enter correct access keys as well as the regions. You can simply export AWS credentails in terminal
-
-```bash
-export AWS_ACCESS_KEY_ID=<your aws access key>
-export AWS_SECRET_ACCESS_KEY=<your aws secret key>
-export AWS_SESSION_TOKEN=<your aws session token>
-```
-
-Now you should be able to run the application.
+Next enter your credentials in .env file. Now you should be able to run the application.
 
 ```bash
 uv run uvicorn src.main:app --reload
@@ -67,7 +59,7 @@ uv run uvicorn src.main:app --reload
 Go to the front end directory
 
 ```bash
-cd frontend/
+cd web/
 ```
 
 Create a .env file from the .env.example file and ensure you enter correct credentials.
@@ -119,7 +111,7 @@ For formatting run the following script:
 ruff format
 ```
 
-For linting run the following:
+For linting run the following inside the web folder.
 
 ```bash
 bun run lint
