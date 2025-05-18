@@ -37,7 +37,7 @@ export default function DescriptionEditor({
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [data]);
+  }, [data, onSave]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -102,11 +102,8 @@ export default function DescriptionEditor({
 
   const handleDelete = (idx: number) => {
     if (!data) return;
-    // First create a copy of the key_points array
     const updatedKeyPoints = [...data.key_points];
-    // Then remove the item at the specified index
     updatedKeyPoints.splice(idx, 1);
-    // Finally, update the state with the new array
     setData({ ...data, key_points: updatedKeyPoints });
   };
 

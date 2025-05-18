@@ -25,7 +25,6 @@ export default function DefineComponent({
     setProcessLoad(true);
   }
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -43,9 +42,6 @@ export default function DefineComponent({
     ws.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
 
-      if (parsedData.status === "completed") {
-        setIsProcessing(false);
-      }
       setMessages((prev) => [...prev, parsedData]);
     };
 
