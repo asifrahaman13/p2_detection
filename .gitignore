@@ -13,3 +13,4 @@ check.log
 redacted_output.pdf
 .env
 logs/
+web/.env
