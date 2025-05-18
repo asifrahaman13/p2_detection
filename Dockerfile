@@ -28,4 +28,3 @@ EXPOSE 8000
 
 # Use 'uv' to run both Redis and FastAPI
 CMD ["uv", "run",  "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-

@@ -23,12 +23,12 @@ services:
 
   backend:
     build:
-      context: .          
-      dockerfile: Dockerfile  
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     networks:
-      - my-network    
+      - my-network
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
@@ -40,12 +40,12 @@ services:
 
   web:
     build:
-      context: ./web    
-      dockerfile: Dockerfile  
+      context: ./web
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     networks:
-      - my-network  
+      - my-network
     depends_on:
       - backend
     healthcheck:
@@ -63,4 +63,4 @@ volumes:
     driver: local
   mongo_data:
     driver: local
- 
+

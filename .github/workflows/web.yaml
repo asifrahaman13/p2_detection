@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build web 
+    name: Build web
     runs-on: ubuntu-latest
     env:
       ORG_PROJECT: super-query
@@ -28,7 +28,7 @@ jobs:
           echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: | 
+        run: |
           cd web
           bun install
 
