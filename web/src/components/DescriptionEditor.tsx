@@ -127,7 +127,7 @@ export default function DescriptionEditor({
       {/* Middle Section */}
       {!isProcessing && (
         <div className="h-full">
-          <div className="text-sm text-gray-500 mb-4 text-justif font-mono">
+          <div className="text-sm text-gray-500 mb-4 text-justify font-mono">
             These are the key points that will be used by the AI to find the
             fields that need to be extracted. For example, if you want to mask
             out the name of a person, you can add a key point like &quot;Name of
@@ -138,9 +138,12 @@ export default function DescriptionEditor({
           <div className="flex-1 overflow-auto space-y-6">
             {data?.key_points.map((point, idx) => (
               <div className="flex items-center gap-8" key={idx}>
-                <div className="flex  bg-blue-100 rounded-xl p-1 px-3 text-blue-600 h-full">{idx + 1}</div>
+                <div className="flex  bg-blue-100 rounded-xl p-1 px-3 text-blue-600 h-full">
+                  {idx + 1}
+                </div>
                 <div>
                   <textarea
+                    rows={1}
                     key={idx}
                     className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
                     value={point}

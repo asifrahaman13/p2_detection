@@ -51,6 +51,7 @@ class DocsRedactor:
         )
 
         with Pool(cpu_count()) as pool:
+            # for start_page in range(1, total_pages + 1, self.chunk_size):
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
                 log.info(f"\n🔹 Processing pages {start_page} to {end_page}")
@@ -87,7 +88,7 @@ class DocsRedactor:
                             normalized = self._normalize(phrase)
                             self.word_map[normalized] = replacement
                             word_count[normalized] += 1
-                    word_pages[normalized].add(page_number + 1)
+                            word_pages[phrase].add(page_number + 1)
 
         total_time = time.time() - start_time
         log.info(f"🔹 Total time taken: {total_time:.2f}s")
@@ -161,61 +162,75 @@ class DocsRedactor:
         processed_images = []
 
         for page_num, image in enumerate(images):
-            log.info(f"🔹 Processing Page {page_num + 1}")
-            draw = ImageDraw.Draw(image)
-            data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
+            try:
+                log.info(f"🔹 Processing Page {page_num + 1}")
+                draw = ImageDraw.Draw(image)
+                data = pytesseract.image_to_data(
+                    image, output_type=pytesseract.Output.DICT
+                )
 
-            n_boxes = len(data["text"])
-            words = [
-                {
-                    "text": data["text"][i].strip(),
-                    "normalized": self._normalize(data["text"][i]),
-                    "box": (
-                        data["left"][i],
-                        data["top"][i],
-                        data["width"][i],
-                        data["height"][i],
-                    ),
-                    "index": i,
-                }
-                for i in range(n_boxes)
-                if data["text"][i].strip()
-            ]
+                n_boxes = len(data["text"])
+                words = [
+                    {
+                        "text": data["text"][i].strip(),
+                        "normalized": self._normalize(data["text"][i]),
+                        "box": (
+                            data["left"][i],
+                            data["top"][i],
+                            data["width"][i],
+                            data["height"][i],
+                        ),
+                        "index": i,
+                    }
+                    for i in range(n_boxes)
+                    if data["text"][i].strip()
+                ]
 
-            i = 0
-            while i < len(words):
-                match_found = False
-                for phrase, replacement in self.word_map.items():
-                    phrase_parts = phrase.split()
-                    match = all(
-                        i + j < len(words)
-                        and words[i + j]["normalized"] == phrase_parts[j]
-                        for j in range(len(phrase_parts))
-                    )
-
-                    if match:
-                        boxes = [words[i + j]["box"] for j in range(len(phrase_parts))]
-                        min_x = min(box[0] for box in boxes)
-                        min_y = min(box[1] for box in boxes)
-                        max_x = max(box[0] + box[2] for box in boxes)
-                        max_y = max(box[1] + box[3] for box in boxes)
-
-                        draw.rectangle([min_x, min_y, max_x, max_y], fill="black")
-
-                        font = self._get_font(replacement, max_x - min_x, max_y - min_y)
-                        text_pos = self._centered_text_position(
-                            font, replacement, (min_x, min_y, max_x, max_y)
+                i = 0
+                while i < len(words):
+                    match_found = False
+                    for phrase, replacement in self.word_map.items():
+                        phrase_parts = phrase.split()
+                        match = all(
+                            i + j < len(words)
+                            and words[i + j]["normalized"] == phrase_parts[j]
+                            for j in range(len(phrase_parts))
                         )
-                        draw.text(text_pos, replacement, fill="white", font=font)
 
-                        log.info(f"🔒 Replaced phrase '{phrase}' with '{replacement}'")
-                        i += len(phrase_parts)
-                        match_found = True
-                        break
+                        if match:
+                            boxes = [
+                                words[i + j]["box"] for j in range(len(phrase_parts))
+                            ]
+                            min_x = min(box[0] for box in boxes)
+                            min_y = min(box[1] for box in boxes)
+                            max_x = max(box[0] + box[2] for box in boxes)
+                            max_y = max(box[1] + box[3] for box in boxes)
 
-                if not match_found:
-                    i += 1
+                            draw.rectangle([min_x, min_y, max_x, max_y], fill="black")
 
-            processed_images.append(image)
+                            font = self._get_font(
+                                replacement, max_x - min_x, max_y - min_y
+                            )
+                            text_pos = self._centered_text_position(
+                                font, replacement, (min_x, min_y, max_x, max_y)
+                            )
+                            draw.text(text_pos, replacement, fill="white", font=font)
 
+                            log.info(
+                                f"🔒 Replaced phrase '{phrase}' with '{replacement}'"
+                            )
+                            i += len(phrase_parts)
+                            match_found = True
+                            break
+
+                    if not match_found:
+                        i += 1
+
+                processed_images.append(image)
+
+            except Exception as e:
+                log.error(f"❌ Error processing Page {page_num + 1}: {e}")
+                continue
+
+        # log.info("The processed images are: ", processed_images)
         return processed_images

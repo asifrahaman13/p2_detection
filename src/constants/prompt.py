@@ -15,15 +15,17 @@ The person names should not be any list. In fact everything should be key value 
 - Company name : "THE COMPANY"
 - Company email addresse : "theCOMPANY@email.com"
 - Person name : "THE PERSON" 
-- Addresses : abc road, pin xyasdfsdfsd.
+- Addresses : "THE ADDRESS".
 - Phone numbers : +xx yyyyyyyyyy\n  
 
              
 =======================================================\n\n
 
 *IMPORTANT: Only give the json formatted text and no other response. Your response should be ready to be converted to json.\n
-*IMPORTANT: Only consider the given entities you are asked for.
-*IMPORTANT: Do not give unnecessary key value pairs other then the format given to you
+*IMPORTANT: Only consider the given entities you are asked for.\n
+*IMPORTANT: Do not give unnecessary key value pairs other then the format given to you.\n
+*IMPORTANT: The results most likelly should not contian any long phrases like "equity investments at fair value through other comprehensive income", "deposits in margin accounts" etc.\n
 
-he given text is: {prompt}.  
+=======================================================================================>\n
+The given text is: {prompt}.  
 """

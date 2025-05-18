@@ -79,6 +79,13 @@ async def process_pdf(request: RedactRequest):
         )
         result = await redactor.extract_lines_from_scanned_pdf_parallel()
         log.info(f"The statistcis is: {result["stats"]}")
+        log.info(f"The redacted images are: {result["redacted_images"]}")
+
+        if not result["redacted_images"] or not result["redacted_images"][0]:
+            log.error("No redacted images found")
+            raise HTTPException(
+                status_code=500, detail="Failed to process the PDF file"
+            )
         output_stream = BytesIO()
         result["redacted_images"][0].save(
             output_stream,
@@ -94,14 +101,13 @@ async def process_pdf(request: RedactRequest):
         aws.upload_file_from_memory(output_stream, output_key)
         log.info(f"Redacted file uploaded successfully: {output_key}")
 
-
         result = {
             "message": "Redacted file uploaded successfully.",
             "file_name": request.input_key,
             "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
             "stats": result["stats"],
         }
-        filter={
+        filter = {
             "file_name": request.input_key,
         }
         result = await mongo_db.upsert(
@@ -118,9 +124,7 @@ async def process_pdf(request: RedactRequest):
                 status_code=500, detail="Failed to save results in MongoDB"
             )
 
-        await progress_callback_func(
-            "completed", key=request.input_key
-        )
+        await progress_callback_func("completed", key=request.input_key)
         return JSONResponse(content=result, status_code=200)
     except Exception as e:
         log.error(f"Error processing PDF: {e}")
