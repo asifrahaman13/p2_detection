@@ -7,13 +7,15 @@ import { useRouter } from "next/navigation";
 import { FileMetadata } from "@/types/dashboard/dashboard";
 
 const MyCases: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [caseName, setCaseName] = useState<string>("");
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
   const [cases, setCases] = useState<FileMetadata[]>([]);
+
+  const router = useRouter();
+
   useEffect(() => {
     async function fetchAllCases() {
       try {
@@ -31,18 +33,14 @@ const MyCases: React.FC = () => {
     fetchAllCases();
   }, []);
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [caseName, setCaseName] = useState("");
-
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
-
-  const router = useRouter();
-
   const handleCreateCase = () => {
-    if (caseName.trim() === "") return; // Simple validation for case name
+    if (caseName.trim() === "") return;
     closeModal();
     router.push(`/dashboard/cases/${caseName}/create-case`);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   return (

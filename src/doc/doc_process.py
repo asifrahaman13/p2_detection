@@ -45,6 +45,11 @@ class DocsRedactor:
         word_count = Counter()
         word_pages = defaultdict(set)
 
+        await self.progress_callback(
+            f"Processing total {total_pages} pages",
+            self.key,
+        )
+
         with Pool(cpu_count()) as pool:
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
@@ -62,11 +67,6 @@ class DocsRedactor:
                 results = pool.map(process_image, image_data)
                 results.sort(key=lambda x: x[0])
 
-                await self.progress_callback(
-                    f"Processing the pages: {start_page} to {end_page}",
-                    self.key,
-                )
-
                 for page_number, lines in results:
                     log.info(f"\n--- Page {page_number + 1} ---")
 
@@ -75,19 +75,19 @@ class DocsRedactor:
                         self.key,
                     )
 
-                    # all_lines = []
-                    # all_lines.extend([line + "\n" for line in lines])
-                    # log.info("llm is triggered.")
-                    # text = "".join(all_lines)
+                    all_lines = []
+                    all_lines.extend([line + "\n" for line in lines])
+                    log.info("llm is triggered.")
+                    text = "".join(all_lines)
 
-                    # result = await self.llm.llm_response(text)
-                    # log.info(f"llm response is: {result}")
-                    # if result is not None:
-                    #     for phrase, replacement in result.items():
-                    #         normalized = self._normalize(phrase)
-                    #         self.word_map[normalized] = replacement
-                    #         word_count[normalized] += 1
-                    # word_pages[normalized].add(page_number + 1)
+                    result = await self.llm.llm_response(text)
+                    log.info(f"llm response is: {result}")
+                    if result is not None:
+                        for phrase, replacement in result.items():
+                            normalized = self._normalize(phrase)
+                            self.word_map[normalized] = replacement
+                            word_count[normalized] += 1
+                    word_pages[normalized].add(page_number + 1)
 
         total_time = time.time() - start_time
         log.info(f"🔹 Total time taken: {total_time:.2f}s")

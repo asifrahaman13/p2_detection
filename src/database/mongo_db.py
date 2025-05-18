@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing import Optional, List
+from typing import Optional, List, Union
 from bson import ObjectId
 
 
@@ -34,6 +34,15 @@ class MongoDBHandler:
     async def update(self, id: str, data: dict) -> bool:
         result = await self.collection.update_one({"_id": ObjectId(id)}, {"$set": data})
         return result.modified_count > 0
+
+    async def upsert(
+        self, filter: Union[dict, str], data: dict, upsert: bool = False
+    ) -> bool:
+        if isinstance(filter, str):
+            filter = {"_id": ObjectId(filter)}
+
+        result = await self.collection.update_one(filter, {"$set": data}, upsert=upsert)
+        return result.modified_count > 0 or result.upserted_id is not None
 
     async def delete(self, id: str) -> bool:
         result = await self.collection.delete_one({"_id": ObjectId(id)})

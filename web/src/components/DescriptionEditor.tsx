@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
 import { DocumentData } from "@/types/dashboard/dashboard";
+import config from "@/config/config";
 
 interface Props {
   docName: string;
@@ -26,6 +27,10 @@ export default function DescriptionEditor({
   viewMode,
   setViewMode,
 }: Props) {
+  const [messages, setMessages] = useState<ProgressMessage[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     idx: number,
@@ -42,24 +47,29 @@ export default function DescriptionEditor({
     setData({ ...data, key_points: [...data.key_points, ""] });
   };
 
-  const [messages, setMessages] = useState<ProgressMessage[]>([]);
-  const wsRef = useRef<WebSocket | null>(null);
+  const handleProcess = () => {
+    setIsProcessing(true);
+    onProcess();
+  };
 
   useEffect(() => {
-    console.log("WebSocket connection opened");
-    console.log("This is the data");
-    console.log(docName);
-    const ws = new WebSocket(`ws://127.0.0.1:8000/api/ws/progress/${docName}`);
-    wsRef.current = ws;
+    const ws = new WebSocket(
+      `${config.websocketUrl}/api/ws/progress/${docName}`,
+    );
+    if (!wsRef.current) {
+      wsRef.current = ws;
+    }
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
     };
 
     ws.onmessage = (event) => {
-      console.log("Received:", event.data);
       const parsedData = JSON.parse(event.data);
-      console.log("Parsed Data:", parsedData);
+
+      if (parsedData.status === "completed") {
+        setIsProcessing(false);
+      }
       setMessages((prev) => [...prev, parsedData]);
     };
 
@@ -74,41 +84,49 @@ export default function DescriptionEditor({
     return () => {
       ws.close();
     };
-  }, []);
+  }, [docName]);
 
   return (
     <div className="bg-white gap-4 h-full p-6 flex flex-col w-full">
       {/* Top Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium">ADD INSTRUCTIONS</h2>
-        <button onClick={addPoint}>
-          <img src="/assets/dashboard/Circle Plus.svg" alt="Add" />
+        <button onClick={addPoint} disabled={isProcessing}>
+          <img
+            src="/assets/dashboard/Circle Plus.svg"
+            alt="Add"
+            className={isProcessing ? "opacity-50 cursor-not-allowed" : ""}
+          />
         </button>
       </div>
-      <div className="text-sm text-gray-500 mb-4 text-justif font-mono">
-        These are the key points that will be used by the AI to find the fields
-        that needs to be extracted. For example, if you have want to mask out
-        the name of the person, you can add a key point like &quot;Name of the
-        person&quot; or &quot;Name of the customer&quot;. You can also add
-        multiple key points. The more key points you add, the better the AI will
-        be able to find the fields that needs to be extracted.
-      </div>
-      {/* Middle Section (growable area) */}
-      <div className="flex-1 overflow-auto space-y-2">
-        {data?.key_points.map((point, idx) => (
-          <textarea
-            key={idx}
-            className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
-            value={point}
-            onChange={(e) => handleChange(e, idx)}
-          />
-        ))}
-      </div>
 
-      {/* Bottom Button Section */}
+      {/* Middle Section */}
+      {!isProcessing && (
+        <div className="h-full">
+          <div className="text-sm text-gray-500 mb-4 text-justif font-mono">
+            These are the key points that will be used by the AI to find the
+            fields that need to be extracted. For example, if you want to mask
+            out the name of a person, you can add a key point like &quot;Name of
+            the person&quot; or &quot;Name of the customer&quot;. The more key
+            points you add, the better the AI will be able to find the fields.
+          </div>
 
-      {messages.length > 0 ? (
-        <div className="bg-gray-100 p-4 rounded-md mt-4 h-1/3 overflow-y-scroll">
+          <div className="flex-1 overflow-auto space-y-2">
+            {data?.key_points.map((point, idx) => (
+              <textarea
+                key={idx}
+                className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
+                value={point}
+                onChange={(e) => handleChange(e, idx)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Updates Section */}
+      {messages.length > 0 && (
+        <div className="bg-gray-100 p-4 rounded-md mt-4 h-full overflow-y-scroll">
           <h3 className="text-sm font-medium text-gray-500 text-center py-2">
             UPDATES
           </h3>
@@ -125,54 +143,55 @@ export default function DescriptionEditor({
             ))}
           </div>
         </div>
-      ) : (
-        <>
-          {wsRef.current && (
-            <div className="flex justify-between items-center mt-4">
-              {/* <div>{wsRef.current.to}</div> */}
-              <div className="flex items-center space-x-4">
-                <span
-                  onClick={() => setViewMode("x")}
-                  className={`px-4 py-1 rounded-l-full border cursor-pointer ${
-                    viewMode === "x"
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-blue-600"
-                  }`}
-                >
-                  Mask
-                </span>
-                <div
-                  className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
-                  onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
-                >
-                  <div
-                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                      viewMode === "x" ? "translate-x-0" : "translate-x-6"
-                    }`}
-                  />
-                </div>
-                <span
-                  onClick={() => setViewMode("y")}
-                  className={`px-4 py-1 rounded-r-full border cursor-pointer ${
-                    viewMode === "y"
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-blue-600"
-                  }`}
-                >
-                  Replace
-                </span>
-              </div>
-
-              <button
-                className="bg-blue-800 text-white py-2 px-4 rounded-md"
-                onClick={onProcess}
-              >
-                Process
-              </button>
-            </div>
-          )}
-        </>
       )}
+
+      {/* Bottom Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <div className="flex items-center space-x-4">
+          <span
+            onClick={() => setViewMode("x")}
+            className={`px-4 py-1 rounded-l-full border cursor-pointer ${
+              viewMode === "x"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-blue-600"
+            }`}
+          >
+            Mask
+          </span>
+          <div
+            className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
+            onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
+          >
+            <div
+              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+                viewMode === "x" ? "translate-x-0" : "translate-x-6"
+              }`}
+            />
+          </div>
+          <span
+            onClick={() => setViewMode("y")}
+            className={`px-4 py-1 rounded-r-full border cursor-pointer ${
+              viewMode === "y"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-blue-600"
+            }`}
+          >
+            Replace
+          </span>
+        </div>
+
+        <button
+          className={`py-2 px-4 rounded-md ${
+            isProcessing
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-blue-800 text-white"
+          }`}
+          onClick={handleProcess}
+          disabled={isProcessing}
+        >
+          Process
+        </button>
+      </div>
     </div>
   );
 }

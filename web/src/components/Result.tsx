@@ -45,12 +45,39 @@ export default function Result({ caseName }: { caseName: string }) {
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="flex flex-col gap-4 text-sm text-gray-800">
-              <div className="text-2xl text-gray-700 font-medium">
-                <span>Total Time:</span> {result.stats.total_time.toFixed(2)}s
+              <div>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-blue-800 hover:bg-blue-700 font-medium text-white px-6 py-2 rounded-md transition"
+                    onClick={() => {
+                      if (result?.stats) {
+                        const jsonBlob = new Blob(
+                          [JSON.stringify(result.stats, null, 2)],
+                          {
+                            type: "application/json",
+                          },
+                        );
+                        const url = URL.createObjectURL(jsonBlob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `${caseName}_stats.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }
+                    }}
+                  >
+                    Download Result
+                  </button>
+                </div>
               </div>
-              <div className="text-2xl text-gray-700 font-medium">
-                <span>Total Words Extracted:</span>{" "}
-                {result.stats.total_words_extracted}
+              <div className="flex justify-between w-full gap-2">
+                <div className="text-2xl  font-medium bg-green-200 text-green-600 px-4 py-2 rounded-lg">
+                  <span>Total Time:</span> {result.stats.total_time.toFixed(2)}s
+                </div>
+                <div className="text-2xl  font-medium bg-green-200 text-green-600 px-4 py-2 rounded-lg">
+                  <span>Total Words Extracted:</span>{" "}
+                  {result.stats.total_words_extracted}
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="font-semibold">Unique Words Extracted:</span>
@@ -104,15 +131,6 @@ export default function Result({ caseName }: { caseName: string }) {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition"
-              onClick={() => alert("Download Result")}
-            >
-              Download Result
-            </button>
           </div>
         </div>
       )}
