@@ -31,19 +31,31 @@ export default function DescriptionEditor({
   const [isProcessing, setIsProcessing] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
+  useEffect(() => {
+    if (data) {
+      onSave();
+    }
+  }, [data]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
+    idx: number
   ) => {
     if (!data) return;
     const updated = [...data.key_points];
     updated[idx] = e.target.value;
     setData({ ...data, key_points: updated });
-    onSave();
   };
 
   const addPoint = () => {
-    if (!data) return;
+    if (!data) {
+      const pdf = {
+        pdf_name: docName,
+      };
+      setData({ ...pdf, key_points: [""] });
+      return;
+    }
+
     setData({ ...data, key_points: [...data.key_points, ""] });
   };
 
@@ -54,7 +66,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`,
+      `${config.websocketUrl}/api/ws/progress/${docName}`
     );
     if (!wsRef.current) {
       wsRef.current = ws;
