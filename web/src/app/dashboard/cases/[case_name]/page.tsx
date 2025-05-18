@@ -70,7 +70,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
             onClick={() => setPreview("x")}
             className={`px-4 py-1 rounded-l-full border cursor-pointer ${
               preview === "x"
-                ? "bg-blue-600 text-white"
+                ? "bg-sideBarGradient text-white"
                 : "bg-white text-blue-600"
             }`}
           >
@@ -90,7 +90,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
             onClick={() => setPreview("y")}
             className={`px-4 py-1 rounded-r-full border cursor-pointer ${
               preview === "y"
-                ? "bg-blue-600 text-white"
+                ? "bg-sideBarGradient text-white"
                 : "bg-white text-blue-600"
             }`}
           >
