@@ -14,3 +14,5 @@ redacted_output.pdf
 .env
 logs/
 web/.env
+
+data/

@@ -41,7 +41,7 @@ export default function DescriptionEditor({
 
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number
+    idx: number,
   ) => {
     if (!data) return;
     const updated = [...data.key_points];
@@ -68,7 +68,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`
+      `${config.websocketUrl}/api/ws/progress/${docName}`,
     );
     if (!wsRef.current) {
       wsRef.current = ws;

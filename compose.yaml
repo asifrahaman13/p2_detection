@@ -13,6 +13,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
+  mongodb:
+    image: "mongo:latest"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - my-network
+
   backend:
     build:
       context: .          
@@ -40,6 +48,11 @@ services:
       - my-network  
     depends_on:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   my-network  :
@@ -47,5 +60,7 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
+  mongo_data:
     driver: local
  

@@ -13,7 +13,7 @@ from src.helper.images import process_image
 from src.llm.llm import LLM
 from src.logs.logger import Logger
 
-log = Logger(name="PDFRedactor").get_logger()
+log = Logger(name="doc_process.py").get_logger()
 
 
 class DocsRedactor:
@@ -187,7 +187,6 @@ class DocsRedactor:
                 while i < len(words):
                     match_found = False
                     for phrase, replacement in self.word_map.items():
-                        # phrase_parts = phrase.split()
                         phrase_parts = [self._normalize(p) for p in phrase.split()]
                         match = all(
                             i + j < len(words)
@@ -230,5 +229,4 @@ class DocsRedactor:
                 log.error(f"❌ Error processing Page {page_num + 1}: {e}")
                 continue
 
-        # log.info("The processed images are: ", processed_images)
         return processed_images

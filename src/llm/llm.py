@@ -42,7 +42,6 @@ class LLM:
 
                 log.info(f"The llm response is: {response.choices[0].message.content}")
                 response_text = response.choices[0].message.content
-                # cleaned=re.sub(r"```(?:json)?\n?|```", "", response_text).strip()
                 cleaned = parse_data(response_text)
                 json_result = json.loads(cleaned)
                 if not isinstance(json_result, dict):
