@@ -14,7 +14,8 @@ Repository to deal with the documents masking out the sensitive information. Cur
 
 ![Screenshot from 2025-05-17 20-45-40](https://github.com/user-attachments/assets/6719c6a4-8cba-4a63-a238-8475f11b3e9d)
 
-![Screenshot from 2025-05-17 20-46-02](https://github.com/user-attachments/assets/6d70f4bb-0296-48c9-b626-db2262e308fa)
+
+![Screenshot from 2025-05-18 16-43-50](https://github.com/user-attachments/assets/a2e435bd-d1bc-4a57-9554-982b3af6f04a)
 
 ## Backend
 
