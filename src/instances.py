@@ -31,7 +31,7 @@ if not AWS_ACCESS_KEY_ID or not AWS_SECRET_ACCESS_KEY:
 
 if not S3_BUCKET_NAME:
     raise ValueError("AWS_BUCKET_NAME is required in the environment variables.")
-    
+
 if not AWS_REGION:
     raise ValueError("AWS_REGION is required in the environment variables.")
 
