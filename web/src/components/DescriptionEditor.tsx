@@ -32,9 +32,11 @@ export default function DescriptionEditor({
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (data) {
-      onSave();
-    }
+    const timeout = setTimeout(() => {
+      if (data) onSave();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   }, [data]);
 
   const handleChange = (
@@ -98,6 +100,16 @@ export default function DescriptionEditor({
     };
   }, [docName]);
 
+  const handleDelete = (idx: number) => {
+    if (!data) return;
+    // First create a copy of the key_points array
+    const updatedKeyPoints = [...data.key_points];
+    // Then remove the item at the specified index
+    updatedKeyPoints.splice(idx, 1);
+    // Finally, update the state with the new array
+    setData({ ...data, key_points: updatedKeyPoints });
+  };
+
   return (
     <div className="bg-white gap-4 h-full p-6 flex flex-col w-full">
       {/* Top Section */}
@@ -125,12 +137,17 @@ export default function DescriptionEditor({
 
           <div className="flex-1 overflow-auto space-y-2">
             {data?.key_points.map((point, idx) => (
-              <textarea
-                key={idx}
-                className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
-                value={point}
-                onChange={(e) => handleChange(e, idx)}
-              />
+              <div className="flex items-center gap-2" key={idx}>
+                <textarea
+                  key={idx}
+                  className="bg-gray-100 py-1 w-full rounded-md text-center border-0 border-none focus:ring-0 focus:outline-none"
+                  value={point}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+                <div>
+                  <button onClick={() => handleDelete(idx)}>❌</button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
