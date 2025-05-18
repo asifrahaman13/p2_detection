@@ -1,27 +1,29 @@
 import json
-from anthropic import AsyncAnthropicBedrock
 import asyncio
+from openai import AsyncOpenAI
 
 from src.constants.prompt import prompt_builder
+from src.helper.json_utuils import parse_data
 from src.logs.logger import Logger
 
-log = Logger(name="PDFRedactor").get_logger()
+log = Logger(name="llm.py").get_logger()
 
 
 class LLM:
     def __init__(
         self,
         max_tokens: int = 1000,
-        model: str = "anthropic.claude-3-5-sonnet-20240620-v1:0",
+        model: str = "gpt-4o",
+        temperature: float = 0.7,
         stream: bool = False,
     ) -> int:
         self.max_tokens = max_tokens
         self.model = model
+        self.temperature = temperature
         self.stream = stream
+        self.openai_client = AsyncOpenAI()
 
-        self.client = AsyncAnthropicBedrock()
-
-    async def llm_response(self, prompt: str) -> str:
+    async def openai_llm_response(self, prompt: str) -> str:
         for attempt in range(3):
             try:
                 message = {
@@ -29,14 +31,20 @@ class LLM:
                     "content": prompt_builder.format(prompt=prompt),
                 }
 
-                response = await self.client.messages.create(
-                    model=self.model, max_tokens=self.max_tokens, messages=[message]
+                log.info(f"Prompt: {prompt_builder.format(prompt=prompt)}")
+
+                response = await self.openai_client.chat.completions.create(
+                    model=self.model,
+                    messages=[message],
+                    max_tokens=self.max_tokens,
+                    temperature=self.temperature,
                 )
 
-                log.info(f"The llm response is: {response.content[0].text}")
-                response_text = response.content[0].text
-                json_result = json.loads(response_text)
-
+                log.info(f"The llm response is: {response.choices[0].message.content}")
+                response_text = response.choices[0].message.content
+                # cleaned=re.sub(r"```(?:json)?\n?|```", "", response_text).strip()
+                cleaned = parse_data(response_text)
+                json_result = json.loads(cleaned)
                 if not isinstance(json_result, dict):
                     raise ValueError("Parsed response is not a dict.")
 

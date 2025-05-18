@@ -10,13 +10,13 @@ give the result in a json format only.
 
 The key should be the text and the value should be fom the following generic placeholders.
 
-The person names should not be any list. In fact everything should be key value pairs only. and should contain the following entities only.
+The person names should not be any list. In fact everything should be key value pairs only. and should contain the following entities only. The key should be the actual text and the value should be the generic placeholders.
 
-- Company name : "THE COMPANY"
-- Company email addresse : "theCOMPANY@email.com"
-- Person name : "THE PERSON"
-- Addresses : "THE ADDRESS".
-- Phone numbers : +xx yyyyyyyyyy\n
+- Actual company name : "THE COMPANY"
+- Actual company email addresse : "theCOMPANY@email.com"
+- Acutal person name : "THE PERSON"
+- Actual addresses : "THE ADDRESS".
+- Acutla phone numbers : +xx yyyyyyyyyy\n
 
 
 =======================================================\n\n

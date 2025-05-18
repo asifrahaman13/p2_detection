@@ -1,4 +1,3 @@
-import asyncio
 from io import BytesIO
 from multiprocessing import Pool, cpu_count
 import time
@@ -26,7 +25,7 @@ class DocsRedactor:
         key: str = None,
         progress_callback=None,
     ) -> None:
-        self.pdf_path = pdf_bytes_io
+        self.pdf_bytes_io = pdf_bytes_io
         self.word_map = defaultdict()
         self.dpi = dpi
         self.chunk_size = chunk_size
@@ -38,7 +37,7 @@ class DocsRedactor:
 
     async def extract_lines_from_scanned_pdf_parallel(self) -> dict:
         start_time = time.time()
-        reader = PdfReader(self.pdf_path)
+        reader = PdfReader(self.pdf_bytes_io)
         total_pages = len(reader.pages)
 
         all_lines = []
@@ -51,12 +50,11 @@ class DocsRedactor:
         )
 
         with Pool(cpu_count()) as pool:
-            # for start_page in range(1, total_pages + 1, self.chunk_size):
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
                 log.info(f"\n🔹 Processing pages {start_page} to {end_page}")
-                self.pdf_path.seek(0)
-                pdf_bytes = self.pdf_path.read()
+                self.pdf_bytes_io.seek(0)
+                pdf_bytes = self.pdf_bytes_io.read()
 
                 images = convert_from_bytes(
                     pdf_bytes,
@@ -80,8 +78,7 @@ class DocsRedactor:
                     all_lines.extend([line + "\n" for line in lines])
                     log.info("llm is triggered.")
                     text = "".join(all_lines)
-
-                    result = await self.llm.llm_response(text)
+                    result = await self.llm.openai_llm_response(text)
                     log.info(f"llm response is: {result}")
                     if result is not None:
                         for phrase, replacement in result.items():
@@ -157,7 +154,7 @@ class DocsRedactor:
 
     def redact(self) -> list:
         self.pdf_bytes_io.seek(0)
-        images = convert_from_bytes(self.pdf_path.getvalue(), dpi=self.dpi)
+        images = convert_from_bytes(self.pdf_bytes_io.getvalue(), dpi=self.dpi)
 
         processed_images = []
 
@@ -190,7 +187,8 @@ class DocsRedactor:
                 while i < len(words):
                     match_found = False
                     for phrase, replacement in self.word_map.items():
-                        phrase_parts = phrase.split()
+                        # phrase_parts = phrase.split()
+                        phrase_parts = [self._normalize(p) for p in phrase.split()]
                         match = all(
                             i + j < len(words)
                             and words[i + j]["normalized"] == phrase_parts[j]
