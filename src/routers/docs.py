@@ -4,11 +4,13 @@ from fastapi.responses import JSONResponse
 from src.instances.index import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
+from fastapi.concurrency import run_in_threadpool
 
 from src.models.cloud import CloudStorage
 from src.models.docs import DocumentData, RedactRequest
 from src.instances.index import mongo_db
 from src.helper.callback_func import progress_callback_func
+from src.helper.cpu_helper import run_blocking_io
 from src.models.db import Collections
 
 log = Logger(name="router").get_logger()
@@ -67,8 +69,10 @@ async def process_pdf(request: RedactRequest):
             )
 
         log.info(f"Input key: {request.input_key}")
-        input_stream = aws.download_file_to_memory(
-            f"{CloudStorage.UPLOADS.value}/{request.input_key}"
+
+        input_stream = await run_blocking_io(
+            aws.download_file_to_memory,
+            f"{CloudStorage.UPLOADS.value}/{request.input_key}",
         )
 
         configurations = await mongo_db.find_one(

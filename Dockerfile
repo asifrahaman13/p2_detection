@@ -26,5 +26,5 @@ COPY . .
 # Expose the port that the application will run on
 EXPOSE 8000
 
-# Use 'uv' to run both Redis and FastAPI
-CMD ["uv", "run",  "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use gunicorn to run in production
+CMD ["gunicorn", "src.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]

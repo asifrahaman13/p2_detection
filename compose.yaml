@@ -1,19 +1,4 @@
 services:
-
-  postgres:
-    image: postgres:latest
-    ports:
-      - "5433:5432"
-    networks:
-      - my-network
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-
   mongodb:
     image: "mongo:latest"
     volumes:
@@ -35,8 +20,6 @@ services:
       - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
     env_file:
       - .env
-    depends_on:
-      - postgres
 
   web:
     build:

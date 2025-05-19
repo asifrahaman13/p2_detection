@@ -41,13 +41,13 @@ export default function DescriptionEditor({
   }, [data, onSave]);
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
+    idx: number
   ) => {
     if (!data) return;
     const { name, value } = e.target;
 
     const updatedKeyPoints = data.key_points.map((point, i) =>
-      i === idx ? { ...point, [name]: value } : point,
+      i === idx ? { ...point, [name]: value } : point
     );
 
     console.log("Updated key points:", updatedKeyPoints);
@@ -108,7 +108,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`,
+      `${config.websocketUrl}/api/ws/progress/${docName}`
     );
     if (!wsRef.current) {
       wsRef.current = ws;
@@ -186,7 +186,7 @@ export default function DescriptionEditor({
       {/* Scrollable Table Section */}
       <div className="flex-1 overflow-y-auto space-y-4">
         {/* Table Header */}
-        <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-md">
+        <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-100 font-semibold text-gray-700 rounded-md">
           <div>Entity</div>
           <div>Description</div>
           <div>Replace With</div>
@@ -203,7 +203,7 @@ export default function DescriptionEditor({
             <textarea
               rows={3}
               name="entity"
-              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className=" text-gray-900 p-3 w-full rounded-md outline-none "
               placeholder="Entity"
               value={point.entity}
               onChange={(e) => handleChange(e, idx)}
@@ -213,7 +213,7 @@ export default function DescriptionEditor({
             <textarea
               rows={3}
               name="description"
-              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className=" text-gray-900 p-3 w-full rounded-md outline-none "
               placeholder="Description"
               value={point.description}
               onChange={(e) => handleChange(e, idx)}
@@ -223,7 +223,7 @@ export default function DescriptionEditor({
             <textarea
               rows={3}
               name="replaceWith"
-              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className=" text-gray-900 p-3 w-full rounded-md outline-none "
               placeholder="Replace With"
               value={point.replaceWith}
               onChange={(e) => handleChange(e, idx)}
