@@ -157,43 +157,58 @@ export default function DescriptionEditor({
             points you add, the better the AI will be able to find the fields.
           </div>
 
-          <div className="flex-1 overflow-auto space-y-6">
+          <div className="flex-1 overflow-auto space-y-4">
+            {/* Table Header */}
+            <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-md">
+              <div>Entity</div>
+              <div>Description</div>
+              <div>Replace With</div>
+              <div className="text-right">Action</div>
+            </div>
+
+            {/* Table Body */}
             {data?.key_points.map((point, idx) => (
-              <div className="flex items-center gap-8" key={idx}>
-                <div className="flex  bg-blue-100 rounded-xl p-1 px-3 text-blue-600 h-full">
-                  {idx + 1}
-                </div>
-                <div>
-                  <textarea
-                    rows={1}
-                    name="entity"
-                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
-                    value={point.entity}
-                    onChange={(e) => handleChange(e, idx)}
-                  />
-                </div>
-                <div>
-                  <textarea
-                    rows={1}
-                    name="description"
-                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
-                    value={point.description}
-                    onChange={(e) => handleChange(e, idx)}
-                  />
-                  <textarea
-                    rows={1}
-                    name="replaceWith"
-                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
-                    value={point.replaceWith}
-                    onChange={(e) => handleChange(e, idx)}
-                  />
-                </div>
-                <div>
+              <div
+                key={idx}
+                className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
+              >
+                {/* Entity */}
+                <textarea
+                  rows={3}
+                  name="entity"
+                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  placeholder="Entity"
+                  value={point.entity}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Description */}
+                <textarea
+                  rows={3}
+                  name="description"
+                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  placeholder="Description"
+                  value={point.description}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Replace With */}
+                <textarea
+                  rows={3}
+                  name="replaceWith"
+                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  placeholder="Replace With"
+                  value={point.replaceWith}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Delete Button */}
+                <div className="flex justify-end items-start pt-1">
                   <button
                     onClick={() => handleDelete(idx)}
-                    className="bg-red-100 p-2 rounded-2xl"
+                    className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
                   >
-                    ❌
+                    ❌ Delete
                   </button>
                 </div>
               </div>
@@ -204,7 +219,6 @@ export default function DescriptionEditor({
 
       {/* Updates Section */}
       <ProgressUpdates messages={messages} />
-      <button onClick={() => console.log(data)}>view the result</button>
 
       {/* Bottom Controls */}
       <div className="flex justify-between items-center mt-4">

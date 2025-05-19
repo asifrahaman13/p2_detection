@@ -26,12 +26,8 @@ class LLM:
     async def openai_llm_response(self, prompt: str) -> str:
         for attempt in range(3):
             try:
-                message = {
-                    "role": "user",
-                    "content": prompt_builder.format(prompt=prompt),
-                }
-
-                log.info(f"Prompt: {prompt_builder.format(prompt=prompt)}")
+                log.info(f"Prompt: {prompt}")
+                message = {"role": "user", "content": prompt}
 
                 response = await self.openai_client.chat.completions.create(
                     model=self.model,

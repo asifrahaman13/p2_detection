@@ -61,21 +61,27 @@ async def process_pdf(request: RedactRequest):
     try:
         log.info("Processing docs...")
 
-        await progress_callback_func(
-            "downloading the file to our system", key=request.input_key
-        )
-        await progress_callback_func(
-            "downloading the file to our system", key=request.input_key
-        )
+        for _ in range(2):
+            await progress_callback_func(
+                "downloading the file to our system", key=request.input_key
+            )
 
         log.info(f"Input key: {request.input_key}")
         input_stream = aws.download_file_to_memory(
             f"{CloudStorage.UPLOADS.value}/{request.input_key}"
         )
 
+        configurations = await mongo_db.find_one(
+            filters={"pdf_name": request.input_key},
+            collection_name=Collections.CONFIGUATIONS.value,
+        )
+
+        log.info(f"The configurations are as follows: {str(configurations)}")
+
         redactor = DocsRedactor(
             input_stream,
             key=request.input_key,
+            configurations=configurations,
             progress_callback=progress_callback_func,
         )
         result = await redactor.extract_lines_from_scanned_pdf_parallel()
@@ -178,7 +184,6 @@ async def list_files():
 async def save_document(data: DocumentData):
     try:
         data = data.model_dump()
-        print(data)
         if not data["pdf_name"]:
             raise HTTPException(status_code=400, detail="docs name is required")
 

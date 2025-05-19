@@ -53,7 +53,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   return (
     <div className="p-4 bg-gray-100 w-full">
-      <div className="text-xl font-medium py-4">{params.case_name}</div>
+      <div className="text-4xl font-medium py-4">{params.case_name}</div>
 
       <div className="flex justify-between mb-4">
         <ToggleTabs

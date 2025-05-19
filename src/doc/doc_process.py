@@ -1,6 +1,7 @@
 from io import BytesIO
 from multiprocessing import Pool, cpu_count
 import time
+import copy
 
 from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
@@ -12,6 +13,7 @@ from collections import Counter, defaultdict
 from src.helper.images import process_image
 from src.llm.llm import LLM
 from src.logs.logger import Logger
+from src.constants.prompt import prompt_builder
 
 log = Logger(name="doc_process.py").get_logger()
 
@@ -23,6 +25,7 @@ class DocsRedactor:
         dpi: int = 150,
         chunk_size: int = 2,
         key: str = None,
+        configurations: dict = {},
         progress_callback=None,
     ) -> None:
         self.pdf_bytes_io = pdf_bytes_io
@@ -32,8 +35,37 @@ class DocsRedactor:
         self.dpi = dpi
         self.pdf_bytes_io = pdf_bytes_io
         self.key = key
+        self.configuations = configurations
         self.progress_callback = progress_callback
         self.llm = LLM()
+
+    def prompt_builder(self, text: str) -> str:
+        descriptions = "\n"
+        replacement = ""
+        log.info(f"The configurations received is: {self.configuations}")
+        key_points = self.configuations.get("key_points", None)
+        if key_points is None or key_points == []:
+            return ""
+        log.info(f"The key points is==============>: {key_points}")
+        for k in key_points:
+            log.info(f"The key is: {k}")
+            entity = k.get("entity", "")
+            replacement = k.get("replaceWith", "")
+            description = k.get("description", "")
+
+            description_string = f"{entity}: {description}"
+            descriptions += description_string
+
+            replacement_string = f"- {entity}: {replacement}\n"
+            replacement += replacement_string
+
+        description += "\n"
+        replacement += "\n"
+        formatted_prompt = prompt_builder.format(
+            descriptions=descriptions, replacement=replacement, text=text
+        )
+
+        return formatted_prompt
 
     async def extract_lines_from_scanned_pdf_parallel(self) -> dict:
         start_time = time.time()
@@ -78,13 +110,14 @@ class DocsRedactor:
                     all_lines.extend([line + "\n" for line in lines])
                     log.info("llm is triggered.")
                     text = "".join(all_lines)
-                    result = await self.llm.openai_llm_response(text)
+
+                    formatted_text = self.prompt_builder(text)
+                    result = await self.llm.openai_llm_response(formatted_text)
                     log.info(f"llm response is: {result}")
                     if result is not None:
                         for phrase, replacement in result.items():
-                            normalized = self._normalize(phrase)
-                            self.word_map[normalized] = replacement
-                            word_count[normalized] += 1
+                            self.word_map[phrase] = replacement
+                            word_count[phrase] += 1
                             word_pages[phrase].add(page_number + 1)
 
         total_time = time.time() - start_time
@@ -95,6 +128,7 @@ class DocsRedactor:
 
         if self.word_map:
             await self.progress_callback("Redacting the document", self.key)
+            word_map_copy = copy.deepcopy(self.word_map)
             self.word_map = {self._normalize(k): v for k, v in self.word_map.items()}
             redacted_images = self.redact()
 
@@ -103,7 +137,7 @@ class DocsRedactor:
                 "stats": {
                     "total_time": total_time,
                     "total_words_extracted": sum(word_count.values()),
-                    "unique_words_extracted": list(self.word_map.keys()),
+                    "unique_words_extracted": list(word_map_copy),
                     "word_frequencies": dict(word_count),
                     "word_page_map": {
                         k: sorted(list(v)) for k, v in word_pages.items()
