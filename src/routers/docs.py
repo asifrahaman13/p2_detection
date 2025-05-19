@@ -182,16 +182,14 @@ async def save_document(data: DocumentData):
         if not data["key_points"]:
             raise HTTPException(status_code=400, detail="Key points are required")
 
-        await mongo_db.delete_all(
-            {"pdf_name": data["pdf_name"]},
+        await mongo_db.upsert(
+            filter={"pdf_name": data["pdf_name"]},
+            data={"key_points": data["key_points"], "pdf_name": data["pdf_name"]},
+            upsert=True,
             collection_name=Collections.CONFIGUATIONS.value,
         )
 
-        await mongo_db.create(
-            data={"key_points": data["key_points"], "pdf_name": data["pdf_name"]},
-            collection_name=Collections.CONFIGUATIONS.value,
-        )
-        log.info(f"Document saved successfully: {data["pdf_name"]}")
+        log.info(f"Document saved successfully: {data['pdf_name']}")
         return JSONResponse(
             content={"message": "Document saved successfully"}, status_code=200
         )
@@ -238,19 +236,23 @@ async def delete_resource(request: RedactRequest):
     try:
         key = request.input_key
         filters = {"file_name": key}
-        docs_del_result = await mongo_db.delete_all(
-            filters=filters, collection_name=Collections.DOCS.value
-        )
-        docs_file_result = await mongo_db.delete_all(
-            filters=filters, collection_name=Collections.DOC_FILES.value
-        )
-        config_result = await mongo_db.delete_all(
-            filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value
-        )
+
+        async with mongo_db.start_transaction() as session:
+            await mongo_db.delete_all(
+                filters=filters, collection_name=Collections.DOCS.value
+            )
+            await mongo_db.delete_all(
+                filters=filters, collection_name=Collections.DOC_FILES.value
+            )
+            await mongo_db.delete_all(
+                filters={"pdf_name": key},
+                collection_name=Collections.CONFIGUATIONS.value,
+            )
         aws.delete_file(key=key)
 
         return JSONResponse(
-            content={"message": "Resources deleted succesfully"}, status_code=200
+            content={"message": "Resources deleted successfully"},
+            status_code=200,
         )
 
     except Exception as e:
