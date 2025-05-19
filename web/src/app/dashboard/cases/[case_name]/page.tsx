@@ -30,7 +30,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
   const [preview, setPreview] = useState("x");
   const [viewMode, setViewMode] = useState("x");
   const [pageNum, setPageNum]=useState<number>(1);
-  
+
 
   const [documentData, setDocumentData] = useDocumentData(params.case_name);
   const docUrl = usePresignedUrl(params.case_name);
@@ -155,7 +155,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
           <div className="w-1/2 h-3/4">
             <UploadedPdf
             key={pageNum}
-               
+
               uploadedPdf={
                 preview === "x"
                   ? (docUrl?.original_pdf ?? null)
