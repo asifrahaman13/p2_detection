@@ -29,6 +29,8 @@ export default function Page({ params }: { params: { case_name: string } }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [preview, setPreview] = useState("x");
   const [viewMode, setViewMode] = useState("x");
+  const [pageNum, setPageNum]=useState<number>(1);
+  
 
   const [documentData, setDocumentData] = useDocumentData(params.case_name);
   const docUrl = usePresignedUrl(params.case_name);
@@ -146,17 +148,20 @@ export default function Page({ params }: { params: { case_name: string } }) {
             </div>
           ) : (
             <div className="w-1/2 h-3/4">
-              <Result caseName={params.case_name} />
+              <Result caseName={params.case_name} setPageNum={setPageNum} />
             </div>
           )}
 
           <div className="w-1/2 h-3/4">
             <UploadedPdf
+            key={pageNum}
+               
               uploadedPdf={
                 preview === "x"
                   ? (docUrl?.original_pdf ?? null)
                   : (docUrl?.masked_pdf ?? null)
               }
+              page={pageNum}
             />
           </div>
         </div>

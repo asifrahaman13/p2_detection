@@ -15,7 +15,9 @@ type RedactedFileUploadResponse = {
   };
 };
 
-export default function Result({ caseName }: { caseName: string }) {
+type ResultTypeProps = { caseName: string; setPageNum: (page: number) => void };
+
+export default function Result({ caseName, setPageNum }: ResultTypeProps) {
   const [result, setResult] = useState<RedactedFileUploadResponse | null>(null);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function Result({ caseName }: { caseName: string }) {
       try {
         const response = await axios.post(
           `${config.backendUrl}/api/v1/docs/results`,
-          { input_key: caseName },
+          { input_key: caseName }
         );
         if (response.status === 200) {
           setResult(response.data.results);
@@ -56,7 +58,7 @@ export default function Result({ caseName }: { caseName: string }) {
                           [JSON.stringify(result.stats, null, 2)],
                           {
                             type: "application/json",
-                          },
+                          }
                         );
                         const url = URL.createObjectURL(jsonBlob);
                         const a = document.createElement("a");
@@ -123,29 +125,30 @@ export default function Result({ caseName }: { caseName: string }) {
                           {count}
                         </span>
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <div className="font-medium">Word Page Map:</div>
+                <div className="font-medium">Word Page Map (You can click on the pages to view the pages to the right side) </div>
                 <div className="">
                   {Object.entries(result.stats.word_page_map).map(
                     ([phrase, pages], index) => (
                       <div key={index} className="flex gap-2 items-center">
                         <div className=" ">{phrase}</div>:{" "}
                         <div className="px-2 rounded-lg flex flex-wrap gap-2">
-                          {pages.map((item, idx) => (
-                            <span
+                          {pages?.map((item, idx) => (
+                            <button
+                              onClick={() => setPageNum(item)}
                               key={idx}
                               className="bg-blue-50 text-blue-700 px-2 py-0.5 text-sm rounded-full"
                             >
                               {item}
-                            </span>
+                            </button>
                           ))}
                         </div>
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>
