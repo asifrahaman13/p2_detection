@@ -77,7 +77,7 @@ export default function DefineComponent({
             </div>
           ) : (
             <div>
-              <Group />
+              <Group caseName={case_name} />
               <Overview
                 caseName={case_name}
                 callBackFunction={callbackFunction}

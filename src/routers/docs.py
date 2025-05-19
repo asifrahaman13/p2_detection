@@ -42,15 +42,17 @@ async def upload_pdf(
             )
 
         log.info(f"File uploaded successfully: {file_name}")
-
-        await db.create(
-            table=Tables.PDF_FILES.value,
+        insert=await mongo_db.create(
             data={
                 "file_name": file_name,
                 "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.UPLOADS.value}/{file_name}",
                 "title": title,
             },
+            collection_name=Collections.DOC_FILES.value
         )
+        if insert is None:
+            raise HTTPException(status_code=404, detail="Sorry something went wrong")
+
         return JSONResponse(content={"presigned_url": presigned_url}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -162,18 +164,22 @@ async def get_presigned_url(request: RedactRequest):
 @docs_router.get("/list-files")
 async def list_files():
     try:
-        files = await db.read(Tables.PDF_FILES.value)
-        files = [
-            {
-                "id": file["id"],
-                "file_name": file["file_name"],
-                "s3_path": file["s3_path"],
-                "title": file["title"],
-            }
-            for file in files
-        ]
-        if not files:
-            raise HTTPException(status_code=404, detail="No files found")
+        # files = await db.read(Tables.PDF_FILES.value)
+        # files = [
+        #     {
+        #         "id": file["id"],
+        #         "file_name": file["file_name"],
+        #         "s3_path": file["s3_path"],
+        #         "title": file["title"],
+        #     }
+        #     for file in files
+        # ]
+        # if not files:
+        #     raise HTTPException(status_code=404, detail="No files found")
+        
+        files=await mongo_db.get_all(
+           collection_name=Collections.DOC_FILES.value
+        )
         log.info(f"Files retrieved successfully: {files}")
         return JSONResponse(content={"files": files}, status_code=200)
     except Exception as e:

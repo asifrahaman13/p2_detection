@@ -3,7 +3,7 @@ from src.instances.index import manager
 from src.logs.logger import Logger
 import time
 
-log = Logger(name="router").get_logger()
+log = Logger(name="callback_func.py").get_logger()
 
 
 async def progress_callback(data: dict, key: str) -> None:

@@ -1,32 +1,81 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+import config from "@/config/config";
+import { useDocumentData } from "@/hooks/useDocumentData";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-const sampleData = [
-  "Poone numbers associated with the document",
-  "Email addresses associated with the document",
-  "Names associated with the document",
-  "Company names associated with the document",
-];
+const Group = ({ caseName }: { caseName: string }) => {
+  const [data, setDocumentData] = useDocumentData(caseName);
 
-const Group = () => {
-  const [documentOfInterest, setDocumentOfInterest] =
-    useState<string[]>(sampleData);
-
-  const handleAddDocument = () => {
-    setDocumentOfInterest((prev) => [...prev, "<empty>"]);
+  const saveData = async () => {
+    if (!data) return;
+    try {
+      await axios.post(`${config.backendUrl}/api/v1/docs/save`, data);
+    } catch (err) {
+      console.error("Error saving data", err);
+    }
   };
 
-  const handleUpdate = (
-    index: number,
-    value: string,
-    setState: React.Dispatch<React.SetStateAction<string[]>>,
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (data) saveData();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [data, saveData]);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    idx: number,
   ) => {
-    setState((prev) => {
-      const updated = [...prev];
-      updated[index] = value;
-      return updated;
+    if (!data) return;
+    const { name, value } = e.target;
+
+    const updatedKeyPoints = data.key_points.map((point, i) =>
+      i === idx ? { ...point, [name]: value } : point,
+    );
+
+    console.log("Updated key points:", updatedKeyPoints);
+
+    setDocumentData({ ...data, key_points: updatedKeyPoints });
+  };
+
+  const addPoint = () => {
+    if (!data) {
+      const pdf = {
+        pdf_name: caseName,
+      };
+      setDocumentData({
+        ...pdf,
+        key_points: [
+          {
+            entity: "",
+            description: "",
+            replaceWith: "",
+          },
+        ],
+      });
+      return;
+    }
+
+    setDocumentData({
+      ...data,
+      key_points: [
+        ...data.key_points,
+        {
+          entity: "",
+          description: "",
+          replaceWith: "",
+        },
+      ],
     });
+  };
+
+  const handleDelete = (idx: number) => {
+    if (!data) return;
+    const updatedKeyPoints = [...data.key_points];
+    updatedKeyPoints.splice(idx, 1);
+    setDocumentData({ ...data, key_points: updatedKeyPoints });
   };
 
   return (
@@ -39,38 +88,73 @@ const Group = () => {
           </div>
         </div>
         <div className="border-2 border-gray-100"></div>
-        <div className="text-lg font-medium">Key Data Extractions</div>
-
-        {/* Document of Interest */}
-        <div className="flex items-center gap-2">
-          <div className="text-md font-medium">Types of Data</div>
-          <button onClick={handleAddDocument}>
-            <img src="/assets/dashboard/Circle Plus.svg" alt="" />
+        <div className="flex justify-between">
+          <div className="text-lg font-medium">Key Data Extractions</div>
+          <button onClick={addPoint}>
+            <img
+              src="/assets/dashboard/Circle Plus.svg"
+              alt="Add"
+              className="opacity-50"
+            />
           </button>
         </div>
-        <div className="flex gap-2 flex-wrap w-full">
-          {documentOfInterest.map((doc, index) => (
+
+        {/* Document of Interest */}
+
+        <div className="flex-1 overflow-y-auto space-y-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-md">
+            <div>Entity</div>
+            <div>Description</div>
+            <div>Replace With</div>
+            <div className="text-right">Action</div>
+          </div>
+
+          {/* Table Body */}
+          {data?.key_points.map((point, idx) => (
             <div
-              key={index}
-              className="flex items-center bg-buttonsBackgound text-blue-700 font-medium  rounded-2xl px-3 py-1 m-1"
+              key={idx}
+              className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
             >
-              <input
-                value={doc}
-                onChange={(e) =>
-                  handleUpdate(index, e.target.value, setDocumentOfInterest)
-                }
-                size={Math.max(doc.length - 5, 2)}
-                className="bg-transparent text-center focus:outline-none ring-0"
+              {/* Entity */}
+              <textarea
+                rows={3}
+                name="entity"
+                className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Entity"
+                value={point.entity}
+                onChange={(e) => handleChange(e, idx)}
               />
-              <button
-                className="ml-2 text-blue-700  focus:outline-none"
-                onClick={() => {
-                  const temp = documentOfInterest.filter((_, i) => i !== index);
-                  setDocumentOfInterest(temp);
-                }}
-              >
-                ✕
-              </button>
+
+              {/* Description */}
+              <textarea
+                rows={3}
+                name="description"
+                className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Description"
+                value={point.description}
+                onChange={(e) => handleChange(e, idx)}
+              />
+
+              {/* Replace With */}
+              <textarea
+                rows={3}
+                name="replaceWith"
+                className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Replace With"
+                value={point.replaceWith}
+                onChange={(e) => handleChange(e, idx)}
+              />
+
+              {/* Delete Button */}
+              <div className="flex justify-end items-start pt-1">
+                <button
+                  onClick={() => handleDelete(idx)}
+                  className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
+                >
+                  ❌ Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>

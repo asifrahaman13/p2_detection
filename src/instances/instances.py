@@ -2,7 +2,7 @@ from src.cloud.aws import AWS
 from src.config.index import aws_config, db_config
 from src.database.mongo_db import MongoDBHandler
 from src.helper.conn_manager import ConnectionManager
-from src.models.db import Collections, Databases
+from src.models.db import Databases
 from src.database.ps_db import AsyncPostgresCRUD
 
 
