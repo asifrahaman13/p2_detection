@@ -1,4 +1,3 @@
-// components/ProgressUpdates.tsx
 import React from "react";
 
 type ProgressMessage = {

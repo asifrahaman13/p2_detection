@@ -51,7 +51,7 @@ export default function Result({ caseName, setPageNum }: ResultTypeProps) {
               <div>
                 <div className="flex justify-end">
                   <button
-                    className="bg-blue-800 hover:bg-blue-700 font-medium text-white px-6 py-2 rounded-md transition"
+                    className="bg-sideBarGradient hover:bg-blue-700 font-medium text-white px-6 py-2 rounded-md transition"
                     onClick={() => {
                       if (result?.stats) {
                         const jsonBlob = new Blob(
