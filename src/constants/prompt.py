@@ -1,22 +1,22 @@
 prompt_builder = """You are helpful AI assistant. You will be given certain text. Your job is to extract out the following data all in key value pairs. If there are multiple values then they should not be list everything should be key value pairs.
 
 company_name: All company names (noun)\n
-physical_addresses: All compnay physical address in the text like "3a fragkokklisias granikou str marousi athens gr 15125 greece".\n
-phone_numbers: All phone number in the text including +\n
-person_names: All the name of the person in the text. (strictly noun)\n
 email_address: All email address in the text\n
+physical_addresses: All compnay physical address in the text like "3a fragkokklisias granikou str marousi athens gr 15125 greece".\n
+person_name: All the name of the person in the text. (strictly noun)\n
+phone_number: All phone number in the text including +\n
 
-give the result in a json format only.
+Give the result in a json format only.\n
 
-The key should be the text and the value should be fom the following generic placeholders.
+The person names should not be any list. In fact everything should be key value pairs only. and should contain the following entities only. \n
 
-The person names should not be any list. In fact everything should be key value pairs only. and should contain the following entities only. The key should be the actual text and the value should be the generic placeholders.
+The key should strictly be the actual text and the value should be the generic placeholders like the following.\n
 
-- Actual company name : "THE COMPANY"\n
-- Actual company email addresse : "theCOMPANY@email.com"\n
-- Acutal person name : "THE PERSON"\n
-- Actual addresses : "THE ADDRESS".\n
-- Actual phone numbers : +xx yyyyyyyyyy\n
+- company_name : "THE COMPANY"\n
+- email_address : "theCOMPANY@email.com"\n
+- physical_address : "THE ADDRESS".\n
+- person_name: "THE PERSON"\n
+- phone_number : +xx yyyyyyyyyy\n
 
 
 =======================================================\n\n
