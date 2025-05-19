@@ -11,8 +11,8 @@ log = Logger(name="llm.py").get_logger()
 class LLM:
     def __init__(
         self,
-        max_tokens: int = 1000,
-        model: str = "gpt-4o",
+        max_tokens: int = 400,
+        model: str = "gpt-4.1",
         temperature: float = 0.7,
         stream: bool = False,
     ) -> int:

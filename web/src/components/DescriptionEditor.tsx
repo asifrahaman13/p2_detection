@@ -41,13 +41,13 @@ export default function DescriptionEditor({
   }, [data, onSave]);
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number
+    idx: number,
   ) => {
     if (!data) return;
     const { name, value } = e.target;
 
     const updatedKeyPoints = data.key_points.map((point, i) =>
-      i === idx ? { ...point, [name]: value } : point
+      i === idx ? { ...point, [name]: value } : point,
     );
 
     console.log("Updated key points:", updatedKeyPoints);
@@ -108,7 +108,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`
+      `${config.websocketUrl}/api/ws/progress/${docName}`,
     );
     if (!wsRef.current) {
       wsRef.current = ws;
@@ -178,69 +178,71 @@ export default function DescriptionEditor({
 
       {/* Info Text */}
       {!isProcessing && (
-        <div className="text-sm text-gray-500 text-justify font-mono shrink-0">
-          These are the key points that will be used by the AI...
+        <div>
+          <div className="text-sm text-gray-500 text-justify font-mono shrink-0">
+            These are the key points that will be used by the AI...
+          </div>
+
+          {/* Scrollable Table Section */}
+          <div className="flex-1 overflow-y-auto space-y-4">
+            {/* Table Header */}
+            <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-100 font-semibold text-gray-700 rounded-md">
+              <div>Entity</div>
+              <div>Description</div>
+              <div>Replace With</div>
+              <div className="text-right">Action</div>
+            </div>
+
+            {/* Table Body */}
+            {data?.key_points.map((point, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
+              >
+                {/* Entity */}
+                <textarea
+                  rows={3}
+                  name="entity"
+                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
+                  placeholder="Entity"
+                  value={point.entity}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Description */}
+                <textarea
+                  rows={3}
+                  name="description"
+                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
+                  placeholder="Description"
+                  value={point.description}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Replace With */}
+                <textarea
+                  rows={3}
+                  name="replaceWith"
+                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
+                  placeholder="Replace With"
+                  value={point.replaceWith}
+                  onChange={(e) => handleChange(e, idx)}
+                />
+
+                {/* Delete Button */}
+                <div className="flex justify-end items-start pt-1">
+                  <button
+                    onClick={() => handleDelete(idx)}
+                    className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
+                  >
+                    ❌ Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
-
-      {/* Scrollable Table Section */}
-      <div className="flex-1 overflow-y-auto space-y-4">
-        {/* Table Header */}
-        <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-100 font-semibold text-gray-700 rounded-md">
-          <div>Entity</div>
-          <div>Description</div>
-          <div>Replace With</div>
-          <div className="text-right">Action</div>
-        </div>
-
-        {/* Table Body */}
-        {data?.key_points.map((point, idx) => (
-          <div
-            key={idx}
-            className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
-          >
-            {/* Entity */}
-            <textarea
-              rows={3}
-              name="entity"
-              className=" text-gray-900 p-3 w-full rounded-md outline-none "
-              placeholder="Entity"
-              value={point.entity}
-              onChange={(e) => handleChange(e, idx)}
-            />
-
-            {/* Description */}
-            <textarea
-              rows={3}
-              name="description"
-              className=" text-gray-900 p-3 w-full rounded-md outline-none "
-              placeholder="Description"
-              value={point.description}
-              onChange={(e) => handleChange(e, idx)}
-            />
-
-            {/* Replace With */}
-            <textarea
-              rows={3}
-              name="replaceWith"
-              className=" text-gray-900 p-3 w-full rounded-md outline-none "
-              placeholder="Replace With"
-              value={point.replaceWith}
-              onChange={(e) => handleChange(e, idx)}
-            />
-
-            {/* Delete Button */}
-            <div className="flex justify-end items-start pt-1">
-              <button
-                onClick={() => handleDelete(idx)}
-                className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
-              >
-                ❌ Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
 
       {/* Updates Section */}
       <ProgressUpdates messages={messages} />

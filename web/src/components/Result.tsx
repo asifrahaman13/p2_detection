@@ -9,6 +9,7 @@ type RedactedFileUploadResponse = {
     total_time: number;
     total_words_extracted: number;
     unique_words_extracted: string[];
+    total_unique_words_extracted: number;
     word_frequencies: Record<string, number>;
     word_page_map: Record<string, number[]>;
   };
@@ -70,15 +71,33 @@ export default function Result({ caseName }: { caseName: string }) {
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between w-full gap-2">
-                <div className="text-2xl  font-medium bg-green-200 text-green-600 px-4 py-2 rounded-lg">
-                  <span>Total Time:</span> {result.stats.total_time.toFixed(2)}s
-                </div>
-                <div className="text-2xl  font-medium bg-green-200 text-green-600 px-4 py-2 rounded-lg">
-                  <span>Total Words Extracted:</span>{" "}
-                  {result.stats.total_words_extracted}
-                </div>
+              <div className="flex flex-wrap justify-between w-full gap-4">
+                {[
+                  {
+                    label: "Total Time",
+                    value: `${result.stats.total_time.toFixed(2)}s`,
+                  },
+                  {
+                    label: "Total Words Extracted",
+                    value: result.stats.total_words_extracted,
+                  },
+                  {
+                    label: "Total Unique Words Extracted",
+                    value: result.stats.total_unique_words_extracted,
+                  },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center bg-blue-100 text-blue-900 px-6 py-4 rounded-2xl shadow-md w-full sm:w-auto flex-1 min-w-[200px]"
+                  >
+                    <div className="text-4xl font-bold">{stat.value || 0}</div>
+                    <div className="text-sm font-medium mt-2 text-center">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
               </div>
+
               <div className="flex flex-col gap-2">
                 <span className="font-semibold">Unique Words Extracted:</span>
                 <div className="flex flex-wrap gap-2 mt-1">

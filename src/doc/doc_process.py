@@ -40,29 +40,30 @@ class DocsRedactor:
         self.llm = LLM()
 
     def prompt_builder(self, text: str) -> str:
-        descriptions = "\n"
-        replacement = ""
         log.info(f"The configurations received is: {self.configuations}")
         key_points = self.configuations.get("key_points", None)
         if key_points is None or key_points == []:
             return ""
         log.info(f"The key points is==============>: {key_points}")
+
+        descriptions = "\n"
+        replacements = ""
         for k in key_points:
             log.info(f"The key is: {k}")
             entity = k.get("entity", "")
             replacement = k.get("replaceWith", "")
             description = k.get("description", "")
 
-            description_string = f"{entity}: {description}"
+            description_string = f"- {entity}: {description}"
             descriptions += description_string
 
-            replacement_string = f"- {entity}: {replacement}\n"
-            replacement += replacement_string
+            replacement_string = f"- {entity} : {replacement}\n"
+            replacements += replacement_string
 
-        description += "\n"
-        replacement += "\n"
+        descriptions += "\n"
+        replacements += "\n"
         formatted_prompt = prompt_builder.format(
-            descriptions=descriptions, replacement=replacement, text=text
+            descriptions=descriptions, replacement=replacements, text=text
         )
 
         return formatted_prompt
@@ -138,6 +139,7 @@ class DocsRedactor:
                     "total_time": total_time,
                     "total_words_extracted": sum(word_count.values()),
                     "unique_words_extracted": list(word_map_copy),
+                    "total_unique_words_extracted": len(list(word_map_copy)),
                     "word_frequencies": dict(word_count),
                     "word_page_map": {
                         k: sorted(list(v)) for k, v in word_pages.items()

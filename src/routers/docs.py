@@ -1,3 +1,4 @@
+import asyncio
 from io import BytesIO
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
@@ -62,11 +63,11 @@ async def upload_pdf(
 async def process_pdf(request: RedactRequest):
     try:
         log.info("Processing docs...")
+        log.info(request.input_key)
 
-        for _ in range(2):
-            await progress_callback_func(
-                "downloading the file to our system", key=request.input_key
-            )
+        await progress_callback_func(
+            "downloading the file to our system final", key=request.input_key
+        )
 
         log.info(f"Input key: {request.input_key}")
 
@@ -137,6 +138,7 @@ async def process_pdf(request: RedactRequest):
 
         await progress_callback_func("completed", key=request.input_key)
         return JSONResponse(content=result, status_code=200)
+        # return {"hello":"world"}
     except Exception as e:
         log.error(f"Error processing PDF: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -166,19 +168,6 @@ async def get_presigned_url(request: RedactRequest):
 @docs_router.get("/list-files")
 async def list_files():
     try:
-        # files = await db.read(Tables.PDF_FILES.value)
-        # files = [
-        #     {
-        #         "id": file["id"],
-        #         "file_name": file["file_name"],
-        #         "s3_path": file["s3_path"],
-        #         "title": file["title"],
-        #     }
-        #     for file in files
-        # ]
-        # if not files:
-        #     raise HTTPException(status_code=404, detail="No files found")
-
         files = await mongo_db.get_all(collection_name=Collections.DOC_FILES.value)
         log.info(f"Files retrieved successfully: {files}")
         return JSONResponse(content={"files": files}, status_code=200)
