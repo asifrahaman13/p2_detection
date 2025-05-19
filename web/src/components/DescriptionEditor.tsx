@@ -150,7 +150,7 @@ export default function DescriptionEditor({
   return (
     <div className="bg-white gap-4 h-full p-6 flex flex-col w-full">
       {/* Top Section */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between shrink-0">
         <h2 className="text-xl font-medium">ADD INSTRUCTIONS</h2>
         <div className="flex gap-4">
           <button
@@ -176,82 +176,77 @@ export default function DescriptionEditor({
         </div>
       </div>
 
-      {/* Middle Section */}
+      {/* Info Text */}
       {!isProcessing && (
-        <div className="h-full">
-          <div className="text-sm text-gray-500 mb-4 text-justify font-mono">
-            These are the key points that will be used by the AI to find the
-            fields that need to be extracted. For example, if you want to mask
-            out the name of a person, you can add a key point like &quot;Name of
-            the person&quot; or &quot;Name of the customer&quot;. The more key
-            points you add, the better the AI will be able to find the fields.
-          </div>
-
-          <div className="flex-1 overflow-auto space-y-4">
-            {/* Table Header */}
-            <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-md">
-              <div>Entity</div>
-              <div>Description</div>
-              <div>Replace With</div>
-              <div className="text-right">Action</div>
-            </div>
-
-            {/* Table Body */}
-            {data?.key_points.map((point, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
-              >
-                {/* Entity */}
-                <textarea
-                  rows={3}
-                  name="entity"
-                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                  placeholder="Entity"
-                  value={point.entity}
-                  onChange={(e) => handleChange(e, idx)}
-                />
-
-                {/* Description */}
-                <textarea
-                  rows={3}
-                  name="description"
-                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                  placeholder="Description"
-                  value={point.description}
-                  onChange={(e) => handleChange(e, idx)}
-                />
-
-                {/* Replace With */}
-                <textarea
-                  rows={3}
-                  name="replaceWith"
-                  className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                  placeholder="Replace With"
-                  value={point.replaceWith}
-                  onChange={(e) => handleChange(e, idx)}
-                />
-
-                {/* Delete Button */}
-                <div className="flex justify-end items-start pt-1">
-                  <button
-                    onClick={() => handleDelete(idx)}
-                    className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
-                  >
-                    ❌ Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="text-sm text-gray-500 text-justify font-mono shrink-0">
+          These are the key points that will be used by the AI...
         </div>
       )}
+
+      {/* Scrollable Table Section */}
+      <div className="flex-1 overflow-y-auto space-y-4">
+        {/* Table Header */}
+        <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-md">
+          <div>Entity</div>
+          <div>Description</div>
+          <div>Replace With</div>
+          <div className="text-right">Action</div>
+        </div>
+
+        {/* Table Body */}
+        {data?.key_points.map((point, idx) => (
+          <div
+            key={idx}
+            className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
+          >
+            {/* Entity */}
+            <textarea
+              rows={3}
+              name="entity"
+              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="Entity"
+              value={point.entity}
+              onChange={(e) => handleChange(e, idx)}
+            />
+
+            {/* Description */}
+            <textarea
+              rows={3}
+              name="description"
+              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="Description"
+              value={point.description}
+              onChange={(e) => handleChange(e, idx)}
+            />
+
+            {/* Replace With */}
+            <textarea
+              rows={3}
+              name="replaceWith"
+              className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="Replace With"
+              value={point.replaceWith}
+              onChange={(e) => handleChange(e, idx)}
+            />
+
+            {/* Delete Button */}
+            <div className="flex justify-end items-start pt-1">
+              <button
+                onClick={() => handleDelete(idx)}
+                className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
+              >
+                ❌ Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Updates Section */}
       <ProgressUpdates messages={messages} />
 
       {/* Bottom Controls */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center shrink-0">
         <div className="flex items-center space-x-4">
           <span
             onClick={() => setViewMode("x")}
