@@ -10,6 +10,7 @@ import { State, Action } from "@/types/dashboard/dashboard";
 import axios from "axios";
 import config from "@/config/config";
 import Result from "@/components/Result";
+import { useRouter } from "next/navigation";
 
 const initialState: State = { activeButton: "OUTLINE" };
 
@@ -31,6 +32,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
   const [documentData, setDocumentData] = useDocumentData(params.case_name);
   const docUrl = usePresignedUrl(params.case_name);
+  const router = useRouter();
 
   const saveData = async () => {
     if (!documentData) return;
@@ -51,9 +53,38 @@ export default function Page({ params }: { params: { case_name: string } }) {
     }
   };
 
+  async function deleteResources() {
+    try {
+      const response = await axios.delete(
+        `${config.backendUrl}/api/v1/docs/delete-resource`,
+        {
+          data: {
+            input_key: params.case_name,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("success.");
+        router.push("/dashboard/cases");
+      }
+    } catch (e) {
+      console.log("Sorry something went wrong");
+    }
+  }
+
   return (
     <div className="p-4 bg-gray-100 w-full">
-      <div className="text-4xl font-medium py-4">{params.case_name}</div>
+      <div className="flex items-center gap-4 ">
+        <div className="text-4xl font-medium py-4">{params.case_name}</div>
+        <button onClick={() => deleteResources()}>
+          <img
+            src="/assets/dashboard/delete.png"
+            alt=""
+            className="h-6 w-auto"
+          />
+        </button>
+      </div>
 
       <div className="flex justify-between mb-4">
         <ToggleTabs

@@ -65,3 +65,11 @@ class AWS:
 
     def download_file_obj(self, file_name, input_key, input_stream):
         self.s3_client.download_fileobj(self.bucket_name, input_key, input_stream)
+
+    def delete_file(self, key: str) -> bool:
+        try:
+            self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+            return True
+        except Exception as e:
+            log.error(f"Error deleting file from S3: {e}")
+            return False

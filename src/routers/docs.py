@@ -1,11 +1,9 @@
-import asyncio
 from io import BytesIO
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from src.instances.index import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
-from fastapi.concurrency import run_in_threadpool
 
 from src.models.cloud import CloudStorage
 from src.models.docs import DocumentData, RedactRequest
@@ -138,7 +136,6 @@ async def process_pdf(request: RedactRequest):
 
         await progress_callback_func("completed", key=request.input_key)
         return JSONResponse(content=result, status_code=200)
-        # return {"hello":"world"}
     except Exception as e:
         log.error(f"Error processing PDF: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -231,6 +228,31 @@ async def get_results(request: RedactRequest):
             raise HTTPException(status_code=404, detail="No results found")
         log.info(f"Results retrieved successfully: {results}")
         return JSONResponse(content={"results": results}, status_code=200)
+    except Exception as e:
+        log.error(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@docs_router.delete("/delete-resource")
+async def delete_resource(request: RedactRequest):
+    try:
+        key = request.input_key
+        filters = {"file_name": key}
+        docs_del_result = await mongo_db.delete_all(
+            filters=filters, collection_name=Collections.DOCS.value
+        )
+        docs_file_result = await mongo_db.delete_all(
+            filters=filters, collection_name=Collections.DOC_FILES.value
+        )
+        config_result = await mongo_db.delete_all(
+            filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value
+        )
+        aws.delete_file(key=key)
+
+        return JSONResponse(
+            content={"message": "Resources deleted succesfully"}, status_code=200
+        )
+
     except Exception as e:
         log.error(e)
         raise HTTPException(status_code=500, detail=str(e))
