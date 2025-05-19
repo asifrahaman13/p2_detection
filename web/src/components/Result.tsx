@@ -41,12 +41,12 @@ export default function Result({ caseName, setPageNum }: ResultTypeProps) {
   }, [caseName]);
 
   return (
-    <div className=" bg-gray-50 overflow-scroll h-full">
+    <div className=" bg-white overflow-scroll h-full">
       {!result ? (
         <div className="text-gray-500">Loading...</div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white p-6 rounded-lg">
             <div className="flex flex-col gap-4 text-sm text-gray-800">
               <div>
                 <div className="flex justify-end">

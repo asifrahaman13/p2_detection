@@ -286,7 +286,7 @@ export default function DescriptionEditor({
                       onClick={() => handleDelete(idx)}
                       className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
                     >
-                      ❌ Delete
+                      Delete
                     </button>
                   </div>
                 </div>
