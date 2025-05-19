@@ -11,6 +11,7 @@ from src.instances.index import db
 from src.models.docs import DocumentData, RedactRequest
 from src.instances.index import mongo_db
 from src.helper.callback_func import progress_callback_func
+from src.models.db import Collections
 
 log = Logger(name="router").get_logger()
 
@@ -176,58 +177,44 @@ async def list_files():
 @docs_router.post("/save")
 async def save_document(data: DocumentData):
     try:
-        if not data.pdf_name:
+        data = data.model_dump()
+        print(data)
+        if not data["pdf_name"]:
             raise HTTPException(status_code=400, detail="docs name is required")
 
-        if not data.key_points:
+        if not data["key_points"]:
             raise HTTPException(status_code=400, detail="Key points are required")
 
-        await db.delete(
-            table=Tables.DOCUMENT_DATA.value,
-            key_name="pdf_name",
-            key_val=data.pdf_name,
+        await mongo_db.delete_all(
+            {"pdf_name": data["pdf_name"]},
+            collection_name=Collections.CONFIGUATIONS.value,
         )
-        for key_point in data.key_points:
-            await db.create(
-                table=Tables.DOCUMENT_DATA.value,
-                data={
-                    "key_points": key_point,
-                    "pdf_name": data.pdf_name,
-                },
-            )
-        log.info(f"Document saved successfully: {data.pdf_name}")
+
+        await mongo_db.create(
+            data={"key_points": data["key_points"], "pdf_name": data["pdf_name"]},
+            collection_name=Collections.CONFIGUATIONS.value,
+        )
+        log.info(f"Document saved successfully: {data["pdf_name"]}")
         return JSONResponse(
             content={"message": "Document saved successfully"}, status_code=200
         )
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @docs_router.post("/get-key-points")
 async def get_key_points(request: RedactRequest):
     try:
-        key_points = await db.read(
-            table=Tables.DOCUMENT_DATA.value,
-            conditions={"pdf_name": request.input_key},
+        key_points = await mongo_db.find_one(
+            {"pdf_name": request.input_key},
+            collection_name=Collections.CONFIGUATIONS.value,
         )
         log.info(key_points)
         if not key_points:
             raise HTTPException(status_code=404, detail="No key points found")
 
-        key_points = [
-            {
-                "key_points": key_point["key_points"],
-                "pdf_name": key_point["pdf_name"],
-            }
-            for key_point in key_points
-        ]
-        document_data = {
-            "key_points": [item["key_points"] for item in key_points],
-            "pdf_name": key_points[0]["pdf_name"] if key_points else "",
-        }
         log.info(f"Key points retrieved successfully: {key_points}")
-        return JSONResponse(content=document_data, status_code=200)
+        return JSONResponse(content=key_points, status_code=200)
     except Exception as e:
         log.error(e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -7,10 +7,11 @@ class RedactRequest(BaseModel):
 
 
 class KeyPoint(BaseModel):
-    title: str
+    entity: str
     description: str
+    replaceWith: str
 
 
 class DocumentData(BaseModel):
-    key_points: List[str]
+    key_points: List[KeyPoint]
     pdf_name: str

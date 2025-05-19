@@ -1,10 +1,11 @@
 export type KeyPoint = {
-  title: string;
+  entity: string;
   description: string;
+  replaceWith: string;
 };
 
 export type DocumentData = {
-  key_points: string[];
+  key_points: KeyPoint[];
   pdf_name: string;
 };
 

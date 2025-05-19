@@ -12,3 +12,4 @@ class Tables(Enum):
 
 class Collections(Enum):
     DOCS = "docs"
+    CONFIGUATIONS = "configurations"

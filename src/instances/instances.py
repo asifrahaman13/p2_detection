@@ -37,7 +37,6 @@ def get_mongo():
     return MongoDBHandler(
         uri=db_config.mongo_uri,
         db_name=Databases.DOCS.value,
-        collection_name=Collections.DOCS.value,
     )
 
 

@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DocumentData } from "@/types/dashboard/dashboard";
 import config from "@/config/config";
+import ProgressUpdates from "./ui/ProgressUpdates";
 
 interface Props {
   docName: string;
@@ -38,15 +39,20 @@ export default function DescriptionEditor({
 
     return () => clearTimeout(timeout);
   }, [data, onSave]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     idx: number,
   ) => {
     if (!data) return;
-    const updated = [...data.key_points];
-    updated[idx] = e.target.value;
-    setData({ ...data, key_points: updated });
+    const { name, value } = e.target;
+
+    const updatedKeyPoints = data.key_points.map((point, i) =>
+      i === idx ? { ...point, [name]: value } : point,
+    );
+
+    console.log("Updated key points:", updatedKeyPoints);
+
+    setData({ ...data, key_points: updatedKeyPoints });
   };
 
   const addPoint = () => {
@@ -54,11 +60,30 @@ export default function DescriptionEditor({
       const pdf = {
         pdf_name: docName,
       };
-      setData({ ...pdf, key_points: [""] });
+      setData({
+        ...pdf,
+        key_points: [
+          {
+            entity: "",
+            description: "",
+            replaceWith: "",
+          },
+        ],
+      });
       return;
     }
 
-    setData({ ...data, key_points: [...data.key_points, ""] });
+    setData({
+      ...data,
+      key_points: [
+        ...data.key_points,
+        {
+          entity: "",
+          description: "",
+          replaceWith: "",
+        },
+      ],
+    });
   };
 
   const handleProcess = () => {
@@ -141,9 +166,25 @@ export default function DescriptionEditor({
                 <div>
                   <textarea
                     rows={1}
-                    key={idx}
+                    name="entity"
                     className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
-                    value={point}
+                    value={point.entity}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
+                </div>
+                <div>
+                  <textarea
+                    rows={1}
+                    name="description"
+                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
+                    value={point.description}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
+                  <textarea
+                    rows={1}
+                    name="replaceWith"
+                    className="bg-gray-100 px-2 text-blue-700 py-1 w-full rounded-md items-center border-0 border-none focus:ring-0 focus:outline-none"
+                    value={point.replaceWith}
                     onChange={(e) => handleChange(e, idx)}
                   />
                 </div>
@@ -162,25 +203,8 @@ export default function DescriptionEditor({
       )}
 
       {/* Updates Section */}
-      {messages.length > 0 && (
-        <div className="bg-gray-100 p-4 rounded-md mt-4 h-full overflow-y-scroll">
-          <h3 className="text-sm font-medium text-gray-500 text-center py-2">
-            UPDATES
-          </h3>
-          <div className="flex flex-col gap-2">
-            {messages.map((message, index) => (
-              <div key={index} className="text-sm text-gray-700 flex gap-2">
-                <div className="bg-blue-300 text-blue-800 px-2 py-1 rounded-md">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </div>
-                <div className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md">
-                  {message.status}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ProgressUpdates messages={messages} />
+      <button onClick={() => console.log(data)}>view the result</button>
 
       {/* Bottom Controls */}
       <div className="flex justify-between items-center mt-4">
