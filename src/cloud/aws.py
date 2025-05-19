@@ -41,7 +41,6 @@ class AWS:
             ExtraArgs={"ContentType": "application/pdf"},
         )
 
-
     def upload_pdf(self, file_name: str, file: UploadFile):
         if file.file is None:
             raise ValueError("Uploaded file is None")

@@ -24,6 +24,7 @@ const Group = ({ caseName }: { caseName: string }) => {
 
     return () => clearTimeout(timeout);
   }, [data, saveData]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     idx: number,
@@ -71,6 +72,48 @@ const Group = ({ caseName }: { caseName: string }) => {
     });
   };
 
+  const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result as string);
+
+        if (!Array.isArray(json)) {
+          console.error("Invalid JSON format: not an array.");
+          return;
+        }
+
+        const isValid = json.every(
+          (item) =>
+            typeof item.entity === "string" &&
+            typeof item.description === "string" &&
+            typeof item.replaceWith === "string",
+        );
+
+        if (!isValid) {
+          console.error(
+            "Invalid JSON format: items do not match expected shape.",
+          );
+          return;
+        }
+
+        const pdf = {
+          pdf_name: caseName,
+          key_points: json,
+        };
+
+        setDocumentData(pdf);
+      } catch (err) {
+        console.error("Failed to parse JSON file:", err);
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   const handleDelete = (idx: number) => {
     if (!data) return;
     const updatedKeyPoints = [...data.key_points];
@@ -80,16 +123,21 @@ const Group = ({ caseName }: { caseName: string }) => {
 
   return (
     <div>
-      <div className="bg-white p-6 w-full gap-4 flex flex-col">
-        <div className="flex flex-col gap-4">
+      <div className="bg-white p-6 overflow-y-scroll w-full gap-4 flex flex-col">
+        <div className="flex  gap-4 justify-between">
           <div className="text-md font-semibold">Define filters</div>
-          <div className="text-sm">
-            Select the type of data you wish to mask.
-          </div>
+          <input
+            type="file"
+            accept="application/json"
+            onChange={handleJsonUpload}
+            className="mb-4"
+          />
         </div>
         <div className="border-2 border-gray-100"></div>
         <div className="flex justify-between">
-          <div className="text-lg font-medium">Key Data Extractions</div>
+          <div className="text-md font-medium">
+            These are the key points that will be used by the AI...
+          </div>
           <button onClick={addPoint}>
             <img
               src="/assets/dashboard/Circle Plus.svg"
@@ -98,8 +146,6 @@ const Group = ({ caseName }: { caseName: string }) => {
             />
           </button>
         </div>
-
-        {/* Document of Interest */}
 
         <div className="flex-1 overflow-y-auto space-y-4">
           {/* Table Header */}

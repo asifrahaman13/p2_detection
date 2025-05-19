@@ -61,7 +61,7 @@ export default function DefineComponent({
   return (
     <Fragment>
       <div className="flex flex-col h-full w-full items-center">
-        <div className=" bg-white shadow-md rounded-md flex h-1/2 flex-col w-1/2">
+        <div className=" bg-white shadow-md rounded-md flex h-3/4 flex-col w-1/2">
           {processLoad ? (
             <div className="flex flex-col gap-2 p-4 overflow-y-scroll my-2">
               {messages.map((message, index) => (
@@ -76,7 +76,7 @@ export default function DefineComponent({
               ))}
             </div>
           ) : (
-            <div>
+            <div className="overflow-y-scroll h-">
               <Group caseName={case_name} />
               <Overview
                 caseName={case_name}

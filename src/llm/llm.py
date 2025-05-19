@@ -2,7 +2,6 @@ import json
 import asyncio
 from openai import AsyncOpenAI
 
-from src.constants.prompt import prompt_builder
 from src.helper.json_utuils import parse_data
 from src.logs.logger import Logger
 

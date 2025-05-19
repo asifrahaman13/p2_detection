@@ -3,7 +3,6 @@ from src.config.index import aws_config, db_config
 from src.database.mongo_db import MongoDBHandler
 from src.helper.conn_manager import ConnectionManager
 from src.models.db import Databases
-from src.database.ps_db import AsyncPostgresCRUD
 
 
 def singleton(cls):
@@ -25,11 +24,6 @@ def get_aws():
         aws_access_key_id=aws_config.access_key_id,
         aws_secret_access_key=aws_config.secret_access_key,
     )
-
-
-@singleton
-def get_postgres():
-    return AsyncPostgresCRUD(dsn=db_config.postgres_dsn)
 
 
 @singleton

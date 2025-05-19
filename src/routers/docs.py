@@ -5,9 +5,7 @@ from src.instances.index import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
 
-from src.models.db import Tables
 from src.models.cloud import CloudStorage
-from src.instances.index import db
 from src.models.docs import DocumentData, RedactRequest
 from src.instances.index import mongo_db
 from src.helper.callback_func import progress_callback_func
@@ -42,13 +40,13 @@ async def upload_pdf(
             )
 
         log.info(f"File uploaded successfully: {file_name}")
-        insert=await mongo_db.create(
+        insert = await mongo_db.create(
             data={
                 "file_name": file_name,
                 "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.UPLOADS.value}/{file_name}",
                 "title": title,
             },
-            collection_name=Collections.DOC_FILES.value
+            collection_name=Collections.DOC_FILES.value,
         )
         if insert is None:
             raise HTTPException(status_code=404, detail="Sorry something went wrong")
@@ -176,10 +174,8 @@ async def list_files():
         # ]
         # if not files:
         #     raise HTTPException(status_code=404, detail="No files found")
-        
-        files=await mongo_db.get_all(
-           collection_name=Collections.DOC_FILES.value
-        )
+
+        files = await mongo_db.get_all(collection_name=Collections.DOC_FILES.value)
         log.info(f"Files retrieved successfully: {files}")
         return JSONResponse(content={"files": files}, status_code=200)
     except Exception as e:
