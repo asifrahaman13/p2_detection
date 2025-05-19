@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { DocumentData } from "@/types/dashboard/dashboard";
 import config from "@/config/config";
 import ProgressUpdates from "./ui/ProgressUpdates";
+import { useDocumentData } from "@/hooks/useDocumentData";
 
 interface Props {
   docName: string;
@@ -147,17 +148,70 @@ export default function DescriptionEditor({
     setData({ ...data, key_points: updatedKeyPoints });
   };
 
+  const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result as string);
+        console.log(json);
+
+        if (!Array.isArray(json)) {
+          console.error("Invalid JSON format: not an array.");
+          return;
+        }
+
+        const isValid = json.every(
+          (item) =>
+            typeof item.entity === "string" &&
+            typeof item.description === "string" &&
+            typeof item.replaceWith === "string",
+        );
+
+        if (!isValid) {
+          console.error(
+            "Invalid JSON format: items do not match expected shape.",
+          );
+          return;
+        }
+
+        const pdf = {
+          pdf_name: docName,
+          key_points: json,
+        };
+
+        setData(pdf);
+      } catch (err) {
+        console.error("Failed to parse JSON file:", err);
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
-    <div className="bg-white gap-4 h-full p-6 flex flex-col w-full">
-      {/* Top Section */}
+    <div className="bg-white flex flex-col h-full w-full p-6 gap-4">
+      {/* Top Bar */}
       <div className="flex items-center justify-between shrink-0">
         <h2 className="text-xl font-medium">ADD INSTRUCTIONS</h2>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <label className="cursor-pointer bg-sideBarGradient hover:bg-sideBarGradient text-white px-5 py-2 rounded-lg shadow transition duration-200">
+            Import JSON
+            <input
+              type="file"
+              accept="application/json"
+              onChange={handleJsonUpload}
+              className="hidden"
+            />
+          </label>
+
           <button
             className={`py-2 px-4 rounded-md border ${
               isProcessing
                 ? "bg-gray-400 text-white cursor-not-allowed"
-                : " text-gray-900 "
+                : "text-gray-900"
             }`}
             onClick={() => {
               if (data) exportToJson(data, docName);
@@ -166,6 +220,7 @@ export default function DescriptionEditor({
           >
             Export
           </button>
+
           <button onClick={addPoint} disabled={isProcessing}>
             <img
               src="/assets/dashboard/Circle Plus.svg"
@@ -176,15 +231,14 @@ export default function DescriptionEditor({
         </div>
       </div>
 
-      {/* Info Text */}
-      {!isProcessing && (
-        <div>
-          <div className="text-sm text-gray-500 text-justify font-mono shrink-0">
-            These are the key points that will be used by the AI...
-          </div>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-4">
+        {!isProcessing && (
+          <>
+            <div className="text-sm text-gray-500 text-justify font-mono">
+              These are the key points that will be used by the AI...
+            </div>
 
-          {/* Scrollable Table Section */}
-          <div className="flex-1 overflow-y-auto space-y-4">
             {/* Table Header */}
             <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-gray-100 font-semibold text-gray-700 rounded-md">
               <div>Entity</div>
@@ -193,62 +247,60 @@ export default function DescriptionEditor({
               <div className="text-right">Action</div>
             </div>
 
-            {/* Table Body */}
-            {data?.key_points.map((point, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border items-start"
-              >
-                {/* Entity */}
-                <textarea
-                  rows={3}
-                  name="entity"
-                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
-                  placeholder="Entity"
-                  value={point.entity}
-                  onChange={(e) => handleChange(e, idx)}
-                />
+            {/* Table Rows */}
+            <div className="space-y-4">
+              {data?.key_points.map((point, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border"
+                >
+                  <textarea
+                    rows={3}
+                    name="entity"
+                    className="text-gray-900 p-3 w-full rounded-md outline-none"
+                    placeholder="Entity"
+                    value={point.entity}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
 
-                {/* Description */}
-                <textarea
-                  rows={3}
-                  name="description"
-                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
-                  placeholder="Description"
-                  value={point.description}
-                  onChange={(e) => handleChange(e, idx)}
-                />
+                  <textarea
+                    rows={3}
+                    name="description"
+                    className="text-gray-900 p-3 w-full rounded-md outline-none"
+                    placeholder="Description"
+                    value={point.description}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
 
-                {/* Replace With */}
-                <textarea
-                  rows={3}
-                  name="replaceWith"
-                  className=" text-gray-900 p-3 w-full rounded-md outline-none "
-                  placeholder="Replace With"
-                  value={point.replaceWith}
-                  onChange={(e) => handleChange(e, idx)}
-                />
+                  <textarea
+                    rows={3}
+                    name="replaceWith"
+                    className="text-gray-900 p-3 w-full rounded-md outline-none"
+                    placeholder="Replace With"
+                    value={point.replaceWith}
+                    onChange={(e) => handleChange(e, idx)}
+                  />
 
-                {/* Delete Button */}
-                <div className="flex justify-end items-start pt-1">
-                  <button
-                    onClick={() => handleDelete(idx)}
-                    className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
-                  >
-                    ❌ Delete
-                  </button>
+                  <div className="flex justify-end items-start pt-1">
+                    <button
+                      onClick={() => handleDelete(idx)}
+                      className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
+                    >
+                      ❌ Delete
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+              ))}
+            </div>
+          </>
+        )}
 
-      {/* Updates Section */}
-      <ProgressUpdates messages={messages} />
+        {/* Progress Section */}
+        <ProgressUpdates messages={messages} />
+      </div>
 
-      {/* Bottom Controls */}
-      <div className="flex justify-between items-center shrink-0">
+      {/* Bottom Fixed Controls */}
+      <div className="shrink-0 pt-4 border-t mt-4 flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <span
             onClick={() => setViewMode("x")}
@@ -282,19 +334,17 @@ export default function DescriptionEditor({
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <button
-            className={`py-2 px-4 rounded-md ${
-              isProcessing
-                ? "bg-gray-400 text-white cursor-not-allowed"
-                : "bg-sideBarGradient text-white"
-            }`}
-            onClick={handleProcess}
-            disabled={isProcessing}
-          >
-            Process
-          </button>
-        </div>
+        <button
+          className={`py-2 px-4 rounded-md ${
+            isProcessing
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-sideBarGradient text-white"
+          }`}
+          onClick={handleProcess}
+          disabled={isProcessing}
+        >
+          Process
+        </button>
       </div>
     </div>
   );

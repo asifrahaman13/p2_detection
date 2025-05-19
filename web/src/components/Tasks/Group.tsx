@@ -3,7 +3,7 @@
 import config from "@/config/config";
 import { useDocumentData } from "@/hooks/useDocumentData";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 const Group = ({ caseName }: { caseName: string }) => {
   const [data, setDocumentData] = useDocumentData(caseName);
