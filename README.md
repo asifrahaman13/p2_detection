@@ -89,11 +89,6 @@ The appllication can also be run as a docker container serveice. Run the followi
 docker compose up
 ```
 
-## Ports
-
-The frontend of the application will run on port 3000. `http://127.0.0.1:3000`
-
-The backend of the application will run on port 8000 `http://127.0.0.1:8000`
 
 ## Formatting
 
@@ -111,6 +106,12 @@ For formatting run the following script:
 ruff format
 ```
 
+If you want to run the precommit hooks, you can run the following comand. They will run anyway.
+
+```bash
+uv run pre-commit run
+```
+
 For linting run the following inside the web folder.
 
 ```bash
@@ -122,3 +123,9 @@ For the format run the following:
 ```bash
 bun run format
 ```
+
+## Ports
+
+The frontend of the application will run on port 3000. `http://127.0.0.1:3000`
+
+The backend of the application will run on port 8000 `http://127.0.0.1:8000`
