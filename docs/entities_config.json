@@ -1,0 +1,27 @@
+[
+  {
+    "entity": "company_name",
+    "description": "All company names (noun)",
+    "replaceWith": "THE COMPANY"
+  },
+  {
+    "entity": "email_address",
+    "description": "All email address in the text",
+    "replaceWith": "theCOMPANY@email.com"
+  },
+  {
+    "entity": "physical_addresses",
+    "description": "All compnay physical address in the text like \"3a fragkokklisias granikou str marousi athens gr 15125 greece",
+    "replaceWith": "THE ADDRESS"
+  },
+  {
+    "entity": "person_name",
+    "description": "All the name of the person in the text. (strictly noun)",
+    "replaceWith": "THE PERSON\""
+  },
+  {
+    "entity": "phone_number",
+    "description": " All phone number in the text including +",
+    "replaceWith": " +xx yyyyyyyyyy"
+  }
+]
