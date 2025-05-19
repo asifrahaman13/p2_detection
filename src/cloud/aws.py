@@ -1,5 +1,3 @@
-import io
-
 import boto3
 from fastapi import UploadFile
 from io import BytesIO
@@ -43,12 +41,6 @@ class AWS:
             ExtraArgs={"ContentType": "application/pdf"},
         )
 
-    def get_pdf_buffer_s3(self, file_key):
-        s3 = boto3.client("s3")
-        pdf_file = io.BytesIO()
-        s3.download_fileobj(self.bucket_name, file_key, pdf_file)
-        pdf_file.seek(0)
-        return pdf_file
 
     def upload_pdf(self, file_name: str, file: UploadFile):
         if file.file is None:

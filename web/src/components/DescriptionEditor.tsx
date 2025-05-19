@@ -91,6 +91,21 @@ export default function DescriptionEditor({
     onProcess();
   };
 
+  const exportToJson = (data: DocumentData, docName: string) => {
+    if (!data) return;
+
+    const fileData = JSON.stringify(data.key_points, null, 2);
+    const blob = new Blob([fileData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${docName || "ruleset"}.json`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     const ws = new WebSocket(
       `${config.websocketUrl}/api/ws/progress/${docName}`,
@@ -137,13 +152,28 @@ export default function DescriptionEditor({
       {/* Top Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium">ADD INSTRUCTIONS</h2>
-        <button onClick={addPoint} disabled={isProcessing}>
-          <img
-            src="/assets/dashboard/Circle Plus.svg"
-            alt="Add"
-            className={isProcessing ? "opacity-50 cursor-not-allowed" : ""}
-          />
-        </button>
+        <div className="flex gap-4">
+          <button
+            className={`py-2 px-4 rounded-md border ${
+              isProcessing
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : " text-gray-900 "
+            }`}
+            onClick={() => {
+              if (data) exportToJson(data, docName);
+            }}
+            disabled={isProcessing}
+          >
+            Export
+          </button>
+          <button onClick={addPoint} disabled={isProcessing}>
+            <img
+              src="/assets/dashboard/Circle Plus.svg"
+              alt="Add"
+              className={isProcessing ? "opacity-50 cursor-not-allowed" : ""}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Middle Section */}
@@ -255,17 +285,19 @@ export default function DescriptionEditor({
           </span>
         </div>
 
-        <button
-          className={`py-2 px-4 rounded-md ${
-            isProcessing
-              ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-sideBarGradient text-white"
-          }`}
-          onClick={handleProcess}
-          disabled={isProcessing}
-        >
-          Process
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            className={`py-2 px-4 rounded-md ${
+              isProcessing
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-sideBarGradient text-white"
+            }`}
+            onClick={handleProcess}
+            disabled={isProcessing}
+          >
+            Process
+          </button>
+        </div>
       </div>
     </div>
   );
