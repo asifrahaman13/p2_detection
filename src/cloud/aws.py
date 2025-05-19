@@ -6,7 +6,7 @@ from io import BytesIO
 
 from src.logs.logger import Logger
 
-log = Logger(name="AWS").get_logger()
+log = Logger(name="aws.py").get_logger()
 
 
 class AWS:

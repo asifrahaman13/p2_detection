@@ -1,6 +1,6 @@
 import asyncio
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from src.instances import manager
+from src.instances.index import manager
 
 from src.logs.logger import Logger
 

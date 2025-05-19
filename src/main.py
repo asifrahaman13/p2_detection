@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
 from src.models.db import Tables
-from src.instances import db
+from src.instances.index import db
 from src.routers.docs_websocket import docs_websocket
 from src.routers.docs import docs_router
 from src.logs.logger import Logger

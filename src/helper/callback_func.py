@@ -1,5 +1,5 @@
 import asyncio
-from src.instances import manager
+from src.instances.index import manager
 from src.logs.logger import Logger
 import time
 

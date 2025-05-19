@@ -11,12 +11,21 @@ export function useDocumentData(caseName: string) {
     const inputKey = parseInputKey(caseName);
     if (!inputKey) return;
 
-    axios
-      .post(`${config.backendUrl}/api/v1/docs/get-key-points`, {
-        input_key: inputKey,
-      })
-      .then((res) => setDocumentData(res.data))
-      .catch((err) => console.error("Keypoints error:", err));
+    const fetchData = async () => {
+      try {
+        const res = await axios.post(
+          `${config.backendUrl}/api/v1/docs/get-key-points`,
+          {
+            input_key: inputKey,
+          },
+        );
+        setDocumentData(res.data);
+      } catch (err) {
+        console.error("Keypoints error:", err);
+      }
+    };
+
+    fetchData();
   }, [caseName]);
 
   return [documentData, setDocumentData] as const;

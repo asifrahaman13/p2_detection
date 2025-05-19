@@ -1,15 +1,15 @@
 from io import BytesIO
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
-from src.instances import aws
+from src.instances.index import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
 
 from src.models.db import Tables
 from src.models.cloud import CloudStorage
-from src.instances import db
+from src.instances.index import db
 from src.models.docs import DocumentData, RedactRequest
-from src.instances import mongo_db
+from src.instances.index import mongo_db
 from src.helper.callback_func import progress_callback_func
 
 log = Logger(name="router").get_logger()
