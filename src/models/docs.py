@@ -35,7 +35,7 @@ class KeyPoint(BaseModel):
 
 class DocumentData(BaseModel):
     key_points: List[KeyPoint] = Field(
-        ..., 
+        ...,
         example=[
             {
                 "entity": "John Doe",
