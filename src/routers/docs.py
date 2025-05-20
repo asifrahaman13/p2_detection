@@ -240,7 +240,7 @@ async def delete_resource(request: RedactRequest):
     try:
         key = request.input_key
         filters = {"file_name": key}
-        
+
         """ Mongodb transactions are only supported when you are connected to a replica set or mongodb shared cluster.
          So for now we are not passing the sessions. The code could have looked like this:
 
@@ -260,7 +260,7 @@ async def delete_resource(request: RedactRequest):
         await mongo_db.delete_all(filters=filters, collection_name=Collections.DOCS.value)
         await mongo_db.delete_all(filters=filters, collection_name=Collections.DOC_FILES.value)
         await mongo_db.delete_all(filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value)
-    
+
         aws.delete_file(key=key)
 
         return JSONResponse(
