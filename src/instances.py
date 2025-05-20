@@ -1,7 +1,7 @@
 from src.cloud.aws import AWS
 from src.config.index import aws_config, db_config
 from src.database.mongo_db import MongoDBHandler
-from src.helper.conn_manager import ConnectionManager
+from src.conn.conn_manager import ConnectionManager
 from src.models.db import Databases
 
 
@@ -37,3 +37,8 @@ def get_mongo():
 @singleton
 def get_conn_manager():
     return ConnectionManager()
+
+
+aws = get_aws()
+mongo_db = get_mongo()
+manager = get_conn_manager()

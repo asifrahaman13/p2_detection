@@ -3,7 +3,7 @@ import asyncio
 
 from openai import AsyncOpenAI
 
-from src.helper.json_utuils import parse_data
+from src.helper.json_utils import parse_data
 from src.logs.logger import Logger
 
 log = Logger(name="llm.py").get_logger()

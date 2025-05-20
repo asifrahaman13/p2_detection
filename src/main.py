@@ -4,9 +4,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.routers.docs_websocket import docs_websocket
-from src.routers.docs import docs_router
 from src.logs.logger import Logger
+from src.routers import *
 
 log = Logger(name="main").get_logger()
 

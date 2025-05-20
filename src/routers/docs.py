@@ -3,17 +3,13 @@ from io import BytesIO
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
-from src.instances.index import aws
+from src.instances import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
-from src.models.cloud import CloudStorage
-from src.models.docs import DocumentData, RedactRequest
-from src.instances.index import mongo_db
-from src.helper.callback_func import progress_callback_func
-from src.helper.time import curr_timestamp
-from src.helper.cpu_helper import run_blocking_io
-from src.models.db import Collections
-from src.models.doc_config import Status
+from src.instances import mongo_db
+from src.routers.callback_func import progress_callback_func
+from src.helper import *
+from src.models import *
 
 log = Logger(name="router").get_logger()
 

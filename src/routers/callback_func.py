@@ -1,6 +1,6 @@
 from src.logs.logger import Logger
-from src.instances.index import manager
-from .time import curr_timestamp
+from src.instances import manager
+from ..helper.time import curr_timestamp
 
 log = Logger(name="callback_func.py").get_logger()
 

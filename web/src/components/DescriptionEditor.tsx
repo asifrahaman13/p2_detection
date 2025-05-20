@@ -179,10 +179,7 @@ export default function DescriptionEditor({
     if (!data) {
       return;
     }
-    // Now set the toogle mode.
-
     setData({ ...data, process_type: mode });
-
     console.log(data);
   }
   function exportToJson(data: DocumentData, docName: string) {
