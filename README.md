@@ -47,10 +47,16 @@ Create a .env file from the .env.example file, and ensure you enter correct cred
 mv .env.example .env
 ```
 
-Next enter your credentials in .env file. Now you should be able to run the application.
+Next enter your credentials in .env file. Now you should be able to run the application in dev environment.
 
 ```bash
 uv run uvicorn src.main:app --reload
+```
+
+For production environment you can use the gunicorn and uvicorn combined instead. (Here we used 4 wokers.)
+
+```bash
+src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
 ## Front end
@@ -125,6 +131,6 @@ bun run format
 
 ## Ports
 
-The frontend of the application will run on port 3000. `http://127.0.0.1:3000`
+The frontend of the application will run on port 3000. `http://127.0.0.1:3000`. But you need to hit the following api instead to be in the dashboard: `http://localhost:3000/dashboard/cases`
 
 The backend of the application will run on port 8000 `http://127.0.0.1:8000`
