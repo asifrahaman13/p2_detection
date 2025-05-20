@@ -141,7 +141,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
                 setData={setDocumentData}
                 onSave={saveData}
                 onProcess={processDocument}
-                viewMode={viewMode}
                 setViewMode={setViewMode}
               />
             </div>

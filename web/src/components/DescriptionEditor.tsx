@@ -10,7 +10,6 @@ interface Props {
   setData: React.Dispatch<React.SetStateAction<DocumentData | null>>;
   onSave: () => void;
   onProcess: () => void;
-  viewMode: string;
   setViewMode: (mode: string) => void;
 }
 
@@ -25,7 +24,6 @@ export default function DescriptionEditor({
   setData,
   onSave,
   onProcess,
-  viewMode,
   setViewMode,
 }: Props) {
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
