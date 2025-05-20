@@ -87,7 +87,7 @@ async def process_pdf(request: RedactRequest):
             configurations=configurations,
             progress_callback=progress_callback_func,
         )
-        result = await redactor.extract_lines_from_scanned_pdf_parallel()
+        result = await redactor.process_doc()
         log.info(f"The statistcis is: {result["stats"]}")
         log.info(f"The redacted images are: {result["redacted_images"]}")
 
@@ -184,7 +184,11 @@ async def save_document(data: DocumentData):
 
         await mongo_db.upsert(
             filter={"pdf_name": data["pdf_name"]},
-            data={"key_points": data["key_points"], "pdf_name": data["pdf_name"]},
+            data={
+                "key_points": data["key_points"],
+                "pdf_name": data["pdf_name"],
+                "process_type": data["process_type"],
+            },
             upsert=True,
             collection_name=Collections.CONFIGUATIONS.value,
         )
@@ -236,18 +240,27 @@ async def delete_resource(request: RedactRequest):
     try:
         key = request.input_key
         filters = {"file_name": key}
+        
+        """ Mongodb transactions are only supported when you are connected to a replica set or mongodb shared cluster.
+         So for now we are not passing the sessions. The code could have looked like this:
 
-        async with mongo_db.start_transaction() as session:
+         async with mongo_db.start_transaction() as session:
             await mongo_db.delete_all(
-                filters=filters, collection_name=Collections.DOCS.value
+                filters=filters, collection_name=Collections.DOCS.value, session=session
             )
             await mongo_db.delete_all(
-                filters=filters, collection_name=Collections.DOC_FILES.value
+                filters=filters, collection_name=Collections.DOC_FILES.value, session=session
             )
             await mongo_db.delete_all(
                 filters={"pdf_name": key},
-                collection_name=Collections.CONFIGUATIONS.value,
+                collection_name=Collections.CONFIGUATIONS.value, session=session
             )
+        """
+
+        await mongo_db.delete_all(filters=filters, collection_name=Collections.DOCS.value)
+        await mongo_db.delete_all(filters=filters, collection_name=Collections.DOC_FILES.value)
+        await mongo_db.delete_all(filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value)
+    
         aws.delete_file(key=key)
 
         return JSONResponse(

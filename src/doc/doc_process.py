@@ -14,6 +14,7 @@ from src.helper.images import process_image
 from src.llm.llm import LLM
 from src.logs.logger import Logger
 from src.constants.prompt import prompt_builder
+from src.models.doc_config import ProcessTypes
 
 log = Logger(name="doc_process.py").get_logger()
 
@@ -68,7 +69,7 @@ class DocsRedactor:
 
         return formatted_prompt
 
-    async def extract_lines_from_scanned_pdf_parallel(self) -> dict:
+    async def process_doc(self) -> dict:
         start_time = time.time()
         reader = PdfReader(self.pdf_bytes_io)
         total_pages = len(reader.pages)
@@ -241,17 +242,24 @@ class DocsRedactor:
 
                             draw.rectangle([min_x, min_y, max_x, max_y], fill="black")
 
-                            font = self._get_font(
-                                replacement, max_x - min_x, max_y - min_y
-                            )
-                            text_pos = self._centered_text_position(
-                                font, replacement, (min_x, min_y, max_x, max_y)
-                            )
-                            draw.text(text_pos, replacement, fill="white", font=font)
+                            if (
+                                self.configuations["process_type"]
+                                == ProcessTypes.REPLACE.value
+                            ):
+                                font = self._get_font(
+                                    replacement, max_x - min_x, max_y - min_y
+                                )
+                                text_pos = self._centered_text_position(
+                                    font, replacement, (min_x, min_y, max_x, max_y)
+                                )
+                                draw.text(
+                                    text_pos, replacement, fill="white", font=font
+                                )
 
-                            log.info(
-                                f"🔒 Replaced phrase '{phrase}' with '{replacement}'"
-                            )
+                                log.info(
+                                    f"🔒 Replaced phrase '{phrase}' with '{replacement}'"
+                                )
+
                             i += len(phrase_parts)
                             match_found = True
                             break

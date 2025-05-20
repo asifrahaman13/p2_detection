@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { DocumentData } from "@/types/dashboard/dashboard";
 import config from "@/config/config";
 import ProgressUpdates from "./ui/ProgressUpdates";
-import { useDocumentData } from "@/hooks/useDocumentData";
 
 interface Props {
   docName: string;
@@ -40,72 +39,6 @@ export default function DescriptionEditor({
 
     return () => clearTimeout(timeout);
   }, [data, onSave]);
-  const handleChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
-  ) => {
-    if (!data) return;
-    const { name, value } = e.target;
-
-    const updatedKeyPoints = data.key_points.map((point, i) =>
-      i === idx ? { ...point, [name]: value } : point,
-    );
-
-    console.log("Updated key points:", updatedKeyPoints);
-
-    setData({ ...data, key_points: updatedKeyPoints });
-  };
-
-  const addPoint = () => {
-    if (!data) {
-      const pdf = {
-        pdf_name: docName,
-      };
-      setData({
-        ...pdf,
-        key_points: [
-          {
-            entity: "",
-            description: "",
-            replaceWith: "",
-          },
-        ],
-      });
-      return;
-    }
-
-    setData({
-      ...data,
-      key_points: [
-        ...data.key_points,
-        {
-          entity: "",
-          description: "",
-          replaceWith: "",
-        },
-      ],
-    });
-  };
-
-  const handleProcess = () => {
-    setIsProcessing(true);
-    onProcess();
-  };
-
-  const exportToJson = (data: DocumentData, docName: string) => {
-    if (!data) return;
-
-    const fileData = JSON.stringify(data.key_points, null, 2);
-    const blob = new Blob([fileData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${docName || "ruleset"}.json`;
-    link.click();
-
-    URL.revokeObjectURL(url);
-  };
 
   useEffect(() => {
     const ws = new WebSocket(
@@ -141,14 +74,66 @@ export default function DescriptionEditor({
     };
   }, [docName]);
 
-  const handleDelete = (idx: number) => {
+  function handleChange(
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    idx: number,
+  ) {
+    if (!data) return;
+    const { name, value } = e.target;
+
+    const updatedKeyPoints = data.key_points.map((point, i) =>
+      i === idx ? { ...point, [name]: value } : point,
+    );
+
+    console.log("Updated key points:", updatedKeyPoints);
+
+    setData({ ...data, key_points: updatedKeyPoints });
+  }
+
+  function addPoint() {
+    if (!data) {
+      const pdf = {
+        pdf_name: docName,
+      };
+      setData({
+        ...pdf,
+        key_points: [
+          {
+            entity: "",
+            description: "",
+            replaceWith: "",
+          },
+        ],
+      });
+      return;
+    }
+
+    setData({
+      ...data,
+      key_points: [
+        ...data.key_points,
+        {
+          entity: "",
+          description: "",
+          replaceWith: "",
+        },
+      ],
+    });
+  }
+
+  function handleProcess() {
+    setIsProcessing(true);
+    onProcess();
+  }
+
+  function handleDelete(idx: number) {
     if (!data) return;
     const updatedKeyPoints = [...data.key_points];
     updatedKeyPoints.splice(idx, 1);
     setData({ ...data, key_points: updatedKeyPoints });
-  };
+  }
 
-  const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function handleJsonUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -189,7 +174,33 @@ export default function DescriptionEditor({
     };
 
     reader.readAsText(file);
-  };
+  }
+
+  function toogleProcessMode(mode: string) {
+    setViewMode(mode);
+    if (!data) {
+      return;
+    }
+    // Now set the toogle mode.
+
+    setData({ ...data, process_type: mode });
+
+    console.log(data);
+  }
+  function exportToJson(data: DocumentData, docName: string) {
+    if (!data) return;
+
+    const fileData = JSON.stringify(data.key_points, null, 2);
+    const blob = new Blob([fileData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${docName || "ruleset"}.json`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="bg-white flex flex-col h-full w-full p-6 gap-4">
@@ -264,7 +275,7 @@ export default function DescriptionEditor({
                   />
 
                   <textarea
-                    rows={point.description.length/15}
+                    rows={point.description.length / 15}
                     name="description"
                     className="text-gray-900 p-3 w-full rounded-md outline-none"
                     placeholder="Description"
@@ -303,16 +314,16 @@ export default function DescriptionEditor({
       <div className="shrink-0 pt-4 border-t mt-4 flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <span
-            onClick={() => setViewMode("x")}
+            onClick={() => toogleProcessMode("mask")}
             className={`px-4 py-1 rounded-l-full border cursor-pointer ${
-              viewMode === "x"
+              data?.process_type === "mask"
                 ? "bg-sideBarGradient text-white"
                 : "bg-white text-blue-600"
             }`}
           >
             Mask
           </span>
-          <div
+          {/* <div
             className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
             onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
           >
@@ -321,11 +332,11 @@ export default function DescriptionEditor({
                 viewMode === "x" ? "translate-x-0" : "translate-x-6"
               }`}
             />
-          </div>
+          </div> */}
           <span
-            onClick={() => setViewMode("y")}
+            onClick={() => toogleProcessMode("replace")}
             className={`px-4 py-1 rounded-r-full border cursor-pointer ${
-              viewMode === "y"
+              data?.process_type === "replace"
                 ? "bg-sideBarGradient text-white"
                 : "bg-white text-blue-600"
             }`}

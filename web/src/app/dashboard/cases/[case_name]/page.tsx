@@ -29,8 +29,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [preview, setPreview] = useState("x");
   const [viewMode, setViewMode] = useState("x");
-  const [pageNum, setPageNum]=useState<number>(1);
-
+  const [pageNum, setPageNum] = useState<number>(1);
 
   const [documentData, setDocumentData] = useDocumentData(params.case_name);
   const docUrl = usePresignedUrl(params.case_name);
@@ -63,7 +62,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
           data: {
             input_key: params.case_name,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -109,7 +108,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
           >
             Original
           </span>
-          <div
+          {/* <div
             className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
             onClick={() => setPreview(preview === "x" ? "y" : "x")}
           >
@@ -118,7 +117,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
                 preview === "x" ? "translate-x-0" : "translate-x-6"
               }`}
             />
-          </div>
+          </div> */}
           <span
             onClick={() => setPreview("y")}
             className={`px-4 py-1 rounded-r-full border cursor-pointer ${
@@ -154,8 +153,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
 
           <div className="w-1/2 h-3/4">
             <UploadedPdf
-            key={pageNum}
-
+              key={pageNum}
               uploadedPdf={
                 preview === "x"
                   ? (docUrl?.original_pdf ?? null)

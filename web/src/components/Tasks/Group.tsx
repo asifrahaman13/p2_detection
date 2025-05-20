@@ -121,11 +121,56 @@ const Group = ({ caseName }: { caseName: string }) => {
     setDocumentData({ ...data, key_points: updatedKeyPoints });
   };
 
+  function toogleProcessMode(mode: string) {
+    if (!data) {
+      return;
+    }
+    // Now set the toogle mode.
+
+    setDocumentData({ ...data, process_type: mode });
+
+    console.log(data);
+  }
+
   return (
     <div>
       <div className="bg-white p-6 overflow-y-scroll w-full gap-4 flex flex-col">
         <div className="flex  gap-4 justify-between">
-          <div className="text-md font-semibold">Define filters</div>
+          {/* <div className="text-md font-semibold">Define filters</div> */}
+          <div>
+            <div className="flex items-center space-x-4">
+              <span
+                onClick={() => toogleProcessMode("mask")}
+                className={`px-4 py-1 rounded-l-full border cursor-pointer ${
+                  data?.process_type === "mask"
+                    ? "bg-sideBarGradient text-white"
+                    : "bg-white text-blue-600"
+                }`}
+              >
+                Mask
+              </span>
+              {/* <div
+            className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
+            onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
+          >
+            <div
+              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+                viewMode === "x" ? "translate-x-0" : "translate-x-6"
+              }`}
+            />
+          </div> */}
+              <span
+                onClick={() => toogleProcessMode("replace")}
+                className={`px-4 py-1 rounded-r-full border cursor-pointer ${
+                  data?.process_type === "replace"
+                    ? "bg-sideBarGradient text-white"
+                    : "bg-white text-blue-600"
+                }`}
+              >
+                Replace
+              </span>
+            </div>
+          </div>
           <input
             type="file"
             accept="application/json"
@@ -174,7 +219,7 @@ const Group = ({ caseName }: { caseName: string }) => {
 
               {/* Description */}
               <textarea
-                rows={3}
+                rows={point.description.length / 15}
                 name="description"
                 className=" bg-gray-100 text-blue-700 p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 placeholder="Description"
@@ -198,7 +243,7 @@ const Group = ({ caseName }: { caseName: string }) => {
                   onClick={() => handleDelete(idx)}
                   className="text-sm bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-full"
                 >
-                  ❌ Delete
+                  Delete
                 </button>
               </div>
             </div>

@@ -7,6 +7,7 @@ export type KeyPoint = {
 export type DocumentData = {
   key_points: KeyPoint[];
   pdf_name: string;
+  process_type?: string;
 };
 
 export type Message = {

@@ -2,6 +2,8 @@ from typing import Optional
 import boto3
 from io import BytesIO
 
+from fastapi import UploadFile
+
 from src.logs.logger import Logger
 
 log = Logger(name="aws.py").get_logger()
@@ -40,6 +42,20 @@ class AWS:
             Key=key,
             ExtraArgs={"ContentType": "application/pdf"},
         )
+
+    def upload_pdf(self, file_name: str, file: UploadFile):
+        if file.file is None:
+            raise ValueError("Uploaded file is None")
+
+        file.file.seek(0)
+        s3_key = f"uploads/{file_name}"
+        self.s3_client.upload_fileobj(
+            file.file,
+            self.bucket_name,
+            s3_key,
+            ExtraArgs={"ContentType": file.content_type or "application/pdf"},
+        )
+        return True
 
     def generate_presigned_url(self, file_name: str) -> Optional[str]:
         presigned_url = self.s3_client.generate_presigned_url(

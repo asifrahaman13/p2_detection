@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
+from src.models.doc_config import ProcessTypes
 
 
 class RedactRequest(BaseModel):
@@ -15,3 +16,4 @@ class KeyPoint(BaseModel):
 class DocumentData(BaseModel):
     key_points: List[KeyPoint]
     pdf_name: str
+    process_type: Optional[str] = ProcessTypes.REPLACE.value
