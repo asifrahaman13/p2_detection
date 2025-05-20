@@ -1,8 +1,8 @@
 import asyncio
-from fastapi.concurrency import run_in_threadpool
 from typing import Callable, Any
 import functools
 
+from fastapi.concurrency import run_in_threadpool
 
 async def async_sleep(duration):
     await asyncio.sleep(duration)

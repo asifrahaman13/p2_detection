@@ -1,6 +1,7 @@
-import pytesseract
 from typing import Tuple, List
+
 from PIL import Image
+import pytesseract
 
 
 def process_image(image_data: Tuple[int, Image.Image]) -> Tuple[int, List[str]]:

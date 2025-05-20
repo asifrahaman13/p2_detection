@@ -1,10 +1,11 @@
 from io import BytesIO
+
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
+
 from src.instances.index import aws
 from src.doc.doc_process import DocsRedactor
 from src.logs.logger import Logger
-
 from src.models.cloud import CloudStorage
 from src.models.docs import DocumentData, RedactRequest
 from src.instances.index import mongo_db

@@ -2,14 +2,14 @@ import asyncio
 from io import BytesIO
 import time
 import copy
-
+import re
 from concurrent.futures import ProcessPoolExecutor
+from collections import Counter, defaultdict
+
 from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
 import pytesseract
-import re
 from PyPDF2 import PdfReader
-from collections import Counter, defaultdict
 
 from src.helper.images import process_image
 from src.llm.llm import LLM

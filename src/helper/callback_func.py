@@ -1,6 +1,7 @@
-from src.instances.index import manager
-from src.logs.logger import Logger
 import time
+
+from src.logs.logger import Logger
+from src.instances.index import manager
 
 log = Logger(name="callback_func.py").get_logger()
 
