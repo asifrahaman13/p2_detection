@@ -30,7 +30,6 @@ async def upload_pdf(
     try:
         file_name = f"{title}"
         file.file.seek(0)
-        # upload_response = aws.upload_pdf(file_name, file)
         upload_response = await run_blocking_io(aws.upload_pdf, file_name, file)
         if not upload_response:
             raise HTTPException(status_code=500, detail="Failed to upload file to S3")
@@ -123,8 +122,6 @@ async def process_pdf(request: RedactRequest):
         )
 
         await run_blocking_io(aws.upload_file_from_memory, output_stream, output_key)
-
-        # aws.upload_file_from_memory(output_stream, output_key)
         log.info(f"Redacted file uploaded successfully: {output_key}")
 
         result = {
