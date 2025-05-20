@@ -22,12 +22,11 @@ class AWSConfig:
 
 @dataclass(frozen=True)
 class DBConfig:
-    mongo_uri: str = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    postgres_dsn: str = os.getenv("POSTGRES_CONNECTION_STRING")
+    mongo_uri: str = os.getenv("MONGO_URI")
 
     def __post_init__(self):
-        if not self.postgres_dsn:
-            raise ValueError("PostgreSQL connection string is missing.")
+        if not self.mongo_uri:
+            raise ValueError("Mongodb connection string is missing.")
 
 
 @dataclass(frozen=True)

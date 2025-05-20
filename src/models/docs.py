@@ -9,11 +9,7 @@ class RedactRequest(BaseModel):
     class Config:
         orm_mode = True
         extra = "forbid"
-        json_schema_extra = {
-            "example": {
-                "input_key": "sample_doc_123"
-            }
-        }
+        json_schema_extra = {"example": {"input_key": "sample_doc_123"}}
 
 
 class KeyPoint(BaseModel):
@@ -28,7 +24,7 @@ class KeyPoint(BaseModel):
             "example": {
                 "entity": "John Doe",
                 "description": "Name of the patient",
-                "replaceWith": "REDACTED_NAME"
+                "replaceWith": "REDACTED_NAME",
             }
         }
 
@@ -40,14 +36,13 @@ class DocumentData(BaseModel):
             {
                 "entity": "John Doe",
                 "description": "Name of the patient",
-                "replaceWith": "REDACTED_NAME"
+                "replaceWith": "REDACTED_NAME",
             }
-        ]
+        ],
     )
     pdf_name: StrictStr = Field(..., example="medical_record.pdf")
     process_type: Optional[StrictStr] = Field(
-        default=ProcessTypes.REPLACE.value,
-        example="replace"
+        default=ProcessTypes.REPLACE.value, example="replace"
     )
 
     class Config:
@@ -60,10 +55,10 @@ class DocumentData(BaseModel):
                     {
                         "entity": "John Doe",
                         "description": "Name of the patient",
-                        "replaceWith": "REDACTED_NAME"
+                        "replaceWith": "REDACTED_NAME",
                     }
                 ],
                 "pdf_name": "medical_record",
-                "process_type": "replace"
+                "process_type": "replace",
             }
         }

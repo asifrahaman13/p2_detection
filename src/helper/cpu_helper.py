@@ -4,6 +4,7 @@ import functools
 
 from fastapi.concurrency import run_in_threadpool
 
+
 async def async_sleep(duration):
     await asyncio.sleep(duration)
 
