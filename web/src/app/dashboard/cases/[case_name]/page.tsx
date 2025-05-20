@@ -37,16 +37,16 @@ export default function Page(props: {
   const docUrl = usePresignedUrl(params.case_name);
   const router = useRouter();
 
-  const saveData = async () => {
+  async function saveData() {
     if (!documentData) return;
     try {
       await axios.post(`${config.backendUrl}/api/v1/docs/save`, documentData);
     } catch (err) {
       console.error("Error saving data", err);
     }
-  };
+  }
 
-  const processDocument = async () => {
+  async function processDocument() {
     try {
       await axios.post(`${config.backendUrl}/api/v1/docs/process-docs`, {
         input_key: params.case_name,
@@ -54,7 +54,7 @@ export default function Page(props: {
     } catch (err) {
       console.error("Error processing document", err);
     }
-  };
+  }
 
   async function deleteResources() {
     try {

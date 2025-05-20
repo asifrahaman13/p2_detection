@@ -20,10 +20,6 @@ export default function DefineComponent({
   triggerProcess: () => void;
 }) {
   const [processLoad, setProcessLoad] = React.useState<boolean>(false);
-
-  function handleProcessLoad() {
-    setProcessLoad(true);
-  }
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -57,6 +53,10 @@ export default function DefineComponent({
       ws.close();
     };
   }, [case_name]);
+
+  function handleProcessLoad() {
+    setProcessLoad(true);
+  }
 
   return (
     <Fragment>

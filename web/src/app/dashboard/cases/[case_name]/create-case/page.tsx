@@ -51,15 +51,15 @@ export default function Page(props: {
   const [fileSize, setFileSize] = useState<number | null>(null);
   const [dynamicValue, setDynamicValue] = useState(0);
 
-  const handleFileChange = async (file: File | null) => {
+  async function handleFileChange(file: File | null) {
     if (file) {
       setFileName(file.name);
       setFileSize(file.size);
 
       await handleFileUpload(file);
     }
-  };
-  const handleFileUpload = async (file: File) => {
+  }
+  async function handleFileUpload(file: File) {
     setLoading(true);
 
     const formData = new FormData();
@@ -104,19 +104,19 @@ export default function Page(props: {
       clearInterval(interval);
       setLoading(false);
     }
-  };
+  }
 
-  const handleDragOver = (e: React.DragEvent) => {
+  function handleDragOver(e: React.DragEvent) {
     e.preventDefault();
-  };
+  }
 
-  const handleDrop = (e: React.DragEvent) => {
+  function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0] ?? null;
     handleFileChange(file);
-  };
+  }
 
-  const formatFileSize = (fileSize: number | null) => {
+  function formatFileSize(fileSize: number | null) {
     if (fileSize === null) {
       return;
     }
@@ -125,7 +125,7 @@ export default function Page(props: {
     } else {
       return `${(fileSize / (1024 * 1024)).toFixed(2)} MB`;
     }
-  };
+  }
 
   return (
     <Fragment>

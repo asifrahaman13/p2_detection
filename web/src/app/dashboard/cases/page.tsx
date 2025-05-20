@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileMetadata } from "@/types/dashboard/dashboard";
+import { parseTimestamp } from "@/utils/pareseDate";
 
 const MyCases: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -39,22 +40,8 @@ const MyCases: React.FC = () => {
     router.push(`/dashboard/cases/${caseName}/create-case`);
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(e.target.value);
-  };
-
-  function parseTimestamp(timestamp: number) {
-    const date = new Date(timestamp);
-
-    const formatted = date.toLocaleString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-    return formatted;
   }
 
   return (
