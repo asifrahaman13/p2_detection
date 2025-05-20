@@ -10,7 +10,6 @@ interface Props {
   setData: React.Dispatch<React.SetStateAction<DocumentData | null>>;
   onSave: () => void;
   onProcess: () => void;
-  setViewMode: (mode: string) => void;
 }
 
 type ProgressMessage = {
@@ -24,7 +23,6 @@ export default function DescriptionEditor({
   setData,
   onSave,
   onProcess,
-  setViewMode,
 }: Props) {
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -64,7 +62,7 @@ export default function DescriptionEditor({
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.log("WebSocket error:", error);
     };
 
     return () => {
@@ -175,7 +173,6 @@ export default function DescriptionEditor({
   }
 
   function toogleProcessMode(mode: string) {
-    setViewMode(mode);
     if (!data) {
       return;
     }

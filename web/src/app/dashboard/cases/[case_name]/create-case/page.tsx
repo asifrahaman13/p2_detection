@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { Fragment, useReducer, useState } from "react";
+import React, { Fragment, useReducer, useState, use } from "react";
 import DefineComponent from "./DefineComponent";
 import axios from "axios";
 import config from "@/config/config";
@@ -37,7 +37,10 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-export default function Page({ params }: { params: { case_name: string } }) {
+export default function Page(props: {
+  params: Promise<{ case_name: string }>;
+}) {
+  const params = use(props.params);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [display, setDisplay] = useState("define");
   const [loading, setLoading] = useState(false);

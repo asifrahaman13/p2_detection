@@ -91,6 +91,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="h-16 gap-2 flex shadow-xl flex-row justify-between items-center px-4">
             <div className=" w-1/2">
               <input
+                onChange={() => {}}
                 type="text"
                 placeholder="Search by name, contact, or claim number"
                 value=""

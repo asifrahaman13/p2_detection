@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, use } from "react";
 import UploadedPdf from "@/components/UploadedPdf";
 import DescriptionEditor from "@/components/DescriptionEditor";
 import ToggleTabs from "@/components/ToggleTabs";
@@ -25,10 +25,12 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function Page({ params }: { params: { case_name: string } }) {
+export default function Page(props: {
+  params: Promise<{ case_name: string }>;
+}) {
+  const params = use(props.params);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [preview, setPreview] = useState("x");
-  const [viewMode, setViewMode] = useState("x");
   const [pageNum, setPageNum] = useState<number>(1);
 
   const [documentData, setDocumentData] = useDocumentData(params.case_name);
@@ -69,7 +71,7 @@ export default function Page({ params }: { params: { case_name: string } }) {
         console.log("success.");
         router.push("/dashboard/cases");
       }
-    } catch (e) {
+    } catch {
       console.log("Sorry something went wrong");
     }
   }
@@ -141,7 +143,6 @@ export default function Page({ params }: { params: { case_name: string } }) {
                 setData={setDocumentData}
                 onSave={saveData}
                 onProcess={processDocument}
-                setViewMode={setViewMode}
               />
             </div>
           ) : (

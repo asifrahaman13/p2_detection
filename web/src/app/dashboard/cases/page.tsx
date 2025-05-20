@@ -20,7 +20,7 @@ const MyCases: React.FC = () => {
     async function fetchAllCases() {
       try {
         const response = await axios.get(
-          `${config.backendUrl}/api/v1/docs/list-files`
+          `${config.backendUrl}/api/v1/docs/list-files`,
         );
         if (response.status === 200) {
           console.log(response.data);

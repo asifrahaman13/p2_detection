@@ -32,10 +32,10 @@ jobs:
           cd web
           bun install
 
-      # - name: Lint the codebase
-      #   run: |
-      #     cd web
-      #     bun run lint
+      - name: Lint the codebase
+        run: |
+          cd web
+          bun run lint
 
       - name: Build
         run: |
