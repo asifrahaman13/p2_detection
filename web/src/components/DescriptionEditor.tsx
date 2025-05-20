@@ -264,7 +264,7 @@ export default function DescriptionEditor({
                   />
 
                   <textarea
-                    rows={3}
+                    rows={point.description.length/15}
                     name="description"
                     className="text-gray-900 p-3 w-full rounded-md outline-none"
                     placeholder="Description"

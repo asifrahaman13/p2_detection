@@ -9,7 +9,7 @@ default_collection = Collections.DOCS.value
 
 
 class MongoDBHandler:
-    def __init__(self, uri: str, db_name: str):
+    def __init__(self, uri: str, db_name: str) -> None:
         self.client = AsyncIOMotorClient(uri)
         self.db = self.client[db_name]
 
