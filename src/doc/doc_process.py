@@ -1,8 +1,9 @@
+import asyncio
 from io import BytesIO
-from multiprocessing import Pool, cpu_count
 import time
 import copy
 
+from concurrent.futures import ProcessPoolExecutor
 from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
 import pytesseract
@@ -74,19 +75,19 @@ class DocsRedactor:
         reader = PdfReader(self.pdf_bytes_io)
         total_pages = len(reader.pages)
 
-        all_lines = []
         word_count = Counter()
         word_pages = defaultdict(set)
+        all_lines = []
 
-        await self.progress_callback(
-            f"Processing total {total_pages} pages",
-            self.key,
-        )
+        await self.progress_callback(f"Processing total {total_pages} pages", self.key)
 
-        with Pool(cpu_count()) as pool:
+        loop = asyncio.get_event_loop()
+
+        with ProcessPoolExecutor() as executor:
             for start_page in range(1, total_pages + 1, self.chunk_size):
                 end_page = min(start_page + self.chunk_size - 1, total_pages)
                 log.info(f"\n🔹 Processing pages {start_page} to {end_page}")
+
                 self.pdf_bytes_io.seek(0)
                 pdf_bytes = self.pdf_bytes_io.read()
 
@@ -97,24 +98,29 @@ class DocsRedactor:
                     last_page=end_page,
                 )
                 image_data = [(start_page + i - 1, img) for i, img in enumerate(images)]
-                results = pool.map(process_image, image_data)
+
+                results = await asyncio.gather(
+                    *[
+                        loop.run_in_executor(executor, process_image, data)
+                        for data in image_data
+                    ]
+                )
                 results.sort(key=lambda x: x[0])
 
                 for page_number, lines in results:
                     log.info(f"\n--- Page {page_number + 1} ---")
 
                     await self.progress_callback(
-                        f"Processing the page number: {page_number+1}",
-                        self.key,
+                        f"Processing the page number: {page_number + 1}", self.key
                     )
 
-                    all_lines = []
-                    all_lines.extend([line + "\n" for line in lines])
+                    all_lines = [line + "\n" for line in lines]
                     log.info("llm is triggered.")
                     text = "".join(all_lines)
 
                     formatted_text = self.prompt_builder(text)
                     result = await self.llm.openai_llm_response(formatted_text)
+
                     log.info(f"llm response is: {result}")
                     if result is not None:
                         for phrase, replacement in result.items():
@@ -140,7 +146,7 @@ class DocsRedactor:
                     "total_time": total_time,
                     "total_words_extracted": sum(word_count.values()),
                     "unique_words_extracted": list(word_map_copy),
-                    "total_unique_words_extracted": len(list(word_map_copy)),
+                    "total_unique_words_extracted": len(word_map_copy),
                     "word_frequencies": dict(word_count),
                     "word_page_map": {
                         k: sorted(list(v)) for k, v in word_pages.items()

@@ -29,7 +29,8 @@ async def upload_pdf(
     try:
         file_name = f"{title}"
         file.file.seek(0)
-        upload_response = aws.upload_pdf(file_name, file)
+        # upload_response = aws.upload_pdf(file_name, file)
+        upload_response = await run_blocking_io(aws.upload_pdf, file_name, file)
         if not upload_response:
             raise HTTPException(status_code=500, detail="Failed to upload file to S3")
         presigned_url = aws.generate_presigned_url(
@@ -59,6 +60,16 @@ async def upload_pdf(
 
 @docs_router.post("/process-docs")
 async def process_pdf(request: RedactRequest):
+    """
+    There are several steps in this process.
+    1. It downloads the doc into the memory (not hard drive) and keep in the buffer.
+    2. The download happens in separate event loop so that other operations are not blocked.
+    3. Data about the upload operation is inserted in mongodb.
+    4. DocReadactor object is created for the document processing.
+    5. The function process_docs() will process the doc, return the stats and the image array.
+    6. The image will be uploaded to the S3 from memory.
+    7. Data are saved to mongodb and api returns the stats.
+    """
     try:
         log.info("Processing docs...")
         log.info(request.input_key)
@@ -87,7 +98,9 @@ async def process_pdf(request: RedactRequest):
             configurations=configurations,
             progress_callback=progress_callback_func,
         )
+
         result = await redactor.process_doc()
+
         log.info(f"The statistcis is: {result["stats"]}")
         log.info(f"The redacted images are: {result["redacted_images"]}")
 
@@ -108,7 +121,9 @@ async def process_pdf(request: RedactRequest):
             "Uploading the processed file...", key=request.input_key
         )
 
-        aws.upload_file_from_memory(output_stream, output_key)
+        await run_blocking_io(aws.upload_file_from_memory, output_stream, output_key)
+
+        # aws.upload_file_from_memory(output_stream, output_key)
         log.info(f"Redacted file uploaded successfully: {output_key}")
 
         result = {
@@ -257,9 +272,15 @@ async def delete_resource(request: RedactRequest):
             )
         """
 
-        await mongo_db.delete_all(filters=filters, collection_name=Collections.DOCS.value)
-        await mongo_db.delete_all(filters=filters, collection_name=Collections.DOC_FILES.value)
-        await mongo_db.delete_all(filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value)
+        await mongo_db.delete_all(
+            filters=filters, collection_name=Collections.DOCS.value
+        )
+        await mongo_db.delete_all(
+            filters=filters, collection_name=Collections.DOC_FILES.value
+        )
+        await mongo_db.delete_all(
+            filters={"pdf_name": key}, collection_name=Collections.CONFIGUATIONS.value
+        )
 
         aws.delete_file(key=key)
 
