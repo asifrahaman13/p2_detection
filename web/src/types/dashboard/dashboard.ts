@@ -30,6 +30,8 @@ export type FileMetadata = {
   file_name: string;
   s3_path: string;
   title: string;
+  status: string;
+  timestamp: number;
 };
 
 export type Document = {

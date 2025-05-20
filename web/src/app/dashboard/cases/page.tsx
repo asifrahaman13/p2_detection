@@ -20,7 +20,7 @@ const MyCases: React.FC = () => {
     async function fetchAllCases() {
       try {
         const response = await axios.get(
-          `${config.backendUrl}/api/v1/docs/list-files`,
+          `${config.backendUrl}/api/v1/docs/list-files`
         );
         if (response.status === 200) {
           console.log(response.data);
@@ -42,6 +42,20 @@ const MyCases: React.FC = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
+
+  function parseTimestamp(timestamp: number) {
+    const date = new Date(timestamp);
+
+    const formatted = date.toLocaleString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    return formatted;
+  }
 
   return (
     <div className="p-4  bg-gray-100 w-full">
@@ -117,7 +131,7 @@ const MyCases: React.FC = () => {
           <div className="p-2 w-3/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
             Case Name
           </div>
-          <div className="p-2 w-2/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
+          <div className="p-2 flex-1 border-l-0 border-r-0 text-buttonTextColor font-medium">
             Status
           </div>
           <div className="p-2 w-4/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
@@ -137,14 +151,24 @@ const MyCases: React.FC = () => {
           >
             <Link
               href={`/dashboard/cases/${caseItem.file_name}`}
-              className="w-full flex"
+              className="w-full flex py-1"
             >
               <div className="p-2 w-3/12 border-l-0 border-r-0">
                 {caseItem.file_name}
               </div>
-              <div className="p-2 w-2/12 border-l-0 border-r-0">Processed</div>
+              <div className="p-2 flex-1 border-l-0 border-r-0">
+                <span
+                  className={`rounded-lg px-3 py-1 text-sm inline-block ${
+                    caseItem?.status === "uploaded"
+                      ? "bg-blue-200 text-blue-800"
+                      : "bg-green-300 text-green-800"
+                  }`}
+                >
+                  {caseItem?.status}
+                </span>
+              </div>
               <div className="p-2 w-4/12 border-l-0 border-r-0">
-                10/21/2024, 11:49 am
+                {parseTimestamp(caseItem?.timestamp)}
               </div>
               <div className="p-2 w-3/12 border-l-0 border-r-0">
                 Annie Adjuster

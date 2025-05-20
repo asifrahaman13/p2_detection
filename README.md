@@ -56,7 +56,7 @@ uv run uvicorn src.main:app --reload
 For production environment you can use the gunicorn and uvicorn combined instead. (Here we used 4 wokers.)
 
 ```bash
-src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
 ## Front end

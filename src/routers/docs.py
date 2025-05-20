@@ -10,8 +10,10 @@ from src.models.cloud import CloudStorage
 from src.models.docs import DocumentData, RedactRequest
 from src.instances.index import mongo_db
 from src.helper.callback_func import progress_callback_func
+from src.helper.time import curr_timestamp
 from src.helper.cpu_helper import run_blocking_io
 from src.models.db import Collections
+from src.models.doc_config import Status
 
 log = Logger(name="router").get_logger()
 
@@ -47,6 +49,8 @@ async def upload_pdf(
                 "file_name": file_name,
                 "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.UPLOADS.value}/{file_name}",
                 "title": title,
+                "status": Status.UPLOADED.value,
+                "timestamp": curr_timestamp(),
             },
             collection_name=Collections.DOC_FILES.value,
         )
@@ -124,25 +128,31 @@ async def process_pdf(request: RedactRequest):
         await run_blocking_io(aws.upload_file_from_memory, output_stream, output_key)
         log.info(f"Redacted file uploaded successfully: {output_key}")
 
+        filter = {
+            "file_name": request.input_key,
+        }
         result = {
             "message": "Redacted file uploaded successfully.",
             "file_name": request.input_key,
             "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
             "stats": result["stats"],
+            "status": Status.PROCESSED.value,
+            "timestamp": curr_timestamp(),
         }
-        filter = {
-            "file_name": request.input_key,
-        }
-        result = await mongo_db.upsert(
-            filter=filter,
-            data={
-                "file_name": request.input_key,
-                "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.REDACTED.value}/{output_key}",
-                "stats": result["stats"],
-            },
-            upsert=True,
-        )
+        result = await mongo_db.upsert(filter=filter, data=result, upsert=True)
         if not result:
+            raise HTTPException(
+                status_code=500, detail="Failed to save results in MongoDB"
+            )
+
+        update_result = await mongo_db.upsert(
+            filter=filter,
+            data={"status": Status.PROCESSED.value, "timestamp": curr_timestamp()},
+            upsert=True,
+            collection_name=Collections.DOC_FILES.value,
+        )
+
+        if not update_result:
             raise HTTPException(
                 status_code=500, detail="Failed to save results in MongoDB"
             )
