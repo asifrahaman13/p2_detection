@@ -25,7 +25,7 @@ git clone hhttps://github.com/asifrahaman13/p2_detection.git
 Next go to the root directory.
 
 ```bash
-ce p2_detection
+cd p2_detection
 ```
 
 Now set up virtual environment
