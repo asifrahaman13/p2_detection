@@ -3,11 +3,11 @@
 Repository to deal with the documents masking out the sensitive information. Currently, this is in the form of mono repo. Make sure you have node , uv (package manager for python) installed in your system.\
 
 
-![Screenshot from 2025-05-18 11-39-06](https://github.com/user-attachments/assets/f0899994-8e2a-4388-816b-25aa7446d924)
+![Screenshot from 2025-05-21 08-29-19](https://github.com/user-attachments/assets/082b7da6-e97a-45f1-a333-69b746a0889d)
 
 ![Screenshot from 2025-05-18 11-39-54](https://github.com/user-attachments/assets/df21a377-4707-4eff-9e3a-afdeb1c0df0f)
 
-![Screenshot from 2025-05-18 11-40-02](https://github.com/user-attachments/assets/7d6a5abd-ae21-46a2-ba9a-97d90fea23e1)
+![Screenshot from 2025-05-21 08-32-50](https://github.com/user-attachments/assets/933905b4-5293-4ee6-9887-47f1ab50698a)
 
 ![Screenshot from 2025-05-18 11-41-45](https://github.com/user-attachments/assets/47d4acc6-03e6-4ffa-9b44-3912758d9b6f)
 
@@ -28,7 +28,7 @@ Next go to the root directory.
 cd p2_detection
 ```
 
-Now set up virtual environment
+Now set up a virtual environment
 
 ```bash
 uv venv
@@ -41,7 +41,7 @@ Next install the dependencies.
 uv sync
 ```
 
-Create a .env file from the .env.example file, and ensure you enter correct credentials.
+Create a .env file from the .env.example file, and ensure you enter the correct credentials.
 
 ```bash
 mv .env.example .env
@@ -53,7 +53,7 @@ Next enter your credentials in .env file. Now you should be able to run the appl
 uv run uvicorn src.main:app --reload
 ```
 
-For production environment you can use the gunicorn and uvicorn combined instead. (Here we used 4 wokers.)
+For the production environment, you can use the unicorn and unicorn combined instead. (Here, we used 4 workers.)
 
 ```bash
 gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
@@ -61,13 +61,13 @@ gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker -
 
 ## Front end
 
-Go to the front end directory
+Go to the front-end directory
 
 ```bash
 cd web/
 ```
 
-Create a .env file from the .env.example file and ensure you enter correct credentials.
+Create a .env file from the .env.example file and ensure you enter the correct credentials.
 
 ```bash
 mv .env.example .env
@@ -79,15 +79,15 @@ Now install the dependencies.
 bun install
 ```
 
-Next run the server in local environment.
+Next, run the server in the local environment.
 
 ```bash
 bun run dev
 ```
 
-## Run as docker container
+## Run as a docker container
 
-The appllication can also be run as a docker container serveice. Run the following command at the root folder. Make sure you enter the correcnt credentials in the .env file of both the frontend and backend.
+The application can also be run as a docker container service. Run the following command in the root folder. Make sure you enter the correcnt credentials in the .env file of both the frontend and backend.
 
 
 ```bash
@@ -111,7 +111,7 @@ For formatting run the following script:
 ruff format
 ```
 
-If you want to run the precommit hooks, you can run the following comand. They will run anyway.
+If you want to run the pre-commit hooks, you can run the following command. They will run anyway.
 
 ```bash
 uv run pre-commit run
