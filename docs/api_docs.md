@@ -1,6 +1,6 @@
 # API documentation
 
-The followings are the list of curl requests for the APIs. 
+The followings are the list of curl requests for the APIs.
 
 1. Upload Documentss
 
@@ -57,7 +57,7 @@ curl -X POST http://localhost:8000/v1/docs/save \
 
 ```
 
-6. Get all the key points of the document. 
+6. Get all the key points of the document.
 
 ```bash
 curl -X POST http://localhost:8000/v1/docs/get-key-points \
