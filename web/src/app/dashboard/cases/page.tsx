@@ -34,11 +34,11 @@ const MyCases: React.FC = () => {
     fetchAllCases();
   }, []);
 
-  const handleCreateCase = () => {
+  function handleCreateCase() {
     if (caseName.trim() === "") return;
     closeModal();
     router.push(`/dashboard/cases/${caseName}/create-case`);
-  };
+  }
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(e.target.value);
@@ -113,39 +113,33 @@ const MyCases: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="w-full border border-gray-300">
-        <div className="bg-gray-200 flex">
-          <div className="p-2 w-3/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
-            Case Name
-          </div>
-          <div className="p-2 flex-1 border-l-0 border-r-0 text-buttonTextColor font-medium">
-            Status
-          </div>
-          <div className="p-2 w-4/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
-            Last Updated
-          </div>
-          <div className="p-2 w-3/12 border-l-0 border-r-0 text-buttonTextColor font-medium">
-            Last Updated By
-          </div>
+      <div className="w-full border border-gray-300 rounded-md overflow-hidden">
+        {/* Header */}
+        <div className="bg-gray-200 flex flex-wrap text-sm font-medium text-buttonTextColor">
+          <div className="p-3 w-1/12">Case Name</div>
+          <div className="p-3 flex-1">Status</div>
+          <div className="p-3 w-2/12">Last Updated</div>
+          <div className="p-3 w-3/12">Time Taken</div>
+          <div className="p-3 w-4/12">Tags</div>
+          <div className="p-3 w-1/12">Last Updated By</div>
         </div>
 
+        {/* Rows */}
         {cases?.map((caseItem, index) => (
           <div
             key={index}
-            className={`${
-              index % 2 !== 0 ? "bg-white" : ""
-            } flex text-buttonTextColor border-2 border-gray-100`}
+            className={`flex flex-wrap items-center text-sm text-buttonTextColor ${
+              index % 2 === 0 ? "bg-white" : "bg-gray-50"
+            }`}
           >
             <Link
               href={`/dashboard/cases/${caseItem.file_name}`}
-              className="w-full flex py-1"
+              className="w-full flex flex-wrap py-2 hover:bg-gray-100 transition-colors"
             >
-              <div className="p-2 w-3/12 border-l-0 border-r-0">
-                {caseItem.file_name}
-              </div>
-              <div className="p-2 flex-1 border-l-0 border-r-0">
+              <div className="p-3 w-1/12 truncate">{caseItem.file_name}</div>
+              <div className="p-3 flex-1">
                 <span
-                  className={`rounded-lg px-3 py-1 text-sm inline-block ${
+                  className={`rounded-full px-3 py-1 text-xs font-semibold inline-block ${
                     caseItem?.status === "uploaded"
                       ? "bg-blue-200 text-blue-800"
                       : "bg-green-300 text-green-800"
@@ -154,12 +148,34 @@ const MyCases: React.FC = () => {
                   {caseItem?.status}
                 </span>
               </div>
-              <div className="p-2 w-4/12 border-l-0 border-r-0">
+
+              <div className="p-3 w-2/12 whitespace-nowrap">
                 {parseTimestamp(caseItem?.timestamp)}
               </div>
-              <div className="p-2 w-3/12 border-l-0 border-r-0">
-                Annie Adjuster
+              <div className="p-3 w-3/12">
+                <span className="inline-block px-3 py-1 rounded-full bg-yellow-200 text-yellow-900 text-xs font-semibold">
+                  {Number(caseItem?.time_taken).toFixed(2)} s
+                </span>
               </div>
+              <div className="p-3 w-4/12 flex flex-wrap gap-2">
+                {caseItem?.tags.length > 0 ? (
+                  caseItem?.tags.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-orange-200 text-orange-600 px-2 py-1 rounded-xl "
+                    >
+                      {item}
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="bg-orange-200 text-orange-600 px-2 py-1 rounded-xl">
+                      Not provided
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="p-3 w-1/12 whitespace-nowrap">Annie Adjuster</div>
             </Link>
           </div>
         ))}

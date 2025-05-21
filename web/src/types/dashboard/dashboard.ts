@@ -32,6 +32,8 @@ export type FileMetadata = {
   title: string;
   status: string;
   timestamp: number;
+  time_taken: number;
+  tags: string[];
 };
 
 export type Document = {

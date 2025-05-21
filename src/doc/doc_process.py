@@ -5,11 +5,13 @@ import copy
 import re
 from concurrent.futures import ProcessPoolExecutor
 from collections import Counter, defaultdict
+from typing import Optional
 
 from pdf2image import convert_from_bytes
 from PIL import ImageDraw, ImageFont
 import pytesseract
 from PyPDF2 import PdfReader
+from PIL import Image
 
 from src.helper.images import process_image
 from src.llm.llm import LLM
@@ -29,6 +31,7 @@ class DocsRedactor:
         key: str = None,
         configurations: dict = {},
         progress_callback=None,
+        start_time: Optional[int] = None,
     ) -> None:
         self.pdf_bytes_io = pdf_bytes_io
         self.word_map = defaultdict()
@@ -39,6 +42,7 @@ class DocsRedactor:
         self.key = key
         self.configuations = configurations
         self.progress_callback = progress_callback
+        self.start_time = start_time
         self.llm = LLM()
 
     def prompt_builder(self, text: str) -> str:
@@ -71,7 +75,6 @@ class DocsRedactor:
         return formatted_prompt
 
     async def process_doc(self) -> dict:
-        start_time = time.time()
         reader = PdfReader(self.pdf_bytes_io)
         total_pages = len(reader.pages)
 
@@ -128,8 +131,6 @@ class DocsRedactor:
                             word_count[phrase] += 1
                             word_pages[phrase].add(page_number + 1)
 
-        total_time = time.time() - start_time
-        log.info(f"🔹 Total time taken: {total_time:.2f}s")
         log.info(f"🧠 Unique phrases found: {len(self.word_map)}")
         log.info(f"📈 Word frequency: {dict(word_count)}")
         log.info(f"📄 Word locations: {dict(word_pages)}")
@@ -143,7 +144,7 @@ class DocsRedactor:
             return {
                 "redacted_images": redacted_images,
                 "stats": {
-                    "total_time": total_time,
+                    "total_time": time.time() - self.start_time,
                     "total_words_extracted": sum(word_count.values()),
                     "unique_words_extracted": list(word_map_copy),
                     "total_unique_words_extracted": len(word_map_copy),
@@ -157,7 +158,7 @@ class DocsRedactor:
         return {
             "redacted_images": [],
             "stats": {
-                "total_time": total_time,
+                "total_time": time.time() - self.start_time,
                 "total_words_extracted": 0,
                 "unique_words_extracted": [],
                 "word_frequencies": {},
@@ -247,11 +248,41 @@ class DocsRedactor:
                             max_y = max(box[1] + box[3] for box in boxes)
 
                             draw.rectangle([min_x, min_y, max_x, max_y], fill="black")
-
                             if (
                                 self.configuations["process_type"]
                                 == ProcessTypes.REPLACE.value
+                                and replacement
                             ):
+                                draw.rectangle(
+                                    [min_x, min_y, max_x, max_y], fill="white"
+                                )
+                                font = self._get_font(
+                                    replacement, max_x - min_x, max_y - min_y
+                                )
+                                text_pos = self._centered_text_position(
+                                    font, replacement, (min_x, min_y, max_x, max_y)
+                                )
+                                draw.text(text_pos, replacement, fill="blue", font=font)
+                                log.info(
+                                    f"🔒 Replaced phrase '{phrase}' with '{replacement}'"
+                                )
+                            else:
+                                light_blue = (173, 216, 230, 128)
+                                if image.mode == "RGBA":
+                                    overlay = Image.new("RGBA", image.size)
+                                    overlay_draw = ImageDraw.Draw(overlay)
+                                    overlay_draw.rectangle(
+                                        [min_x, min_y, max_x, max_y], fill=light_blue
+                                    )
+                                    image = Image.alpha_composite(
+                                        image.convert("RGBA"), overlay
+                                    )
+                                    draw = ImageDraw.Draw(image)
+                                else:
+                                    draw.rectangle(
+                                        [min_x, min_y, max_x, max_y], fill="#ADD8E6"
+                                    )
+
                                 font = self._get_font(
                                     replacement, max_x - min_x, max_y - min_y
                                 )

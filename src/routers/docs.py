@@ -1,4 +1,5 @@
 from io import BytesIO
+import time
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
@@ -26,6 +27,7 @@ async def upload_pdf(
     title: str = Form(...),
 ):
     try:
+        start_time = time.time()
         file_name = f"{title}"
         file.file.seek(0)
         upload_response = await run_blocking_io(aws.upload_pdf, file_name, file)
@@ -40,17 +42,30 @@ async def upload_pdf(
             )
 
         log.info(f"File uploaded successfully: {file_name}")
-        insert = await mongo_db.create(
+        insert_doc = await mongo_db.create(
             data={
                 "file_name": file_name,
                 "s3_path": f"s3://{aws.bucket_name}/{CloudStorage.UPLOADS.value}/{file_name}",
                 "title": title,
                 "status": Status.UPLOADED.value,
                 "timestamp": curr_timestamp(),
+                "time_taken": time.time() - start_time,
             },
             collection_name=Collections.DOC_FILES.value,
         )
-        if insert is None:
+        if insert_doc is None:
+            raise HTTPException(status_code=404, detail="Sorry something went wrong")
+
+        insert_config = await mongo_db.create(
+            data={
+                "pdf_name": file_name,
+                "key_points": [],
+                "process_type": ProcessTypes.REPLACE.value,
+            },
+            collection_name=Collections.CONFIGUATIONS.value,
+        )
+
+        if insert_config is None:
             raise HTTPException(status_code=404, detail="Sorry something went wrong")
 
         return JSONResponse(content={"presigned_url": presigned_url}, status_code=200)
@@ -71,11 +86,13 @@ async def process_pdf(request: RedactRequest):
     7. Data are saved to mongodb and api returns the stats.
     """
     try:
+        start_time = time.time()
         log.info("Processing docs...")
         log.info(request.input_key)
 
         await progress_callback_func(
-            "downloading the file to our system final", key=request.input_key
+            "downloading the file to our system. It may take a few moments",
+            key=request.input_key,
         )
 
         log.info(f"Input key: {request.input_key}")
@@ -97,6 +114,7 @@ async def process_pdf(request: RedactRequest):
             key=request.input_key,
             configurations=configurations,
             progress_callback=progress_callback_func,
+            start_time=start_time,
         )
 
         result = await redactor.process_doc()
@@ -134,6 +152,7 @@ async def process_pdf(request: RedactRequest):
             "stats": result["stats"],
             "status": Status.PROCESSED.value,
             "timestamp": curr_timestamp(),
+            "time_taken": result["total_time"],
         }
         result = await mongo_db.upsert(filter=filter, data=result, upsert=True)
         if not result:
@@ -184,9 +203,28 @@ async def get_presigned_url(request: RedactRequest):
 @docs_router.get("/list-files")
 async def list_files():
     try:
-        files = await mongo_db.get_all(collection_name=Collections.DOC_FILES.value)
-        log.info(f"Files retrieved successfully: {files}")
-        return JSONResponse(content={"files": files}, status_code=200)
+        file_metadata = await mongo_db.get_all(
+            collection_name=Collections.DOC_FILES.value
+        )
+
+        for f in file_metadata:
+            pdf_name = f["file_name"]
+            res = await mongo_db.find_one(
+                filters={"pdf_name": pdf_name},
+                collection_name=Collections.CONFIGUATIONS.value,
+            )
+            if res is None:
+                continue
+            key_points = res.get("key_points", None)
+            entities = []
+            if key_points:
+                for k in key_points:
+                    entity = k["entity"]
+                    entities.append(entity)
+            f["tags"] = entities
+
+        log.info(f"Final metadata after aggregating the results: {file_metadata}")
+        return JSONResponse(content={"files": file_metadata}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -206,6 +206,7 @@ export default function DescriptionEditor({
               type="file"
               accept="application/json"
               onChange={handleJsonUpload}
+              disabled={isProcessing}
               className="hidden"
             />
           </label>
