@@ -1,157 +1,81 @@
 {
-  "total_time": 39.57938528060913,
-  "total_words_extracted": 87,
+  "total_time": 23.927060842514038,
+  "total_words_extracted": 34,
   "unique_words_extracted": [
-    "deloitte certified public accountants sa",
-    "3a fragkokklisias  granikou str marousi athens gr 15125 greece",
-    "30 210 6781 100",
-    "black sea trade and development bank",
-    "deloitte",
-    "31 december 2021",
-    "31 december 2020",
-    "management",
-    "greek",
-    "alexandra kostara",
-    "athens greece",
-    "marousi athens greece",
-    "income statement",
-    "for the year ended 31 december 2021",
-    "presented in thousands of eur",
-    "statement of comprehensive income",
-    "cash and due from banks",
-    "deposits in margin accounts",
-    "debt investment securities at fair value through other comprehensive income",
-    "derivative financial instruments",
-    "loans at amortized cost",
-    "loans at fair value through profit or loss",
-    "equity investments at fair value through profit or loss",
-    "equity investments at fair value through other comprehensive income",
-    "accrued interest receivable",
-    "other assets",
-    "property and equipment",
-    "intangible assets",
-    "right of use assets",
-    "amounts due to financial institutions",
-    "debt evidenced by certificates",
-    "accrued interest payable",
-    "statement of changes in members equity",
-    "statement of cash flows",
-    "1 komninon street thessaloniki",
-    "hellenic republic",
-    "albania",
-    "armenia",
-    "azerbaijan",
-    "bulgaria",
-    "georgia",
-    "greece",
-    "moldova",
-    "romania",
-    "russian federation",
-    "turkey",
-    "ukraine",
-    "adela xhemali",
-    "arthur javadyan",
-    "samir sharifov",
-    "monica dimitrovabeecher",
-    "koba gvenetadze",
-    "adonisspyridon georgiadis",
-    "dumitru budianschi",
-    "alin chitu",
-    "timur maksimov",
-    "murat zaman",
-    "yuliia svyrydenko",
-    "mr arlind gjokuta",
-    "mr andranik grigoryan",
-    "mr famil ismayilov",
-    "ms milena boykova",
-    "mr ekaterine guntsadze",
-    "mr loannis tsakiris",
-    "ms elena matveeva",
-    "ms diana blindu",
-    "mr dmitry birichevskiy",
-    "dr serhat koksal",
-    "mr taras kachka",
-    "russia",
-    "international accounting standards board",
-    "european central bank"
+    "Deloitte",
+    "Black Sea Trade and Development Bank",
+    "3a Fragkokklisias & Granikou str. Marousi Athens GR 151-25 Greece",
+    "+30 210 6781 100",
+    "Alexandra Kostara",
+    "Deloitte Certified Public Accountants SA",
+    "3a Fragkokklisias & Granikou str., GR 151-25 Marousi, Athens, Greece",
+    "1 Komninon Street, Thessaloniki, in the Hellenic Republic",
+    "Ms. Adela Xhemali",
+    "Mr. Arthur Javadyan",
+    "Mr. Samir Sharifov",
+    "Ms. Monica Dimitrova-Beecher",
+    "Mr. Koba Gvenetadze",
+    "Mr. Adonis-Spyridon Georgiadis",
+    "Mr. Dumitru Budianschi",
+    "Mr. Alin Chitu",
+    "Mr. Timur Maksimov",
+    "Mr. Murat Zaman",
+    "Mr. Yuliia Svyrydenko",
+    "Arlind Gjokuta",
+    "Andranik Grigoryan",
+    "Famil Ismayilov",
+    "Milena Boykova",
+    "Ekaterine Guntsadze",
+    "loannis Tsakiris",
+    "Elena Matveeva",
+    "Diana Blindu",
+    "Dmitry Birichevskiy",
+    "Serhat Koksal",
+    "Taras Kachka"
   ],
+  "total_unique_words_extracted": 30,
   "word_frequencies": {
-    "deloitte certified public accountants sa": 1,
-    "3a fragkokklisias  granikou str marousi athens gr 15125 greece": 1,
-    "30 210 6781 100": 1,
-    "black sea trade and development bank": 2,
-    "deloitte": 3,
-    "31 december 2021": 1,
-    "31 december 2020": 1,
-    "management": 1,
-    "greek": 1,
-    "alexandra kostara": 1,
-    "athens greece": 1,
-    "marousi athens greece": 1,
-    "income statement": 1,
-    "for the year ended 31 december 2021": 2,
-    "presented in thousands of eur": 2,
-    "statement of comprehensive income": 1,
-    "cash and due from banks": 1,
-    "deposits in margin accounts": 1,
-    "debt investment securities at fair value through other comprehensive income": 1,
-    "derivative financial instruments": 1,
-    "loans at amortized cost": 1,
-    "loans at fair value through profit or loss": 1,
-    "equity investments at fair value through profit or loss": 1,
-    "equity investments at fair value through other comprehensive income": 1,
-    "accrued interest receivable": 1,
-    "other assets": 1,
-    "property and equipment": 1,
-    "intangible assets": 1,
-    "right of use assets": 1,
-    "amounts due to financial institutions": 1,
-    "debt evidenced by certificates": 1,
-    "accrued interest payable": 1,
-    "statement of changes in members equity": 1,
-    "statement of cash flows": 1,
-    "1 komninon street thessaloniki": 1,
-    "hellenic republic": 1,
-    "albania": 2,
-    "armenia": 2,
-    "azerbaijan": 2,
-    "bulgaria": 2,
-    "georgia": 2,
-    "greece": 2,
-    "moldova": 2,
-    "romania": 2,
-    "russian federation": 1,
-    "turkey": 2,
-    "ukraine": 2,
-    "adela xhemali": 1,
-    "arthur javadyan": 1,
-    "samir sharifov": 1,
-    "monica dimitrovabeecher": 1,
-    "koba gvenetadze": 1,
-    "adonisspyridon georgiadis": 1,
-    "dumitru budianschi": 1,
-    "alin chitu": 1,
-    "timur maksimov": 1,
-    "murat zaman": 1,
-    "yuliia svyrydenko": 1,
-    "mr arlind gjokuta": 1,
-    "mr andranik grigoryan": 1,
-    "mr famil ismayilov": 1,
-    "ms milena boykova": 1,
-    "mr ekaterine guntsadze": 1,
-    "mr loannis tsakiris": 1,
-    "ms elena matveeva": 1,
-    "ms diana blindu": 1,
-    "mr dmitry birichevskiy": 1,
-    "dr serhat koksal": 1,
-    "mr taras kachka": 1,
-    "russia": 1,
-    "international accounting standards board": 1,
-    "european central bank": 1
+    "Deloitte": 4,
+    "Black Sea Trade and Development Bank": 2,
+    "3a Fragkokklisias & Granikou str. Marousi Athens GR 151-25 Greece": 1,
+    "+30 210 6781 100": 1,
+    "Alexandra Kostara": 1,
+    "Deloitte Certified Public Accountants SA": 1,
+    "3a Fragkokklisias & Granikou str., GR 151-25 Marousi, Athens, Greece": 1,
+    "1 Komninon Street, Thessaloniki, in the Hellenic Republic": 1,
+    "Ms. Adela Xhemali": 1,
+    "Mr. Arthur Javadyan": 1,
+    "Mr. Samir Sharifov": 1,
+    "Ms. Monica Dimitrova-Beecher": 1,
+    "Mr. Koba Gvenetadze": 1,
+    "Mr. Adonis-Spyridon Georgiadis": 1,
+    "Mr. Dumitru Budianschi": 1,
+    "Mr. Alin Chitu": 1,
+    "Mr. Timur Maksimov": 1,
+    "Mr. Murat Zaman": 1,
+    "Mr. Yuliia Svyrydenko": 1,
+    "Arlind Gjokuta": 1,
+    "Andranik Grigoryan": 1,
+    "Famil Ismayilov": 1,
+    "Milena Boykova": 1,
+    "Ekaterine Guntsadze": 1,
+    "loannis Tsakiris": 1,
+    "Elena Matveeva": 1,
+    "Diana Blindu": 1,
+    "Dmitry Birichevskiy": 1,
+    "Serhat Koksal": 1,
+    "Taras Kachka": 1
   },
   "word_page_map": {
-    "Deloitte Certified Public Accountants S.A.": [
-      2
+    "Deloitte": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "Black Sea Trade and Development Bank": [
+      2,
+      11
     ],
     "3a Fragkokklisias & Granikou str. Marousi Athens GR 151-25 Greece": [
       2
@@ -159,226 +83,82 @@
     "+30 210 6781 100": [
       2
     ],
-    "Black Sea Trade and Development Bank": [
-      2,
-      11
-    ],
-    "Deloitte": [
-      3,
-      4,
-      5
-    ],
-    "31 December 2021": [
-      3
-    ],
-    "31 December 2020": [
-      3
-    ],
-    "Management": [
-      3
-    ],
-    "Greek": [
-      4
-    ],
     "Alexandra Kostara": [
       5
     ],
-    "Athens, Greece": [
+    "Deloitte Certified Public Accountants SA": [
       5
     ],
-    "Marousi, Athens, Greece": [
+    "3a Fragkokklisias & Granikou str., GR 151-25 Marousi, Athens, Greece": [
       5
     ],
-    "INCOME STATEMENT": [
-      6
-    ],
-    "For the year ended 31 December 2021": [
-      6,
-      10
-    ],
-    "Presented in thousands of EUR": [
-      6,
-      10
-    ],
-    "STATEMENT OF COMPREHENSIVE INCOME": [
-      7
-    ],
-    "Cash and due from banks": [
-      8
-    ],
-    "Deposits in margin accounts": [
-      8
-    ],
-    "Debt investment securities at fair value through other comprehensive income": [
-      8
-    ],
-    "Derivative financial instruments": [
-      8
-    ],
-    "Loans at amortized cost": [
-      8
-    ],
-    "Loans at fair value through profit or loss": [
-      8
-    ],
-    "Equity investments at fair value through profit or loss": [
-      8
-    ],
-    "Equity investments at fair value through other comprehensive income": [
-      8
-    ],
-    "Accrued interest receivable": [
-      8
-    ],
-    "Other assets": [
-      8
-    ],
-    "Property and equipment": [
-      8
-    ],
-    "Intangible assets": [
-      8
-    ],
-    "Right of use assets": [
-      8
-    ],
-    "Amounts due to financial institutions": [
-      8
-    ],
-    "Debt evidenced by certificates": [
-      8
-    ],
-    "Accrued interest payable": [
-      8
-    ],
-    "STATEMENT OF CHANGES IN MEMBERS' EQUITY": [
-      9
-    ],
-    "STATEMENT OF CASH FLOWS": [
-      10
-    ],
-    "1 Komninon Street, Thessaloniki": [
+    "1 Komninon Street, Thessaloniki, in the Hellenic Republic": [
       11
     ],
-    "Hellenic Republic": [
+    "Ms. Adela Xhemali": [
       11
     ],
-    "Albania": [
-      11,
-      12
-    ],
-    "Armenia": [
-      11,
-      12
-    ],
-    "Azerbaijan": [
-      11,
-      12
-    ],
-    "Bulgaria": [
-      11,
-      12
-    ],
-    "Georgia": [
-      11,
-      12
-    ],
-    "Greece": [
-      11,
-      12
-    ],
-    "Moldova": [
-      11,
-      12
-    ],
-    "Romania": [
-      11,
-      12
-    ],
-    "Russian Federation": [
+    "Mr. Arthur Javadyan": [
       11
     ],
-    "Turkey": [
-      11,
-      12
-    ],
-    "Ukraine": [
-      11,
-      12
-    ],
-    "Adela Xhemali": [
+    "Mr. Samir Sharifov": [
       11
     ],
-    "Arthur Javadyan": [
+    "Ms. Monica Dimitrova-Beecher": [
       11
     ],
-    "Samir Sharifov": [
+    "Mr. Koba Gvenetadze": [
       11
     ],
-    "Monica Dimitrova-Beecher": [
+    "Mr. Adonis-Spyridon Georgiadis": [
       11
     ],
-    "Koba Gvenetadze": [
+    "Mr. Dumitru Budianschi": [
       11
     ],
-    "Adonis-Spyridon Georgiadis": [
+    "Mr. Alin Chitu": [
       11
     ],
-    "Dumitru Budianschi": [
+    "Mr. Timur Maksimov": [
       11
     ],
-    "Alin Chitu": [
+    "Mr. Murat Zaman": [
       11
     ],
-    "Timur Maksimov": [
+    "Mr. Yuliia Svyrydenko": [
       11
     ],
-    "Murat Zaman": [
-      11
-    ],
-    "Yuliia Svyrydenko": [
-      11
-    ],
-    "Mr. Arlind Gjokuta": [
+    "Arlind Gjokuta": [
       12
     ],
-    "Mr. Andranik Grigoryan": [
+    "Andranik Grigoryan": [
       12
     ],
-    "Mr. Famil Ismayilov": [
+    "Famil Ismayilov": [
       12
     ],
-    "Ms. Milena Boykova": [
+    "Milena Boykova": [
       12
     ],
-    "Mr. Ekaterine Guntsadze": [
+    "Ekaterine Guntsadze": [
       12
     ],
-    "Mr. loannis Tsakiris": [
+    "loannis Tsakiris": [
       12
     ],
-    "Ms. Elena Matveeva": [
+    "Elena Matveeva": [
       12
     ],
-    "Ms. Diana Blindu": [
+    "Diana Blindu": [
       12
     ],
-    "Mr. Dmitry Birichevskiy": [
+    "Dmitry Birichevskiy": [
       12
     ],
-    "Dr. Serhat Koksal": [
+    "Serhat Koksal": [
       12
     ],
-    "Mr. Taras Kachka": [
-      12
-    ],
-    "Russia": [
-      12
-    ],
-    "International Accounting Standards Board": [
-      12
-    ],
-    "European Central Bank": [
+    "Taras Kachka": [
       12
     ]
   }
