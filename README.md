@@ -97,9 +97,8 @@ docker compose up
 
 ## Formatting
 
-For backend:
 
-For linting run the following:
+For linting the backend run the following:
 
 ```bash
 ruff check --fix
@@ -117,7 +116,7 @@ If you want to run the pre-commit hooks, you can run the following command. They
 uv run pre-commit run
 ```
 
-For linting run the following inside the web folder.
+For linting the frontend run the following inside the web folder.
 
 ```bash
 bun run lint
