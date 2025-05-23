@@ -70,6 +70,7 @@ async def upload_pdf(
 
         return JSONResponse(content={"presigned_url": presigned_url}, status_code=200)
     except Exception as e:
+        await progress_callback_func("some error occured", key=file_name)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -152,7 +153,7 @@ async def process_pdf(request: RedactRequest):
             "stats": result["stats"],
             "status": Status.PROCESSED.value,
             "timestamp": curr_timestamp(),
-            "time_taken": result["total_time"],
+            "time_taken": result["stats"]["total_time"],
         }
         result = await mongo_db.upsert(filter=filter, data=result, upsert=True)
         if not result:
@@ -176,6 +177,7 @@ async def process_pdf(request: RedactRequest):
         return JSONResponse(content=result, status_code=200)
     except Exception as e:
         log.error(f"Error processing PDF: {e}")
+        await progress_callback_func("Some error occured.", key=request.input_key)
         raise HTTPException(status_code=500, detail=str(e))
 
 
