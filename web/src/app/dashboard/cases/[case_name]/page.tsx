@@ -178,8 +178,14 @@ export default function Page(props: {
           )}
 
           {state.activeButton === "LOGS" && (
-            <div className="w-1/2 h-3/4">
-              <ProgressUpdates messages={logs} />
+            <div className="w-1/2 h-3/4 bg-white">
+              {logs.length > 0 ? (
+                <ProgressUpdates messages={logs} />
+              ) : (
+                <div className="h-full flex justify-center items-center">
+                  Sorry nothing to display here.
+                </div>
+              )}
             </div>
           )}
 

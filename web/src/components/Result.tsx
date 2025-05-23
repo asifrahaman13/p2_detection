@@ -43,7 +43,9 @@ export default function Result({ caseName, setPageNum }: ResultTypeProps) {
   return (
     <div className=" bg-white overflow-scroll h-full">
       {!result ? (
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500 flex justify-center items-center">
+          Loading...
+        </div>
       ) : (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg">
