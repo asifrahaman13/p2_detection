@@ -58,13 +58,31 @@ class MongoDBHandler:
         upsert: bool = False,
         collection_name: str = default_collection,
         session: Optional[AsyncIOMotorClientSession] = None,
+        push_fields: Optional[list[str]] = None,
     ) -> bool:
-        collection = self.db[collection_name]
         if isinstance(filter, str):
             filter = {"_id": ObjectId(filter)}
+
+        update_query = {}
+        push_fields = push_fields or []
+
+        if push_fields:
+            push_ops = {
+                field: {"$each": data[field]}
+                for field in push_fields
+                if field in data and isinstance(data[field], list)
+            }
+            if push_ops:
+                update_query["$push"] = push_ops
+        set_ops = {key: value for key, value in data.items() if key not in push_fields}
+        if set_ops:
+            update_query["$set"] = set_ops
+
+        collection = self.db[collection_name]
         result = await collection.update_one(
-            filter, {"$set": data}, upsert=upsert, session=session
+            filter, update_query, upsert=upsert, session=session
         )
+
         return result.modified_count > 0 or result.upserted_id is not None
 
     async def delete(

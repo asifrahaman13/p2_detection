@@ -334,3 +334,14 @@ async def delete_resource(request: RedactRequest):
     except Exception as e:
         log.error(e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@docs_router.get("/logs/{key}")
+async def logs(key: str):
+    try:
+        response = await mongo_db.find_one(
+            filters={"doc_name": key}, collection_name=Collections.LOGS.value
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

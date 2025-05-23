@@ -4,11 +4,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import Overview from "@/components/Tasks/Overview";
 import Group from "@/components/Tasks/Group";
 import config from "@/config/config";
-
-type ProgressMessage = {
-  status: string;
-  timestamp: number;
-};
+import { ProgressMessage } from "@/types/dashboard/dashboard";
 
 export default function DefineComponent({
   case_name,

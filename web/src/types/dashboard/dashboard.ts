@@ -44,14 +44,20 @@ export type Document = {
 };
 
 export interface State {
-  activeButton: "OUTLINE" | "RESULT";
+  activeButton: "OUTLINE" | "RESULT" | "LOGS";
 }
 
 export type Action =
   | { type: "TOGGLE_TO_OUTLINE" }
-  | { type: "TOGGLE_TO_RESULT" };
+  | { type: "TOGGLE_TO_RESULT" }
+  | { type: "TOGGLE_TO_LOGS" };
 
 export type PresignedUrl = {
   original_pdf: string;
   masked_pdf: string;
+};
+
+export type ProgressMessage = {
+  status: string;
+  timestamp: number;
 };

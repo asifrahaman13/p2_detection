@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useReducer, useState, use } from "react";
+import React, { useReducer, useState, use, useEffect } from "react";
 import UploadedPdf from "@/components/UploadedPdf";
 import DescriptionEditor from "@/components/DescriptionEditor";
 import ToggleTabs from "@/components/ToggleTabs";
@@ -11,6 +12,8 @@ import axios from "axios";
 import config from "@/config/config";
 import Result from "@/components/Result";
 import { useRouter } from "next/navigation";
+import { ProgressMessage } from "@/types/dashboard/dashboard";
+import ProgressUpdates from "@/components/ui/ProgressUpdates";
 
 const initialState: State = { activeButton: "OUTLINE" };
 
@@ -20,6 +23,8 @@ function reducer(state: State, action: Action): State {
       return { activeButton: "OUTLINE" };
     case "TOGGLE_TO_RESULT":
       return { activeButton: "RESULT" };
+    case "TOGGLE_TO_LOGS":
+      return { activeButton: "LOGS" };
     default:
       return state;
   }
@@ -75,6 +80,25 @@ export default function Page(props: {
       console.log("Sorry something went wrong");
     }
   }
+
+  const [logs, setLogs] = useState<ProgressMessage[]>([]);
+
+  useEffect(() => {
+    async function fetchAllLogs() {
+      try {
+        const response = await axios.get(
+          `${config.backendUrl}/api/v1/docs/logs/${params.case_name}`,
+        );
+
+        if (response.status === 200) {
+          setLogs(response.data.log);
+        }
+      } catch {
+        console.log("Sorry something went wrong");
+      }
+    }
+    fetchAllLogs();
+  }, [params.case_name]);
 
   return (
     <div className="p-4 bg-gray-100 w-full">
@@ -135,7 +159,7 @@ export default function Page(props: {
 
       <div className="h-full">
         <div className="flex h-full  gap-8">
-          {state.activeButton === "OUTLINE" ? (
+          {state.activeButton === "OUTLINE" && (
             <div className="w-1/2 h-3/4">
               <DescriptionEditor
                 docName={params.case_name}
@@ -145,9 +169,17 @@ export default function Page(props: {
                 onProcess={processDocument}
               />
             </div>
-          ) : (
+          )}
+
+          {state.activeButton === "RESULT" && (
             <div className="w-1/2 h-3/4">
               <Result caseName={params.case_name} setPageNum={setPageNum} />
+            </div>
+          )}
+
+          {state.activeButton === "LOGS" && (
+            <div className="w-1/2 h-3/4">
+              <ProgressUpdates messages={logs} />
             </div>
           )}
 

@@ -1,6 +1,8 @@
 from src.logs.logger import Logger
 from src.instances import manager
+from src.instances import mongo_db
 from ..helper.time import curr_timestamp
+from src.models import Collections
 
 log = Logger(name="callback_func.py").get_logger()
 
@@ -18,4 +20,13 @@ async def progress_callback(data: dict, key: str) -> None:
 
 async def progress_callback_func(message: str, key: str) -> None:
     timestamp = curr_timestamp()
-    await progress_callback({"status": message, "timestamp": timestamp}, key=key)
+    log = {"status": message, "timestamp": timestamp}
+    await progress_callback(log, key=key)
+
+    await mongo_db.upsert(
+        filter={"doc_name": key},
+        data={"log": [log], "status": "processed"},
+        upsert=True,
+        collection_name=Collections.LOGS.value,
+        push_fields=["log"],
+    )

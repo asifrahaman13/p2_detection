@@ -6,7 +6,7 @@ type Props = {
 export default function ToggleTabs({ active, onChange }: Props) {
   return (
     <div className="flex gap-4">
-      {["OUTLINE", "RESULT"].map((tab) => (
+      {["OUTLINE", "RESULT", "LOGS"].map((tab) => (
         <button
           key={tab}
           onClick={() => onChange(tab)}

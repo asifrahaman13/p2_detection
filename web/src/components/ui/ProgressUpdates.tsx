@@ -10,6 +10,9 @@ interface ProgressUpdatesProps {
 }
 
 const ProgressUpdates: React.FC<ProgressUpdatesProps> = ({ messages }) => {
+  if (!messages) {
+    return null;
+  }
   if (messages.length === 0) return null;
 
   return (
@@ -21,7 +24,7 @@ const ProgressUpdates: React.FC<ProgressUpdatesProps> = ({ messages }) => {
         {messages.map((message, index) => (
           <div key={index} className="text-sm text-gray-700 flex gap-2">
             <div className="bg-blue-300 text-blue-800 px-2 py-1 rounded-md">
-              {new Date(message.timestamp).toLocaleTimeString()}
+              {new Date(message.timestamp).toLocaleString()}
             </div>
             <div className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md">
               {message.status}
