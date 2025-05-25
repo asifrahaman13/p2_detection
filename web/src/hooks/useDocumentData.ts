@@ -23,7 +23,6 @@ export function useDocumentData(caseName: string) {
             input_key: inputKey,
           },
         );
-        setDocumentData(res.data);
         dispatch(setDocumentDataAction(res.data));
       } catch (err) {
         console.error("Keypoints error:", err);

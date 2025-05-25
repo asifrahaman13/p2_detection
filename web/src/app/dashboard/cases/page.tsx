@@ -37,7 +37,7 @@ const MyCases: React.FC = () => {
   function handleCreateCase() {
     if (caseName.trim() === "") return;
     closeModal();
-    router.push(`/dashboard/cases/${caseName}/create-case`);
+    router.push(`/dashboard/uploads/${caseName}/create-case`);
   }
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {

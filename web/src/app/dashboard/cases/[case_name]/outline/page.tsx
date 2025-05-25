@@ -1,23 +1,44 @@
 "use client";
 import DescriptionEditor from "@/components/DescriptionEditor";
 import config from "@/config/config";
-import { useDocumentData } from "@/hooks/useDocumentData";
 import { RootState } from "@/lib/store";
+import { parseInputKey } from "@/utils/parseInputKey";
 import axios from "axios";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setDocumentData as setDocumentDataAction } from "@/lib/features/docSlice";
 
 export default function Page() {
   const doc = useSelector((state: RootState) => state.docSlice);
   const docName = doc.docName;
   const docData = useSelector((state: RootState) => state.docSlice.data);
-  console.log("My slice", docData);
-  const [documentData, setDocumentData] = useDocumentData(docName);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const inputKey = parseInputKey(docName);
+    if (!inputKey) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await axios.post(
+          `${config.backendUrl}/api/v1/docs/get-key-points`,
+          {
+            input_key: inputKey,
+          }
+        );
+        dispatch(setDocumentDataAction(res.data));
+      } catch (err) {
+        console.error("Keypoints error:", err);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, docName]);
 
   async function saveData() {
-    if (!documentData) return;
+    if (!docData) return;
     try {
-      await axios.post(`${config.backendUrl}/api/v1/docs/save`, documentData);
+      await axios.post(`${config.backendUrl}/api/v1/docs/save`, docData);
     } catch (err) {
       console.error("Error saving data", err);
     }
@@ -39,7 +60,6 @@ export default function Page() {
         <DescriptionEditor
           docName={docName}
           data={docData}
-          setData={setDocumentData}
           onSave={saveData}
           onProcess={processDocument}
         />

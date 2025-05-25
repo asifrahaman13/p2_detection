@@ -18,22 +18,16 @@ import { RootState } from "@/lib/store";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  console.log("my path name", pathname.split("/"));
   const dispatch = useDispatch();
-
   const router = useRouter();
+  const doc = useSelector((state: RootState) => state.docSlice);
+  const [preview, setPreview] = useState("x");
+  const docUrl = usePresignedUrl(doc?.docName);
 
   useEffect(() => {
     const docPath = pathname.split("/").at(3) || "";
-    console.log("Baby the doc path is: ", docPath);
     dispatch(updatePdfName(docPath));
-    console.log();
   }, [dispatch, pathname]);
-
-  const doc = useSelector((state: RootState) => state.docSlice);
-  console.log("Hola my docName", doc?.docName);
-  const [preview, setPreview] = useState("x");
-  const docUrl = usePresignedUrl(doc?.docName);
 
   async function deleteResources() {
     try {

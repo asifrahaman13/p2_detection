@@ -8,14 +8,14 @@ import React, { useEffect } from "react";
 const Group = ({ caseName }: { caseName: string }) => {
   const [data, setDocumentData] = useDocumentData(caseName);
 
-  const saveData = async () => {
+  const saveData = React.useCallback(async () => {
     if (!data) return;
     try {
       await axios.post(`${config.backendUrl}/api/v1/docs/save`, data);
     } catch (err) {
       console.error("Error saving data", err);
     }
-  };
+  }, [data]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -125,11 +125,7 @@ const Group = ({ caseName }: { caseName: string }) => {
     if (!data) {
       return;
     }
-    // Now set the toogle mode.
-
     setDocumentData({ ...data, process_type: mode });
-
-    console.log(data);
   }
 
   return (

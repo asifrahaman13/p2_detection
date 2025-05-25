@@ -1,14 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { DocumentData } from "@/types/dashboard/dashboard";
+import { DocumentData, KeyPoint } from "@/types/dashboard/dashboard";
 import config from "@/config/config";
 import ProgressUpdates from "./ui/ProgressUpdates";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import {
+  addKeyPoint,
+  removeKeyPoint,
+  setDocumentData,
+  setProcessType,
+  updateKeyPoint,
+} from "@/lib/features/docSlice";
+import { useDispatch } from "react-redux";
 
 interface Props {
   docName: string;
   data: DocumentData | null;
-  setData: React.Dispatch<React.SetStateAction<DocumentData | null>>;
   onSave: () => void;
   onProcess: () => void;
 }
@@ -21,13 +30,15 @@ type ProgressMessage = {
 export default function DescriptionEditor({
   docName,
   data,
-  setData,
   onSave,
   onProcess,
 }: Props) {
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
+  const dispatch = useDispatch();
+
+  const doc = useSelector((state: RootState) => state.docSlice);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -39,7 +50,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`,
+      `${config.websocketUrl}/api/ws/progress/${docName}`
     );
     if (!wsRef.current) {
       wsRef.current = ws;
@@ -73,49 +84,16 @@ export default function DescriptionEditor({
 
   function handleChange(
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number,
+    idx: number
   ) {
-    if (!data) return;
     const { name, value } = e.target;
-
-    const updatedKeyPoints = data.key_points.map((point, i) =>
-      i === idx ? { ...point, [name]: value } : point,
+    dispatch(
+      updateKeyPoint({ index: idx, field: name as keyof KeyPoint, value })
     );
-
-    console.log("Updated key points:", updatedKeyPoints);
-
-    setData({ ...data, key_points: updatedKeyPoints });
   }
 
   function addPoint() {
-    if (!data) {
-      const pdf = {
-        pdf_name: docName,
-      };
-      setData({
-        ...pdf,
-        key_points: [
-          {
-            entity: "",
-            description: "",
-            replaceWith: "",
-          },
-        ],
-      });
-      return;
-    }
-
-    setData({
-      ...data,
-      key_points: [
-        ...data.key_points,
-        {
-          entity: "",
-          description: "",
-          replaceWith: "",
-        },
-      ],
-    });
+    dispatch(addKeyPoint());
   }
 
   function handleProcess() {
@@ -124,10 +102,7 @@ export default function DescriptionEditor({
   }
 
   function handleDelete(idx: number) {
-    if (!data) return;
-    const updatedKeyPoints = [...data.key_points];
-    updatedKeyPoints.splice(idx, 1);
-    setData({ ...data, key_points: updatedKeyPoints });
+    dispatch(removeKeyPoint(idx));
   }
 
   function handleJsonUpload(event: React.ChangeEvent<HTMLInputElement>) {
@@ -149,12 +124,12 @@ export default function DescriptionEditor({
           (item) =>
             typeof item.entity === "string" &&
             typeof item.description === "string" &&
-            typeof item.replaceWith === "string",
+            typeof item.replaceWith === "string"
         );
 
         if (!isValid) {
           console.error(
-            "Invalid JSON format: items do not match expected shape.",
+            "Invalid JSON format: items do not match expected shape."
           );
           return;
         }
@@ -164,7 +139,8 @@ export default function DescriptionEditor({
           key_points: json,
         };
 
-        setData(pdf);
+        // setData(pdf);
+        dispatch(setDocumentData(pdf))
       } catch (err) {
         console.error("Failed to parse JSON file:", err);
       }
@@ -177,9 +153,12 @@ export default function DescriptionEditor({
     if (!data) {
       return;
     }
-    setData({ ...data, process_type: mode });
+    // setData({ ...data, process_type: mode });
+    dispatch(setProcessType(mode))
     console.log(data);
   }
+
+
   function exportToJson(data: DocumentData, docName: string) {
     if (!data) return;
 
@@ -254,7 +233,7 @@ export default function DescriptionEditor({
 
             {/* Table Rows */}
             <div className="space-y-4">
-              {data?.key_points.map((point, idx) => (
+              {doc.data?.key_points.map((point, idx) => (
                 <div
                   key={idx}
                   className="grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-sm border"
