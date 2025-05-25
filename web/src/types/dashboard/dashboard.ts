@@ -16,7 +16,6 @@ export type Message = {
 
 export type UploadedPdfInterface = {
   uploadedPdf: string | null;
-  page?: number;
 };
 
 export type PDFButtonTypes = {

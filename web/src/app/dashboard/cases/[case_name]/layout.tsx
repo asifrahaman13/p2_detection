@@ -124,13 +124,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
           <div className="w-1/2 h-3/4">
             <UploadedPdf
-              key={1}
               uploadedPdf={
                 preview === "x"
                   ? (docUrl?.original_pdf ?? null)
                   : (docUrl?.masked_pdf ?? null)
               }
-              page={1}
             />
           </div>
         </div>
