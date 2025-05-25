@@ -50,7 +50,7 @@ export default function DescriptionEditor({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${config.websocketUrl}/api/ws/progress/${docName}`
+      `${config.websocketUrl}/api/ws/progress/${docName}`,
     );
     if (!wsRef.current) {
       wsRef.current = ws;
@@ -84,11 +84,11 @@ export default function DescriptionEditor({
 
   function handleChange(
     e: React.ChangeEvent<HTMLTextAreaElement>,
-    idx: number
+    idx: number,
   ) {
     const { name, value } = e.target;
     dispatch(
-      updateKeyPoint({ index: idx, field: name as keyof KeyPoint, value })
+      updateKeyPoint({ index: idx, field: name as keyof KeyPoint, value }),
     );
   }
 
@@ -124,12 +124,12 @@ export default function DescriptionEditor({
           (item) =>
             typeof item.entity === "string" &&
             typeof item.description === "string" &&
-            typeof item.replaceWith === "string"
+            typeof item.replaceWith === "string",
         );
 
         if (!isValid) {
           console.error(
-            "Invalid JSON format: items do not match expected shape."
+            "Invalid JSON format: items do not match expected shape.",
           );
           return;
         }
@@ -140,7 +140,7 @@ export default function DescriptionEditor({
         };
 
         // setData(pdf);
-        dispatch(setDocumentData(pdf))
+        dispatch(setDocumentData(pdf));
       } catch (err) {
         console.error("Failed to parse JSON file:", err);
       }
@@ -153,19 +153,14 @@ export default function DescriptionEditor({
     if (!data) {
       return;
     }
-    // setData({ ...data, process_type: mode });
-    dispatch(setProcessType(mode))
-    console.log(data);
+    dispatch(setProcessType(mode));
   }
-
 
   function exportToJson(data: DocumentData, docName: string) {
     if (!data) return;
-
     const fileData = JSON.stringify(data.key_points, null, 2);
     const blob = new Blob([fileData], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
     link.href = url;
     link.download = `${docName || "ruleset"}.json`;
@@ -198,7 +193,7 @@ export default function DescriptionEditor({
                 : "text-gray-900"
             }`}
             onClick={() => {
-              if (data) exportToJson(data, docName);
+              if (doc.data) exportToJson(doc.data, docName);
             }}
             disabled={isProcessing}
           >

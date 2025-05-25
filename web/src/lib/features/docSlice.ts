@@ -32,7 +32,7 @@ const documentSlice = createSlice({
         index: number;
         field: keyof KeyPoint;
         value: string;
-      }>
+      }>,
     ) {
       const { index, field, value } = action.payload;
       if (state.data && state.data.key_points[index]) {
@@ -79,6 +79,6 @@ export const {
   updateKeyPoint,
   addKeyPoint,
   removeKeyPoint,
-  setProcessType
+  setProcessType,
 } = documentSlice.actions;
 export default documentSlice.reducer;

@@ -26,9 +26,9 @@ export default function Result({ caseName }: ResultTypeProps) {
 
   useEffect(() => {
     async function fetchResults() {
-      console.log("The doc name", caseName)
-      if (caseName.length===0){
-        return
+      console.log("The doc name", caseName);
+      if (caseName.length === 0) {
+        return;
       }
       try {
         const response = await axios.post(
@@ -39,7 +39,7 @@ export default function Result({ caseName }: ResultTypeProps) {
           setResult(response.data.results);
         } else {
           console.error("Error fetching results");
-          console.log(response.data)
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching results", error);

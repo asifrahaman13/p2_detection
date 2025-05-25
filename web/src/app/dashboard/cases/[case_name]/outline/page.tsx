@@ -24,7 +24,7 @@ export default function Page() {
           `${config.backendUrl}/api/v1/docs/get-key-points`,
           {
             input_key: inputKey,
-          }
+          },
         );
         dispatch(setDocumentDataAction(res.data));
       } catch (err) {
