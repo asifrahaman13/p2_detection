@@ -19,11 +19,9 @@ const Overview = ({
   handleProcessLoad: () => void;
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
-
   const router = useRouter();
 
   async function processDocument() {
-    console.log("Case name in overview", caseName);
     try {
       setLoading(true);
       callBackFunction();
@@ -35,10 +33,7 @@ const Overview = ({
           input_key: caseName,
         },
       );
-      console.log("Response from process document", response);
       if (response.status === 200) {
-        const { data } = response;
-        console.log("Data from process document", data);
         router.push(`/dashboard/cases/${caseName}`);
       }
       setLoading(false);

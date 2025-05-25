@@ -25,23 +25,20 @@ const Group = ({ caseName }: { caseName: string }) => {
     return () => clearTimeout(timeout);
   }, [data, saveData]);
 
-  const handleChange = (
+  function handleChange(
     e: React.ChangeEvent<HTMLTextAreaElement>,
     idx: number,
-  ) => {
+  ) {
     if (!data) return;
     const { name, value } = e.target;
 
     const updatedKeyPoints = data.key_points.map((point, i) =>
       i === idx ? { ...point, [name]: value } : point,
     );
-
-    console.log("Updated key points:", updatedKeyPoints);
-
     setDocumentData({ ...data, key_points: updatedKeyPoints });
-  };
+  }
 
-  const addPoint = () => {
+  function addPoint() {
     if (!data) {
       const pdf = {
         pdf_name: caseName,
@@ -70,9 +67,9 @@ const Group = ({ caseName }: { caseName: string }) => {
         },
       ],
     });
-  };
+  }
 
-  const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function handleJsonUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -112,14 +109,14 @@ const Group = ({ caseName }: { caseName: string }) => {
     };
 
     reader.readAsText(file);
-  };
+  }
 
-  const handleDelete = (idx: number) => {
+  function handleDelete(idx: number) {
     if (!data) return;
     const updatedKeyPoints = [...data.key_points];
     updatedKeyPoints.splice(idx, 1);
     setDocumentData({ ...data, key_points: updatedKeyPoints });
-  };
+  }
 
   function toogleProcessMode(mode: string) {
     if (!data) {
@@ -132,7 +129,6 @@ const Group = ({ caseName }: { caseName: string }) => {
     <div>
       <div className="bg-white p-6 overflow-y-scroll w-full gap-4 flex flex-col">
         <div className="flex  gap-4 justify-between">
-          {/* <div className="text-md font-semibold">Define filters</div> */}
           <div>
             <div className="flex items-center space-x-4">
               <span
@@ -145,16 +141,6 @@ const Group = ({ caseName }: { caseName: string }) => {
               >
                 Mask
               </span>
-              {/* <div
-            className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
-            onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
-          >
-            <div
-              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                viewMode === "x" ? "translate-x-0" : "translate-x-6"
-              }`}
-            />
-          </div> */}
               <span
                 onClick={() => toogleProcessMode("replace")}
                 className={`px-4 py-1 rounded-r-full border cursor-pointer ${

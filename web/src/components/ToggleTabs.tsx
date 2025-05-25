@@ -8,7 +8,6 @@ type Props = {
 export default function ToggleTabs({ docName }: Props) {
   const pathname = usePathname();
   const currLink = pathname.split("/").at(-1);
-  console.log("The current link", currLink);
   return (
     <div className="flex gap-4">
       {["outline", "result", "logs"].map((tab) => (

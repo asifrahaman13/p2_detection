@@ -14,6 +14,7 @@ import {
   updateKeyPoint,
 } from "@/lib/features/docSlice";
 import { useDispatch } from "react-redux";
+import { exportToJson } from "@/utils/parseInputKey";
 
 interface Props {
   docName: string;
@@ -138,8 +139,6 @@ export default function DescriptionEditor({
           pdf_name: docName,
           key_points: json,
         };
-
-        // setData(pdf);
         dispatch(setDocumentData(pdf));
       } catch (err) {
         console.error("Failed to parse JSON file:", err);
@@ -154,19 +153,6 @@ export default function DescriptionEditor({
       return;
     }
     dispatch(setProcessType(mode));
-  }
-
-  function exportToJson(data: DocumentData, docName: string) {
-    if (!data) return;
-    const fileData = JSON.stringify(data.key_points, null, 2);
-    const blob = new Blob([fileData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${docName || "ruleset"}.json`;
-    link.click();
-
-    URL.revokeObjectURL(url);
   }
 
   return (
@@ -274,11 +260,9 @@ export default function DescriptionEditor({
           </>
         )}
 
-        {/* Progress Section */}
         <ProgressUpdates messages={messages} />
       </div>
 
-      {/* Bottom Fixed Controls */}
       <div className="shrink-0 pt-4 border-t mt-4 flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <span
@@ -291,16 +275,6 @@ export default function DescriptionEditor({
           >
             Mask
           </span>
-          {/* <div
-            className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
-            onClick={() => setViewMode(viewMode === "x" ? "y" : "x")}
-          >
-            <div
-              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                viewMode === "x" ? "translate-x-0" : "translate-x-6"
-              }`}
-            />
-          </div> */}
           <span
             onClick={() => toogleProcessMode("replace")}
             className={`px-4 py-1 rounded-r-full border cursor-pointer ${

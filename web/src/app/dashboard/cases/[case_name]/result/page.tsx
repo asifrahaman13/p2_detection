@@ -1,18 +1,191 @@
 "use client";
-import Result from "@/components/Result";
 import { RootState } from "@/lib/store";
+import axios from "axios";
+import config from "@/config/config";
+import { setPageNum } from "@/lib/features/logSlice";
 
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Toast from "@/components/toasts/Toast";
+import { useToast } from "@/hooks/useToast";
+import { States } from "@/constants/state";
+
+type RedactedFileUploadResponse = {
+  message: string;
+  s3_path: string;
+  stats: {
+    total_time: number;
+    total_words_extracted: number;
+    unique_words_extracted: string[];
+    total_unique_words_extracted: number;
+    word_frequencies: Record<string, number>;
+    word_page_map: Record<string, number[]>;
+  };
+};
 
 export default function Page() {
   const doc = useSelector((state: RootState) => state.docSlice);
   const docName = doc.docName;
+  const { toast, showToast } = useToast();
+
+  const [result, setResult] = useState<RedactedFileUploadResponse | null>(null);
+  const dispathch = useDispatch();
+
+  useEffect(() => {
+    async function fetchResults() {
+      if (docName.length === 0) {
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `${config.backendUrl}/api/v1/docs/results`,
+          { input_key: docName },
+        );
+        if (response.status === 200) {
+          setResult(response.data.results);
+        }
+      } catch {
+        showToast(
+          "We encountered error fetching the information",
+          States.ERROR,
+        );
+      }
+    }
+
+    fetchResults();
+  }, [docName, showToast]);
 
   return (
     <React.Fragment>
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div className="w-1/2 h-3/4">
-        <Result caseName={docName} />
+        <div className=" bg-white overflow-scroll h-full">
+          {!result ? (
+            <div className="text-gray-500 flex justify-center items-center">
+              Loading...
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-lg">
+                <div className="flex flex-col gap-4 text-sm text-gray-800">
+                  <div>
+                    <div className="flex justify-end">
+                      <button
+                        className="bg-sideBarGradient hover:bg-blue-700 font-medium text-white px-6 py-2 rounded-md transition"
+                        onClick={() => {
+                          if (result?.stats) {
+                            const jsonBlob = new Blob(
+                              [JSON.stringify(result.stats, null, 2)],
+                              {
+                                type: "application/json",
+                              },
+                            );
+                            const url = URL.createObjectURL(jsonBlob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `${docName}_stats.json`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                          }
+                        }}
+                      >
+                        Download Result
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-between w-full gap-4">
+                    {[
+                      {
+                        label: "Total Time",
+                        value: `${result.stats.total_time.toFixed(2)}s`,
+                      },
+                      {
+                        label: "Total Words Extracted",
+                        value: result.stats.total_words_extracted,
+                      },
+                      {
+                        label: "Total Unique Words Extracted",
+                        value: result.stats.total_unique_words_extracted,
+                      },
+                    ].map((stat, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center justify-center bg-blue-100 text-blue-900 px-6 py-4 rounded-2xl shadow-md w-full sm:w-auto flex-1 min-w-[200px]"
+                      >
+                        <div className="text-4xl font-bold">
+                          {stat.value || 0}
+                        </div>
+                        <div className="text-sm font-medium mt-2 text-center">
+                          {stat.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <span className="font-semibold">
+                      Unique Words Extracted:
+                    </span>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {result.stats.unique_words_extracted.map(
+                        (word, index) => (
+                          <div
+                            key={index}
+                            className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded shadow-sm inline-block"
+                          >
+                            {word}
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="font-semibold">Word Frequencies:</span>
+                    <div className="">
+                      {Object.entries(result.stats.word_frequencies).map(
+                        ([word, count], index) => (
+                          <div key={index} className="flex gap-2 items-center">
+                            <span className="font-mono">{word}</span>:
+                            <span className="bg-blue-50 px-2  text-blue-800 rounded-lg">
+                              {" "}
+                              {count}
+                            </span>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="font-medium">
+                      Word Page Map (You can click on the pages to view the
+                      pages to the right side){" "}
+                    </div>
+                    <div className="">
+                      {Object.entries(result.stats.word_page_map).map(
+                        ([phrase, pages], index) => (
+                          <div key={index} className="flex gap-2 items-center">
+                            <div className=" ">{phrase}</div>:{" "}
+                            <div className="px-2 rounded-lg flex flex-wrap gap-2">
+                              {pages?.map((item, idx) => (
+                                <button
+                                  onClick={() => dispathch(setPageNum(item))}
+                                  key={idx}
+                                  className="bg-blue-50 text-blue-700 px-2 py-0.5 text-sm rounded-full"
+                                >
+                                  {item}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </React.Fragment>
   );

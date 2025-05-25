@@ -11,7 +11,6 @@ const UploadedPdf = ({ uploadedPdf }: UploadedPdfInterface) => {
 
   useEffect(() => {
     if (uploadedPdf) {
-      console.log("PDF URL is set...");
       setPdfUrl(`${uploadedPdf}#page=${pageNum}`);
     }
   }, [pageNum, uploadedPdf]);
