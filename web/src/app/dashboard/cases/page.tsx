@@ -44,6 +44,10 @@ const MyCases: React.FC = () => {
     setSearchTerm(e.target.value);
   }
 
+  useEffect(() => {
+    console.log("This is always being called......");
+  });
+
   return (
     <div className="p-4  bg-gray-100 w-full">
       {/* Header */}
@@ -133,7 +137,7 @@ const MyCases: React.FC = () => {
             }`}
           >
             <Link
-              href={`/dashboard/cases/${caseItem.file_name}`}
+              href={`/dashboard/cases/${caseItem.file_name}/outline`}
               className="w-full flex flex-wrap py-2 hover:bg-gray-100 transition-colors"
             >
               <div className="p-3 w-1/12 truncate">{caseItem.file_name}</div>

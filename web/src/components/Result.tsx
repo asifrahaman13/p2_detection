@@ -1,6 +1,9 @@
+"use client";
 import axios from "axios";
 import config from "@/config/config";
 import { useEffect, useState } from "react";
+import { setPageNum } from "@/lib/features/logSlice";
+import { useDispatch } from "react-redux";
 
 type RedactedFileUploadResponse = {
   message: string;
@@ -15,10 +18,11 @@ type RedactedFileUploadResponse = {
   };
 };
 
-type ResultTypeProps = { caseName: string; setPageNum: (page: number) => void };
+type ResultTypeProps = { caseName: string };
 
-export default function Result({ caseName, setPageNum }: ResultTypeProps) {
+export default function Result({ caseName }: ResultTypeProps) {
   const [result, setResult] = useState<RedactedFileUploadResponse | null>(null);
+  const dispathch = useDispatch();
 
   useEffect(() => {
     async function fetchResults() {
@@ -144,7 +148,7 @@ export default function Result({ caseName, setPageNum }: ResultTypeProps) {
                         <div className="px-2 rounded-lg flex flex-wrap gap-2">
                           {pages?.map((item, idx) => (
                             <button
-                              onClick={() => setPageNum(item)}
+                              onClick={() => dispathch(setPageNum(item))}
                               key={idx}
                               className="bg-blue-50 text-blue-700 px-2 py-0.5 text-sm rounded-full"
                             >

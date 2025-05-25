@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { DocumentData } from "@/types/dashboard/dashboard";
 import config from "@/config/config";

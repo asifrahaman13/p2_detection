@@ -4,10 +4,13 @@ import config from "@/config/config";
 import { PresignedUrl } from "@/types/dashboard/dashboard";
 import { parseInputKey } from "@/utils/parseInputKey";
 
-export function usePresignedUrl(caseName: string) {
+export function usePresignedUrl(caseName?: string) {
   const [docUrl, setDocUrl] = useState<PresignedUrl | null>(null);
 
   useEffect(() => {
+    if (!caseName) {
+      return;
+    }
     const inputKey = parseInputKey(caseName);
     if (!inputKey) return;
 

@@ -1,23 +1,28 @@
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 type Props = {
-  active: string;
-  onChange: (tab: string) => void;
+  docName?: string;
 };
 
-export default function ToggleTabs({ active, onChange }: Props) {
+export default function ToggleTabs({ docName }: Props) {
+  const pathname = usePathname();
+  const currLink = pathname.split("/").at(-1);
+  console.log("The current link", currLink);
   return (
     <div className="flex gap-4">
-      {["OUTLINE", "RESULT", "LOGS"].map((tab) => (
-        <button
+      {["outline", "result", "logs"].map((tab) => (
+        <Link
+          href={`/dashboard/cases/${docName}/${tab}`}
           key={tab}
-          onClick={() => onChange(tab)}
           className={`text-lg px-2 border-b-2 ${
-            active === tab
-              ? "border-sideBarBorder font-semibold text-buttonTextColor"
-              : "border-transparent text-buttonTextColor"
+            tab === currLink
+              ? "border-sideBarBorder  font-semibold text-buttonTextColor"
+              : " text-buttonTextColor"
           }`}
         >
           {tab}
-        </button>
+        </Link>
       ))}
     </div>
   );

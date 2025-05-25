@@ -16,7 +16,7 @@ const ProgressUpdates: React.FC<ProgressUpdatesProps> = ({ messages }) => {
   if (messages.length === 0) return null;
 
   return (
-    <div className="bg-gray-100 p-4 rounded-md mt-4 h-full overflow-y-scroll">
+    <div className="bg-white p-4 rounded-md mt-4 h-full overflow-y-scroll">
       <h3 className="text-sm font-medium text-gray-500 text-center py-2">
         UPDATES
       </h3>
