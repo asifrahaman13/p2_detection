@@ -133,6 +133,7 @@ export default function Page(props: {
         <div className="text-blue-600">
           <Link href="/dashboard/cases">Cases/create cases</Link>
         </div>
+
         <div className="w-full h-full flex gap-6 items-center flex-col ">
           <div className="flex gap-2 items-center">
             <div

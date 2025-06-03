@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       if (response.status === 200) {
         console.log("success.");
-        router.push("/dashboard/cases");
+        router.push(`/dashboard/cases/${doc.docName}/outline`);
       }
     } catch {
       console.log("Sorry something went wrong");
