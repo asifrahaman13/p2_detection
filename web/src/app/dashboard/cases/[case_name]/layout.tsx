@@ -41,7 +41,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       );
 
       if (response.status === 200) {
-        console.log("success.");
         router.push(`/dashboard/cases/${doc.docName}/outline`);
       }
     } catch {
@@ -96,16 +95,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             Original
           </span>
-          {/* <div
-            className="relative w-12 h-6 bg-gray-300 rounded-full cursor-pointer"
-            onClick={() => setPreview(preview === "x" ? "y" : "x")}
-          >
-            <div
-              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                preview === "x" ? "translate-x-0" : "translate-x-6"
-              }`}
-            />
-          </div> */}
           <span
             onClick={() => setPreview("y")}
             className={`px-4 py-1 rounded-r-full border cursor-pointer ${

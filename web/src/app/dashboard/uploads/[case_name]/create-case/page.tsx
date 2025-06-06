@@ -93,14 +93,12 @@ export default function Page(props: {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         setLoading(false);
         setDynamicValue(100);
         setFileUploaded(true);
         setPresignedUrl(response.data.presigned_url);
       }
-    } catch (error: unknown) {
-      console.error("Error uploading PDF:", error);
+    } catch {
       clearInterval(interval);
       setLoading(false);
     }

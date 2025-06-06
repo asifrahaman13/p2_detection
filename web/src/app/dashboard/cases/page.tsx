@@ -44,10 +44,6 @@ const MyCases: React.FC = () => {
     setSearchTerm(e.target.value);
   }
 
-  useEffect(() => {
-    console.log("This is always being called......");
-  });
-
   return (
     <div className="p-4  bg-gray-100 w-full">
       {/* Header */}

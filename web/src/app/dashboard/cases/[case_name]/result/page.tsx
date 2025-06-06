@@ -24,12 +24,11 @@ type RedactedFileUploadResponse = {
 };
 
 export default function Page() {
+  const dispathch = useDispatch();
   const doc = useSelector((state: RootState) => state.docSlice);
   const docName = doc.docName;
   const { toast, showToast } = useToast();
-
   const [result, setResult] = useState<RedactedFileUploadResponse | null>(null);
-  const dispathch = useDispatch();
 
   useEffect(() => {
     async function fetchResults() {

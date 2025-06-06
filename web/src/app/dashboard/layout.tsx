@@ -17,14 +17,12 @@ function changeSidebar(
     }));
     return updatedSidebars;
   }
-  console.log(state);
   return state;
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(changeSidebar, sidebarButtons);
   const router = useRouter();
-
   const pathname = usePathname();
 
   React.useEffect(() => {
@@ -32,10 +30,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     dispatch({ type: "changeSidebar", title });
   }, [pathname]);
 
-  const handleSidebarClick = (title: string) => {
+  function handleSidebarClick(title: string) {
     dispatch({ type: "changeSidebar", title });
     router.push(`/dashboard/${title}`);
-  };
+  }
 
   function capitalize(text: string): string {
     if (!text) return text;
