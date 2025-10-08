@@ -17,7 +17,7 @@
     "@reduxjs/toolkit": "^2.2.8",
     "@types/react-beautiful-dnd": "^13.1.8",
     "axios": "^1.7.7",
-    "next": "15.3.2",
+    "next": "15.3.3",
     "pdfjs-dist": "^4.7.76",
     "prettier": "^3.3.3",
     "react": "19.1.0",
